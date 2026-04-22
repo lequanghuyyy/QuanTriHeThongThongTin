@@ -1,0 +1,65 @@
+package com.hmkeyewear.controller;
+
+import com.hmkeyewear.dto.request.AddToCartRequest;
+import com.hmkeyewear.dto.request.UpdateCartItemRequest;
+import com.hmkeyewear.dto.response.ApiResponse;
+import com.hmkeyewear.dto.response.CartResponse;
+import com.hmkeyewear.service.interfaces.CartService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/cart")
+@RequiredArgsConstructor
+public class CartController {
+
+    private final CartService cartService;
+    private final com.hmkeyewear.service.interfaces.OrderService orderService;
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<CartResponse>> getCart(Authentication authentication) {
+        return ResponseEntity.ok(ApiResponse.success(cartService.getCart(authentication.getName())));
+    }
+
+    @PostMapping("/items")
+    public ResponseEntity<ApiResponse<CartResponse>> addToCart(
+            Authentication authentication,
+            @Valid @RequestBody AddToCartRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(cartService.addToCart(authentication.getName(), request)));
+    }
+
+    @PutMapping("/items/{cartItemId}")
+    public ResponseEntity<ApiResponse<CartResponse>> updateCartItem(
+            Authentication authentication,
+            @PathVariable Long cartItemId,
+            @Valid @RequestBody UpdateCartItemRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(cartService.updateCartItem(authentication.getName(), cartItemId, request.getQuantity())));
+    }
+
+    @DeleteMapping("/items/{cartItemId}")
+    public ResponseEntity<ApiResponse<CartResponse>> removeCartItem(
+            Authentication authentication,
+            @PathVariable Long cartItemId
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(cartService.removeCartItem(authentication.getName(), cartItemId)));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void>> clearCart(Authentication authentication) {
+        cartService.clearCart(authentication.getName());
+        return ResponseEntity.ok(ApiResponse.success("Cart cleared successfully", null));
+    }
+
+    @PostMapping("/validate-coupon")
+    public ResponseEntity<ApiResponse<com.hmkeyewear.dto.response.CouponValidateResponse>> validateCoupon(
+            Authentication authentication,
+            @Valid @RequestBody com.hmkeyewear.dto.request.CouponValidateRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success("Coupon applied", orderService.validateCoupon(authentication.getName(), request)));
+    }
+}

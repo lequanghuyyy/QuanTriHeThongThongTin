@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .oauth2Login(oauth2 -> oauth2
                         // .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/google")) // Custom endpoint if needed
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))

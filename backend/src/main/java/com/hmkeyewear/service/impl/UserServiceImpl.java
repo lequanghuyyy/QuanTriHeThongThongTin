@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public AddressResponse addAddress(String email, AddressRequest request) {
         User user = getUser(email);
-        
+
         List<Address> currentAddresses = addressRepository.findByUser(user);
         if (currentAddresses.isEmpty()) {
             request.setDefault(true);
@@ -194,8 +194,7 @@ public class UserServiceImpl implements UserService {
             spec = spec.and((root, query, cb) -> cb.or(
                     cb.like(cb.lower(root.get("email")), pattern),
                     cb.like(cb.lower(root.get("fullName")), pattern),
-                    cb.like(root.get("phone"), pattern)
-            ));
+                    cb.like(root.get("phone"), pattern)));
         }
 
         return userRepository.findAll(spec, pageable).map(this::mapToUserData);

@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* =========================================================================
+     Color System
+     ========================================================================= */
+  --color-primary: #000000; /* Đen: thời thượng, chuyên nghiệp, sang trọng */
+  --color-background: #F9F9F9; /* Trắng ngà */
+  --color-white: #FFFFFF;
+
+  /* Secondary Grayscale */
+  --color-gray-100: #E8E8E8; /* Xám sáng */
+  --color-gray-200: #C6C6C6; /* Xám nhạt */
+  --color-gray-500: #777777; /* Xám đậm */
+  --color-gray-800: #474747; /* Xám */
+
+  /* Status Colors */
+  --color-danger-dark: #BA1A1A; /* Đỏ sẫm */
+  --color-danger: #FF0000; /* Đỏ rực */
+  --color-info: #004070; /* Xanh dương */
+  --color-success: #059668; /* Xanh lá */
+
+  /* =========================================================================
+     Typography
+     ========================================================================= */
+  --font-main: 'Inter', sans-serif;
+  --text-body: 14px;
+  --text-h1: 32px;
+  --text-h2: 24px;
+  --text-h3: 18px;
+
+  /* =========================================================================
+     Border Radius
+     ========================================================================= */
+  --radius-input: 4px;
+  --radius-card: 8px;
+  --radius-button: 24px;
+  --radius-image: 24px;
+
+  /* =========================================================================
+     Base Spacing
+     ========================================================================= */
+  --space-xs: 8px;
+  --space-md: 16px;
+  --space-section: 160px; /* Section Gap - Khoảng trống thương hiệu */
+
+  /* =========================================================================
+     Component Spacing (Theo từng nhóm màn hình)
+     ========================================================================= */
+  
+  /* --- Nhóm A: Trang chủ, Danh sách SP, Chi tiết SP --- */
+  --spacing-header-to-content: 128px;
+  --spacing-product-grid-gap: 32px; /* Có thể dùng 48px */
+  --spacing-product-card-img-to-name: 16px;
+  --spacing-product-card-name-to-price: 8px;
+  --spacing-product-detail-gutter: 80px; /* 80-120px */
+
+  /* --- Nhóm B: Giỏ hàng, Thanh toán, Đăng ký/Login --- */
+  --padding-page-side: 64px; /* Có thể dùng 80px */
+  --padding-auth-form: 48px; /* Có thể dùng 64px */
+  --spacing-auth-input-gap: 24px;
+  --spacing-auth-label-to-input: 8px;
+  --spacing-checkout-group-gap: 48px;
+  --padding-button-y: 20px;
+  --padding-button-x: 40px;
+
+  /* --- Nhóm C: Dashboard KH, Admin Panel --- */
+  --width-sidebar: 280px;
+  --padding-sidebar: 32px;
+  --spacing-sidebar-menu-gap: 8px; /* 8px hoặc 12px */
+  --spacing-sidebar-icon-to-text: 16px;
+  --height-table-row: 64px; /* 64px hoặc 56px */
+  --padding-table-cell-x: 16px;
+  --padding-dashboard-card: 24px;
+  --spacing-dashboard-card-gap: 24px;
+}
+
+/* =========================================================================
+   Global Resets & Basics
+   ========================================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+  font-size: var(--text-body);
+  color: var(--color-primary);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 600; /* Inter semi-bold/bold as default */
+}
+
+h1 { font-size: var(--text-h1); }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); }
+
+/* Material Symbols default config */
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Base Button Style (Example using design tokens) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--padding-button-y) var(--padding-button-x);
+  border-radius: var(--radius-button);
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  opacity: 0.8;
+}

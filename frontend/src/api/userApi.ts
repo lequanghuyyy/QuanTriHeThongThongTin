@@ -1,5 +1,5 @@
 import { axiosInstance as api } from './axiosInstance';
-import { User, Address } from '../types/user.types';
+import type { User, Address } from '../types/user.types';
 
 export const userApi = {
   getProfile: () => api.get<never, User>("/user/profile"),

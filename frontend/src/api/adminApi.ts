@@ -1,7 +1,7 @@
 import { axiosInstance as api } from './axiosInstance';
-import { Page, PageParams } from '../types/api.types';
-import { Product } from '../types/product.types';
-import { Order } from '../types/order.types';
+import type { Page } from '../types/api.types';
+import type { Product } from '../types/product.types';
+import type { Order } from '../types/order.types';
 
 export const adminApi = {
   getDashboardOverview: () => api.get<never, any>("/admin/dashboard/overview"),

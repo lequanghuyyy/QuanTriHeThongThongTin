@@ -4,7 +4,6 @@ import { useMutation } from '@tanstack/react-query';
 import { userApi } from '../../api/userApi';
 import { useForm } from 'react-hook-form';
 import { Camera, Save } from 'lucide-react';
-import clsx from 'clsx';
 
 // Mock toast
 const toast = {
@@ -41,7 +40,7 @@ export const Profile = () => {
       return userApi.updateProfile({ ...data, avatar: avatarUrl });
     },
     onSuccess: (res) => {
-      updateUser(res.data);
+      updateUser(res);
       toast.success("Cập nhật thông tin thành công");
     },
     onError: () => toast.error("Không thể cập nhật thông tin")

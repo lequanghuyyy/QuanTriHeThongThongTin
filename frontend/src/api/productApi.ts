@@ -1,6 +1,6 @@
 import { axiosInstance as api } from './axiosInstance';
-import { Page, PageParams } from '../types/api.types';
-import { 
+import type { Page, PageParams } from '../types/api.types';
+import type { 
   Product, 
   ProductFilterParams, 
   Category, 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../api/adminApi';
 import { formatVND } from '../../utils/formatters';
-import { Search, Plus, Filter, Edit2, Trash2, Power, PowerOff, X, Image as ImageIcon, Box } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Power, PowerOff, X, Image as ImageIcon } from 'lucide-react';
 import clsx from 'clsx';
 import { useForm, useFieldArray } from 'react-hook-form';
 
@@ -88,7 +88,7 @@ export const Products = () => {
     setIsModalOpen(true);
   };
 
-  const products = productsData?.data.content || [];
+  const products = productsData?.content || [];
 
   return (
     <div className="p-8 animate-fade-in">
@@ -151,7 +151,7 @@ export const Products = () => {
               ) : products.length === 0 ? (
                 <tr><td colSpan={7} className="text-center py-12 text-gray-500">Không tìm thấy sản phẩm nào.</td></tr>
               ) : (
-                products.map(product => (
+                products.map((product: any) => (
                   <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -193,9 +193,9 @@ export const Products = () => {
         </div>
 
         {/* Pagination */}
-        {productsData && productsData.data.totalPages > 1 && (
+        {productsData && productsData.totalPages > 1 && (
           <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-white">
-            {[...Array(productsData.data.totalPages)].map((_, i) => (
+            {[...Array(productsData.totalPages)].map((_, i) => (
               <button
                 key={i}
                 onClick={() => setPage(i + 1)}

@@ -7,7 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '../../api/authApi';
 import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
 import clsx from 'clsx';
-import { RegisterRequest } from '../../types/user.types';
+import type { RegisterRequest } from '../../types/user.types';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),

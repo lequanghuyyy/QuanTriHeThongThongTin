@@ -10,7 +10,7 @@ export const Reviews = () => {
     queryFn: () => reviewApi.getMyReviews(),
   });
 
-  const reviews = reviewsData?.data || [];
+  const reviews = reviewsData || [];
 
   return (
     <div className="animate-fade-in">

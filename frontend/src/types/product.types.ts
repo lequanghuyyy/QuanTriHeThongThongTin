@@ -1,4 +1,4 @@
-import { Page, PageParams } from "./api.types";
+import type { Page, PageParams } from "./api.types";
 
 export interface Product {
   id: number;

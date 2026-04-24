@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-form-hooks'; // Wait, let's just use simple state or react-hook-form if it's there.
-// package.json has react-hook-form.
 import { useForm as useHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -13,7 +11,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
 import { formatVND } from '../../utils/formatters';
 import { CheckoutRequest, PaymentMethod, ShippingAddress } from '../../types/order.types';
-import { Check, CreditCard, Wallet, MapPin, Plus, Lock } from 'lucide-react';
+import { CreditCard, Wallet, Plus, Lock } from 'lucide-react';
 import clsx from 'clsx';
 
 const addressSchema = z.object({
@@ -61,9 +59,9 @@ export const Checkout = () => {
   });
 
   useEffect(() => {
-    if (addressesData?.data && addressesData.data.length > 0 && !selectedAddressId) {
-      const defaultAddr = addressesData.data.find(a => a.isDefault);
-      setSelectedAddressId(defaultAddr ? defaultAddr.id : addressesData.data[0].id);
+    if (addressesData && addressesData.length > 0 && !selectedAddressId) {
+      const defaultAddr = addressesData.find(a => a.isDefault);
+      setSelectedAddressId(defaultAddr ? defaultAddr.id : addressesData[0].id);
     }
   }, [addressesData, selectedAddressId]);
 
@@ -73,7 +71,7 @@ export const Checkout = () => {
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       clearCount();
-      navigate(`/tai-khoan/don-hang/${res.data.orderCode}`, {
+      navigate(`/tai-khoan/don-hang/${res.orderCode}`, {
         state: { isNewOrder: true }
       });
       toast.success("Đặt hàng thành công!");
@@ -85,7 +83,7 @@ export const Checkout = () => {
     mutationFn: (data: AddressForm) => userApi.addAddress({ ...data, isDefault: false }),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      setSelectedAddressId(res.data.id);
+      setSelectedAddressId(res.id);
       setIsAddingAddress(false);
       toast.success("Đã thêm địa chỉ mới");
       reset();
@@ -105,8 +103,8 @@ export const Checkout = () => {
     return <div className="p-8 text-center min-h-[60vh] flex items-center justify-center">Đang tải thông tin...</div>;
   }
 
-  const cart = cartData?.data;
-  const addresses = addressesData?.data || [];
+  const cart = cartData;
+  const addresses = addressesData || [];
 
   if (!cart || cart.items.length === 0) {
     return <Navigate to="/gio-hang" replace />;
@@ -127,7 +125,7 @@ export const Checkout = () => {
       paymentMethod,
       note: note.trim() || undefined,
       couponCode: passedCoupon,
-      items: cart.items.map(item => ({
+      items: cart.items.map((item: any) => ({
         productVariantId: item.variant.id,
         quantity: item.quantity
       }))
@@ -162,7 +160,7 @@ export const Checkout = () => {
               </div>
             ) : (
               <div className="flex flex-col gap-4 mb-6">
-                {addresses.map(addr => (
+                {addresses.map((addr: any) => (
                   <label key={addr.id} className={clsx(
                     "flex items-start p-4 border rounded-lg cursor-pointer transition-all",
                     selectedAddressId === addr.id ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
@@ -319,7 +317,7 @@ export const Checkout = () => {
             <h2 className="text-xl font-serif text-gray-900 mb-6">Tóm tắt đơn hàng</h2>
             
             <div className="flex flex-col gap-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-              {cart.items.map(item => (
+              {cart.items.map((item: any) => (
                 <div key={item.cartItemId} className="flex gap-4">
                   <div className="w-16 h-16 bg-white border border-gray-100 rounded flex items-center justify-center shrink-0">
                     <img src={item.product.thumbnailUrl} alt={item.product.name} className="w-full h-full object-contain mix-blend-multiply p-1" />

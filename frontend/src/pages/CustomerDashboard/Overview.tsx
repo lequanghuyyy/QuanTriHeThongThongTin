@@ -1,18 +1,17 @@
-import { useAuthStore } from '../../store/authStore';
+
 import { useQuery } from '@tanstack/react-query';
 import { orderApi } from '../../api/orderApi';
 import { Package, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Overview = () => {
-  const { user } = useAuthStore();
 
   const { data: ordersData } = useQuery({
     queryKey: ['orders'],
     queryFn: () => orderApi.getMyOrders({ page: 1, size: 5 }),
   });
 
-  const recentOrders = ordersData?.data.content || [];
+  const recentOrders = ordersData?.content || [];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -57,7 +56,7 @@ export const Overview = () => {
             <p className="text-gray-500 text-sm text-center py-4">Bạn chưa có đơn hàng nào.</p>
           ) : (
             <div className="space-y-4">
-              {recentOrders.map(order => (
+              {recentOrders.map((order: any) => (
                 <div key={order.id} className="flex items-center justify-between border-b border-gray-50 pb-4 last:border-0 last:pb-0">
                   <div>
                     <div className="font-medium text-gray-900">#{order.orderCode}</div>

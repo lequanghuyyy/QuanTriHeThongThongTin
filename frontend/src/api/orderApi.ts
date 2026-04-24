@@ -1,6 +1,6 @@
 import { axiosInstance as api } from './axiosInstance';
-import { Page, PageParams } from '../types/api.types';
-import { Order, CheckoutRequest, OrderStatus } from '../types/order.types';
+import type { Page, PageParams } from '../types/api.types';
+import type { Order, CheckoutRequest, OrderStatus } from '../types/order.types';
 
 export const orderApi = {
   checkout: (data: CheckoutRequest) => api.post<never, Order>("/orders/checkout", data),

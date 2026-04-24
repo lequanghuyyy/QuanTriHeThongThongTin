@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { productApi } from '../../../api/productApi';
-import { Category } from '../../../types/product.types';
+import type { Category } from '../../../types/product.types';
 import { useDebounce } from '../../../hooks/useDebounce';
 
 interface ProductSidebarProps {

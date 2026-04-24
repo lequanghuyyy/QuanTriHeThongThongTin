@@ -34,9 +34,9 @@ export const OrderDetail = () => {
   }, [location.state]);
 
   if (isLoading) return <div className="py-12 text-center text-gray-500">Đang tải chi tiết đơn hàng...</div>;
-  if (!orderData?.data) return <div className="py-12 text-center text-danger">Không tìm thấy đơn hàng.</div>;
+  if (!orderData) return <div className="py-12 text-center text-danger">Không tìm thấy đơn hàng.</div>;
 
-  const order = orderData.data;
+  const order = orderData;
 
   // Determine current step index
   let currentStepIndex = steps.findIndex(s => s.status === order.status);
@@ -118,7 +118,7 @@ export const OrderDetail = () => {
           <section className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-6 flex items-center gap-2"><Package size={18}/> Sản phẩm</h3>
             <div className="space-y-4">
-              {order.items.map(item => (
+              {order.items.map((item: any) => (
                 <div key={item.id} className="flex gap-4 items-center pb-4 border-b border-gray-50 last:border-0 last:pb-0">
                   <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded p-1 shrink-0">
                     <img src={item.productVariant.imageUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />

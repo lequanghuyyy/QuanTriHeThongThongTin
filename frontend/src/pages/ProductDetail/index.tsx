@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCartStore } from '../../store/cartStore';
 import { productApi } from '../../api/productApi';
 import { cartApi } from '../../api/cartApi';
-import { ProductVariant } from '../../types/product.types';
+import type { ProductVariant } from '../../types/product.types';
 import { formatVND, formatDate } from '../../utils/formatters';
 import { ProductCard } from '../../components/common/ProductCard';
 import { 
@@ -79,7 +79,7 @@ export const ProductDetail = () => {
     },
     onSuccess: (response) => {
       // Assuming response.data contains the cart with itemCount
-      const cart = response.data;
+      const cart = response;
       if (cart && typeof cart.itemCount === 'number') {
         setItemCount(cart.itemCount);
       }
@@ -465,19 +465,19 @@ export const ProductDetail = () => {
                   {/* Reviews Summary */}
                   <div className="md:col-span-4 flex flex-col gap-6">
                     <div className="text-center md:text-left">
-                      <div className="text-5xl font-bold text-gray-900 mb-2">{reviewsData.data.averageRating.toFixed(1)}</div>
+                      <div className="text-5xl font-bold text-gray-900 mb-2">{reviewsData.averageRating.toFixed(1)}</div>
                       <div className="flex justify-center md:justify-start text-yellow-400 mb-2">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={20} fill={i < Math.round(reviewsData.data.averageRating) ? "currentColor" : "none"} />
+                          <Star key={i} size={20} fill={i < Math.round(reviewsData.averageRating) ? "currentColor" : "none"} />
                         ))}
                       </div>
-                      <div className="text-sm text-gray-500">{reviewsData.data.totalCount} đánh giá</div>
+                      <div className="text-sm text-gray-500">{reviewsData.totalCount} đánh giá</div>
                     </div>
 
                     <div className="flex flex-col gap-2">
                       {[5, 4, 3, 2, 1].map((star) => {
-                        const count = reviewsData.data.ratingDistribution[star as 1|2|3|4|5] || 0;
-                        const percent = reviewsData.data.totalCount > 0 ? (count / reviewsData.data.totalCount) * 100 : 0;
+                        const count = reviewsData.ratingDistribution[star as 1|2|3|4|5] || 0;
+                        const percent = reviewsData.totalCount > 0 ? (count / reviewsData.totalCount) * 100 : 0;
                         return (
                           <div key={star} className="flex items-center gap-3 text-sm cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setRatingFilter(ratingFilter === star ? undefined : star)}>
                             <span className={clsx("w-3 text-gray-600 font-medium", ratingFilter === star && "text-primary font-bold")}>{star}</span>
@@ -503,13 +503,13 @@ export const ProductDetail = () => {
                       )}
                     </div>
 
-                    {reviewsData.data.reviews.content.length === 0 ? (
+                    {reviewsData.reviews.content.length === 0 ? (
                       <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200">
                         <span className="text-gray-500">Chưa có đánh giá nào phù hợp.</span>
                       </div>
                     ) : (
                       <div className="flex flex-col gap-6">
-                        {reviewsData.data.reviews.content.map(review => (
+                        {reviewsData.reviews.content.map((review: any) => (
                           <div key={review.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
                             <div className="flex items-center gap-4 mb-3">
                               <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold overflow-hidden">
@@ -544,9 +544,9 @@ export const ProductDetail = () => {
                     )}
 
                     {/* Pagination */}
-                    {reviewsData.data.reviews.totalPages > 1 && (
+                    {reviewsData.reviews.totalPages > 1 && (
                       <div className="flex justify-center mt-6 gap-2">
-                        {[...Array(reviewsData.data.reviews.totalPages)].map((_, i) => (
+                        {[...Array(reviewsData.reviews.totalPages)].map((_, i) => (
                           <button
                             key={i}
                             onClick={() => setReviewPage(i + 1)}
@@ -569,11 +569,11 @@ export const ProductDetail = () => {
       </div>
 
       {/* Related Products */}
-      {relatedProducts && relatedProducts.data && relatedProducts.data.length > 0 && (
+      {relatedProducts && relatedProducts.length > 0 && (
         <div className="mt-16 sm:mt-24">
           <h2 className="text-2xl font-serif text-gray-900 mb-8 text-center sm:text-left">Có thể bạn sẽ thích</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {relatedProducts.data.map(product => (
+            {relatedProducts.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, Truck, RefreshCcw, Eye } from 'lucide-react';
@@ -173,7 +173,7 @@ const BestSellers = () => {
 // 4. FeaturedCollections
 // ----------------------------------------------------------------------
 const FeaturedCollections = () => {
-  const { data: collections, isLoading } = useQuery({
+  const { data: collections } = useQuery({
     queryKey: ['collections'],
     queryFn: productApi.getCollections,
   });

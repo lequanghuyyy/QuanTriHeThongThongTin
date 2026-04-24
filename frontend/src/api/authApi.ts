@@ -1,5 +1,5 @@
 import { axiosInstance as api } from './axiosInstance';
-import { RegisterRequest, AuthTokens } from '../types/user.types';
+import type { RegisterRequest, AuthTokens } from '../types/user.types';
 
 export const authApi = {
   register: (data: RegisterRequest) => api.post<never, AuthTokens>("/auth/register", data),

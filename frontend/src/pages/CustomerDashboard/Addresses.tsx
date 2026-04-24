@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { MapPin, Plus, Edit2, Trash2, X, Star } from 'lucide-react';
 import clsx from 'clsx';
-import { Address } from '../../types/user.types';
+import type { Address } from '../../types/user.types';
 
 const addressSchema = z.object({
   recipientName: z.string().min(2, "Vui lòng nhập họ tên"),
@@ -93,7 +93,7 @@ export const Addresses = () => {
     setEditingAddress(null);
   };
 
-  const addresses = addressesData?.data || [];
+  const addresses = addressesData || [];
 
   return (
     <div className="animate-fade-in">
@@ -117,7 +117,7 @@ export const Addresses = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-          {addresses.map(addr => (
+          {addresses.map((addr: Address) => (
             <div key={addr.id} className={clsx(
               "bg-white rounded-lg p-6 shadow-sm border relative overflow-hidden transition-all",
               addr.isDefault ? "border-primary" : "border-gray-100 hover:border-gray-300"

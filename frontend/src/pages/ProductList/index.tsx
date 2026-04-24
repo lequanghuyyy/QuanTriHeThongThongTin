@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { SlidersHorizontal, SearchX, X } from 'lucide-react';
 import { productApi } from '../../api/productApi';
-import { ProductFilterParams, Category } from '../../types/product.types';
+import type { ProductFilterParams, Category } from '../../types/product.types';
 import { ProductCard } from '../../components/common/ProductCard';
 import { ProductCardSkeleton } from '../../components/common/ProductCardSkeleton';
 import { ProductSidebar } from '../../components/common/ProductSidebar';

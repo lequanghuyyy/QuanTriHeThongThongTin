@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, ShoppingBag, User as UserIcon, Menu, LogOut, LayoutDashboard, FileText } from 'lucide-react';
@@ -18,7 +18,7 @@ export const Header = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Fetch categories for mega menu
-  const { data: categories } = useQuery({
+  useQuery({
     queryKey: ['categories'],
     queryFn: productApi.getCategories,
     staleTime: 5 * 60 * 1000,

@@ -6,8 +6,7 @@ import { useCartStore } from '../../store/cartStore';
 import { formatVND } from '../../utils/formatters';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
-import clsx from 'clsx';
-import { CartItem } from '../../types/cart.types';
+import type { CartItem } from '../../types/cart.types';
 
 // Mock toast
 const toast = {
@@ -25,9 +24,8 @@ const CartItemRow = ({ item }: { item: CartItem }) => {
     mutationFn: (qty: number) => cartApi.updateItem(item.cartItemId, qty),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
-      // Assuming res.data returns the updated Cart
-      if (res.data?.itemCount !== undefined) {
-         setItemCount(res.data.itemCount);
+      if (res?.itemCount !== undefined) {
+         setItemCount(res.itemCount);
       }
     },
     onError: () => {
@@ -46,8 +44,8 @@ const CartItemRow = ({ item }: { item: CartItem }) => {
     mutationFn: () => cartApi.removeItem(item.cartItemId),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
-      if (res.data?.itemCount !== undefined) {
-         setItemCount(res.data.itemCount);
+      if (res?.itemCount !== undefined) {
+         setItemCount(res.itemCount);
       }
       toast.success("Đã xóa sản phẩm khỏi giỏ");
     }
@@ -132,8 +130,8 @@ export const Cart = () => {
   const validateCouponMutation = useMutation({
     mutationFn: (code: string) => cartApi.validateCoupon(code, cart?.subtotal || 0),
     onSuccess: (res) => {
-      if (res.data.valid) {
-        setDiscountInfo({ discountAmount: res.data.discountAmount, finalPrice: res.data.finalPrice });
+      if (res.valid) {
+        setDiscountInfo({ discountAmount: res.discountAmount, finalPrice: res.finalPrice });
         toast.success("Áp dụng mã thành công!");
       } else {
         toast.error("Mã giảm giá không hợp lệ");
@@ -154,7 +152,7 @@ export const Cart = () => {
   if (isLoading) return <div className="p-8 text-center min-h-[60vh] flex items-center justify-center">Đang tải giỏ hàng...</div>;
   if (isError) return <div className="p-8 text-center text-danger min-h-[60vh] flex items-center justify-center">Lỗi tải giỏ hàng. Vui lòng thử lại.</div>;
 
-  const cart = cartData?.data;
+  const cart = cartData;
 
   if (!cart || cart.items.length === 0) {
     return (
@@ -187,7 +185,7 @@ export const Cart = () => {
         {/* Left: Cart Items */}
         <div className="w-full lg:w-[60%] flex flex-col">
           <div className="border-t border-gray-900">
-             {cart.items.map(item => (
+             {cart.items.map((item: CartItem) => (
                <CartItemRow key={item.cartItemId} item={item} />
              ))}
           </div>

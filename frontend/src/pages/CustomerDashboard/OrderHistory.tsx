@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../api/orderApi';
 import { reviewApi } from '../../api/reviewApi';
-import { OrderStatus, Order, OrderItem } from '../../types/order.types';
+import type { OrderStatus, Order, OrderItem } from '../../types/order.types';
 import { formatVND, formatDate, formatOrderStatus, getOrderStatusColor } from '../../utils/formatters';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
@@ -83,14 +83,14 @@ export const OrderHistory = () => {
         <div className="p-6">
           {isLoading ? (
             <div className="text-center py-8 text-gray-500">Đang tải đơn hàng...</div>
-          ) : ordersData?.data.content.length === 0 ? (
+          ) : ordersData?.content.length === 0 ? (
             <div className="text-center py-12 flex flex-col items-center">
               <Package size={48} className="text-gray-200 mb-4" />
               <p className="text-gray-500">Bạn chưa có đơn hàng nào.</p>
             </div>
           ) : (
             <div className="space-y-6">
-              {ordersData?.data.content.map(order => (
+              {ordersData?.content.map((order: Order) => (
                 <div key={order.id} className="border border-gray-100 rounded-lg p-6 hover:shadow-sm transition-shadow">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
                     <div>
@@ -104,7 +104,7 @@ export const OrderHistory = () => {
                   </div>
 
                   <div className="space-y-4 mb-6">
-                    {order.items.map(item => (
+                    {order.items.map((item: OrderItem) => (
                       <div key={item.id} className="flex gap-4 items-center">
                         <div className="w-16 h-16 bg-gray-50 rounded border border-gray-100 flex-shrink-0">
                           <img src={item.productVariant.imageUrl || 'https://placehold.co/100'} alt={item.productName} className="w-full h-full object-contain p-1 mix-blend-multiply" />
@@ -153,9 +153,9 @@ export const OrderHistory = () => {
               ))}
 
               {/* Pagination (if applicable) */}
-              {ordersData && ordersData.data.totalPages > 1 && (
+              {ordersData && ordersData.totalPages > 1 && (
                 <div className="flex justify-center gap-2 mt-8">
-                  {[...Array(ordersData.data.totalPages)].map((_, i) => (
+                  {[...Array(ordersData.totalPages)].map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setPage(i + 1)}
@@ -216,7 +216,7 @@ const ReviewModal = ({ item, onClose }: { item: OrderItem, onClose: () => void }
         </div>
         <div className="p-6">
           <div className="flex items-center gap-4 mb-6">
-            <img src={item.productVariant.imageUrl} alt="" className="w-16 h-16 object-contain bg-gray-50 border rounded" />
+            <img src={item.productVariant.imageUrl ?? undefined} alt="" className="w-16 h-16 object-contain bg-gray-50 border rounded" />
             <div>
               <p className="font-medium text-sm text-gray-900">{item.productName}</p>
               <p className="text-xs text-gray-500">{item.variantName}</p>

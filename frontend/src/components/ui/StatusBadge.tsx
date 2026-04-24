@@ -1,4 +1,4 @@
-import { OrderStatus } from '../../types/order.types';
+import type { OrderStatus } from '../../types/order.types';
 import { formatOrderStatus, getOrderStatusColor } from '../../utils/formatters';
 import clsx from 'clsx';
 

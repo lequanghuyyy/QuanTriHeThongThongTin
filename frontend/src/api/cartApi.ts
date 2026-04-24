@@ -1,5 +1,5 @@
 import { axiosInstance as api } from './axiosInstance';
-import { Cart, CouponValidation } from '../types/cart.types';
+import type { Cart, CouponValidation } from '../types/cart.types';
 
 export const cartApi = {
   getCart: () => api.get<never, Cart>("/cart"),

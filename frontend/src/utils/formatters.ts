@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { OrderStatus } from '../types/order.types';
+import type { OrderStatus } from '../types/order.types';
 
 export const formatVND = (amount: number): string =>
   new Intl.NumberFormat("vi-VN").format(amount) + " VNĐ";

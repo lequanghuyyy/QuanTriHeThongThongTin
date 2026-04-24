@@ -13,6 +13,7 @@ import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 import { ForgotPassword } from './pages/Auth/ForgotPassword';
 const StoreLocator = () => <div className="p-8">StoreLocator</div>
+const CollectionDetail = () => <div className="p-8">CollectionDetail</div>
 
 import { Checkout } from './pages/Checkout';
 import { CustomerDashboardLayout } from './pages/CustomerDashboard';
@@ -85,6 +86,7 @@ function App() {
         <Route path="/admin/san-pham" element={<AdminProducts />} />
         <Route path="/admin/don-hang" element={<AdminOrders />} />
         <Route path="/admin/danh-muc" element={<AdminCategories />} />
+      </Route>
       </Routes>
     </>
   )

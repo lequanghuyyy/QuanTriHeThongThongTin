@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../api/adminApi';
 import { formatVND, formatDate, formatOrderStatus, getOrderStatusColor } from '../../utils/formatters';
-import { Search, Filter, Eye, X, Save, Truck, CreditCard } from 'lucide-react';
+import { Search, Eye, X, Save, Truck, CreditCard } from 'lucide-react';
 import clsx from 'clsx';
-import { OrderStatus, PaymentStatus } from '../../types/order.types';
+import type { OrderStatus } from '../../types/order.types';
 import { useForm } from 'react-hook-form';
 
 // Mock toast
@@ -51,7 +51,7 @@ export const Orders = () => {
     setDrawerOpen(true);
   };
 
-  const orders = ordersData?.data.content || [];
+  const orders = ordersData?.content || [];
 
   return (
     <div className="p-8 animate-fade-in relative">
@@ -139,9 +139,9 @@ export const Orders = () => {
         </div>
 
         {/* Pagination */}
-        {ordersData && ordersData.data.totalPages > 1 && (
+        {ordersData && ordersData.totalPages > 1 && (
           <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-white">
-            {[...Array(ordersData.data.totalPages)].map((_, i) => (
+            {[...Array(ordersData.totalPages)].map((_, i) => (
               <button
                 key={i}
                 onClick={() => setPage(i + 1)}

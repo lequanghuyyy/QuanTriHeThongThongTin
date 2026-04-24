@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
-import { Product } from '../../../types/product.types';
+import type { Product } from '../../../types/product.types';
 import { formatVND } from '../../../utils/formatters';
 import { useCartStore } from '../../../store/cartStore';
 

@@ -61,9 +61,12 @@ export const ProductList = () => {
     setSearchParams({});
   };
 
-  const hasActiveFilters = Array.from(searchParams.keys()).some(
-    key => key !== 'page' && key !== 'sort' && key !== 'keyword'
-  );
+  let hasActiveFilters = false;
+  searchParams.forEach((_, key) => {
+    if (key !== 'page' && key !== 'sort' && key !== 'keyword') {
+      hasActiveFilters = true;
+    }
+  });
 
   // Breadcrumb path logic
   const breadcrumbPath = useMemo(() => {

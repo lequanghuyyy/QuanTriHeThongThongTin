@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-04-22T12:18:37+0700",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+    date = "2026-04-25T14:44:45+0700",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
 )
 @Component
 public class CategoryMapperImpl implements CategoryMapper {
@@ -25,9 +25,9 @@ public class CategoryMapperImpl implements CategoryMapper {
 
         categoryTreeResponse.children( categoryListToCategoryTreeResponseList( category.getChildren() ) );
         categoryTreeResponse.id( category.getId() );
+        categoryTreeResponse.imageUrl( category.getImageUrl() );
         categoryTreeResponse.name( category.getName() );
         categoryTreeResponse.slug( category.getSlug() );
-        categoryTreeResponse.imageUrl( category.getImageUrl() );
 
         return categoryTreeResponse.build();
     }

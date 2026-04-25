@@ -52,7 +52,11 @@ export const Register = () => {
   });
 
   const handleGoogleRegister = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/auth/google`;
+    // Vite API URL usually includes /api/v1, we need the base backend URL
+    const baseUrl = import.meta.env.VITE_API_URL 
+      ? import.meta.env.VITE_API_URL.replace('/api/v1', '') 
+      : 'http://localhost:8080';
+    window.location.href = `${baseUrl}/oauth2/authorization/google`;
   };
 
   return (

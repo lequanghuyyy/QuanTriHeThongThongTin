@@ -36,8 +36,6 @@ export default {
         image: '24px',
       },
       spacing: {
-        xs: '8px',
-        md: '16px',
         section: '160px',
       }
     },

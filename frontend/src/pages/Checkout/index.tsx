@@ -10,7 +10,7 @@ import { orderApi } from '../../api/orderApi';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
 import { formatVND } from '../../utils/formatters';
-import { CheckoutRequest, PaymentMethod, ShippingAddress } from '../../types/order.types';
+import type { CheckoutRequest, PaymentMethod } from '../../types/order.types';
 import { CreditCard, Wallet, Plus, Lock } from 'lucide-react';
 import clsx from 'clsx';
 

@@ -4,12 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { userApi } from '../../api/userApi';
 import { useForm } from 'react-hook-form';
 import { Camera, Save } from 'lucide-react';
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from 'sonner';
 
 export const Profile = () => {
   const { user, updateUser } = useAuthStore();
@@ -30,29 +25,33 @@ export const Profile = () => {
   const profileMutation = useMutation({
     mutationFn: async (data: any) => {
       let avatarUrl = user?.avatar;
-      
-      // Giả lập upload Cloudinary (trong thực tế sẽ gọi API Cloudinary)
       if (avatarFile) {
-         // avatarUrl = await uploadToCloudinary(avatarFile);
-         avatarUrl = URL.createObjectURL(avatarFile); // Mock cho preview
+        avatarUrl = URL.createObjectURL(avatarFile); // Preview only; replace with Cloudinary upload in production
       }
-
-      return userApi.updateProfile({ ...data, avatar: avatarUrl });
+      return userApi.updateProfile({ fullName: data.fullName, phone: data.phone, avatar: avatarUrl });
     },
-    onSuccess: (res) => {
-      updateUser(res);
+    onSuccess: (res: any) => {
+      // Backend returns AuthResponse.UserData shape, merge into existing user
+      updateUser({ ...user!, ...res });
       toast.success("Cập nhật thông tin thành công");
     },
-    onError: () => toast.error("Không thể cập nhật thông tin")
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Không thể cập nhật thông tin";
+      toast.error(msg);
+    }
   });
 
   const passwordMutation = useMutation({
-    mutationFn: (data: any) => userApi.changePassword(data),
+    // Backend: POST /users/me/change-password — fields: oldPassword, newPassword
+    mutationFn: (data: any) => userApi.changePassword({ oldPassword: data.oldPassword, newPassword: data.newPassword }),
     onSuccess: () => {
       toast.success("Đổi mật khẩu thành công");
       resetPassword();
     },
-    onError: () => toast.error("Đổi mật khẩu thất bại")
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Đổi mật khẩu thất bại";
+      toast.error(msg);
+    }
   });
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {

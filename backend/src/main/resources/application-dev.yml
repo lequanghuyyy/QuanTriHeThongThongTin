@@ -32,9 +32,8 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-
+            client-id: 85156935075-3euansbct5m7taqq2dhdk01d1nrfki3h.apps.googleusercontent.com
+            client-secret: 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
 jwt:
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
   expiration: 604800000 # 7 days

@@ -7,6 +7,7 @@ import * as z from 'zod';
 import { MapPin, Plus, Edit2, Trash2, X, Star } from 'lucide-react';
 import clsx from 'clsx';
 import type { Address } from '../../types/user.types';
+import { toast } from 'sonner';
 
 const addressSchema = z.object({
   recipientName: z.string().min(2, "Vui lòng nhập họ tên"),
@@ -18,12 +19,6 @@ const addressSchema = z.object({
 });
 
 type AddressForm = z.infer<typeof addressSchema>;
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
 
 export const Addresses = () => {
   const queryClient = useQueryClient();
@@ -44,6 +39,10 @@ export const Addresses = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
       toast.success("Đã xóa địa chỉ");
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Không thể xóa địa chỉ";
+      toast.error(msg);
     }
   });
 
@@ -52,6 +51,10 @@ export const Addresses = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
       toast.success("Đã đặt làm mặc định");
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Không thể đặt mặc định";
+      toast.error(msg);
     }
   });
 
@@ -66,6 +69,10 @@ export const Addresses = () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] });
       toast.success(editingAddress ? "Đã cập nhật địa chỉ" : "Đã thêm địa chỉ mới");
       handleCloseModal();
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || "Không thể lưu địa chỉ";
+      toast.error(msg);
     }
   });
 

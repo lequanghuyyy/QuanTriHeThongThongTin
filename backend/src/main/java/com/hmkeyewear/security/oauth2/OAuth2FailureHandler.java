@@ -13,7 +13,7 @@ import java.io.IOException;
 @Component
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    private final String frontendUrl = "http://localhost:3000/oauth2/redirect";
+    private final String frontendUrl = "http://localhost:5174/oauth2/redirect";
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {

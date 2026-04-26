@@ -14,7 +14,7 @@ export const Profile = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const { register: registerProfile, handleSubmit: handleSubmitProfile, formState: { errors: profileErrors } } = useForm({
-    defaultValues: {
+    values: {
       fullName: user?.fullName || '',
       phone: user?.phone || '',
     }
@@ -113,7 +113,7 @@ export const Profile = () => {
                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-widest mb-2">Email đăng nhập</label>
                 <input 
                   type="text" 
-                  value={user?.email} 
+                  value={user?.email || ''} 
                   disabled 
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded text-sm text-gray-500 cursor-not-allowed"
                 />

@@ -28,7 +28,8 @@ import { Reviews } from './pages/CustomerDashboard/Reviews';
 import { Dashboard as AdminDashboard } from './pages/Admin/Dashboard';
 import { Products as AdminProducts } from './pages/Admin/Products';
 import { Orders as AdminOrders } from './pages/Admin/Orders';
-const AdminCategories = () => <div className="p-8">Admin Categories</div>
+import { Categories as AdminCategories } from './pages/Admin/CategoriesMasterDetail';
+import { Collections as AdminCollections } from './pages/Admin/Collections';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuthStore();
@@ -92,6 +93,7 @@ function App() {
         <Route path="/admin/san-pham" element={<AdminProducts />} />
         <Route path="/admin/don-hang" element={<AdminOrders />} />
         <Route path="/admin/danh-muc" element={<AdminCategories />} />
+        <Route path="/admin/bo-suu-tap" element={<AdminCollections />} />
       </Route>
       </Routes>
     </>

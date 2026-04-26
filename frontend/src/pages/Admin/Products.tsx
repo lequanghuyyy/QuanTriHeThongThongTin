@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../api/adminApi';
+import { productApi } from '../../api/productApi';
 import { formatVND } from '../../utils/formatters';
-import { Search, Plus, Edit2, Trash2, Power, PowerOff, X, Image as ImageIcon } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Power, PowerOff, X } from 'lucide-react';
 import clsx from 'clsx';
 import { useForm, useFieldArray } from 'react-hook-form';
 
@@ -20,10 +21,21 @@ export const Products = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'general' | 'images' | 'variants'>('general');
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
 
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['admin-products', page, search, statusFilter],
     queryFn: () => adminApi.getProducts({ page, size: 10, keyword: search, isActive: statusFilter === '' ? undefined : statusFilter === 'true' }),
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => productApi.getCategories(),
+  });
+
+  const { data: collections } = useQuery({
+    queryKey: ['collections'],
+    queryFn: () => productApi.getCollections(),
   });
 
   const toggleStatusMutation = useMutation({
@@ -31,6 +43,10 @@ export const Products = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success("Đã thay đổi trạng thái");
+    },
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "Không thể thay đổi trạng thái";
+      toast.error(message);
     }
   });
 
@@ -43,7 +59,7 @@ export const Products = () => {
   });
 
   const saveMutation = useMutation({
-    mutationFn: (data: any) => editingProduct ? adminApi.updateProduct(editingProduct.id, data) : adminApi.createProduct(data),
+    mutationFn: (data: any) => editingProduct ? adminApi.updateProduct(editingProduct.id, { ...data, imageUrls }) : adminApi.createProduct({ ...data, imageUrls }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success(editingProduct ? "Cập nhật thành công" : "Thêm mới thành công");
@@ -51,13 +67,15 @@ export const Products = () => {
     }
   });
 
-  const { register, handleSubmit, control, reset } = useForm({
+  const { register, handleSubmit, control, reset, setValue } = useForm({
     defaultValues: {
       name: '',
       sku: '',
       basePrice: 0,
       description: '',
       shortDescription: '',
+      categoryId: null as number | null,
+      collectionId: null as number | null,
       variants: [] as any[]
     }
   });
@@ -70,18 +88,23 @@ export const Products = () => {
   const openModal = (product?: any) => {
     if (product) {
       setEditingProduct(product);
+      setImageUrls(product.images ? product.images.map((img: any) => img.imageUrl) : (product.thumbnailUrl ? [product.thumbnailUrl] : []));
       reset({
         name: product.name,
         sku: product.sku,
         basePrice: product.basePrice,
         description: product.description,
         shortDescription: product.shortDescription,
+        categoryId: product.category?.id || null,
+        collectionId: product.collection?.id || null,
         variants: product.variants || []
       });
     } else {
       setEditingProduct(null);
+      setImageUrls([]);
       reset({
-        name: '', sku: '', basePrice: 0, description: '', shortDescription: '', variants: []
+        name: '', sku: '', basePrice: 0, description: '', shortDescription: '', 
+        categoryId: null, collectionId: null, variants: []
       });
     }
     setActiveTab('general');
@@ -156,7 +179,16 @@ export const Products = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded border border-gray-200 bg-white flex-shrink-0">
-                           <img src={product.thumbnailUrl || 'https://placehold.co/100'} alt="" className="w-full h-full object-contain mix-blend-multiply p-1" />
+                           <img 
+                             src={
+                               product.images?.find((img: any) => img.isPrimary)?.imageUrl || 
+                               product.images?.[0]?.imageUrl || 
+                               product.thumbnailUrl || 
+                               'https://placehold.co/100'
+                             } 
+                             alt={product.name} 
+                             className="w-full h-full object-contain mix-blend-multiply p-1" 
+                           />
                         </div>
                         <span className="font-medium text-gray-900 truncate max-w-[200px]" title={product.name}>{product.name}</span>
                       </div>
@@ -242,6 +274,24 @@ export const Products = () => {
                         <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Giá bán cơ bản (VNĐ)</label>
                         <input type="number" {...register("basePrice")} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
                       </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Danh mục</label>
+                        <select {...register("categoryId", { valueAsNumber: true })} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                          <option value="">-- Chọn danh mục --</option>
+                          {categories?.map((cat: any) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Bộ sưu tập</label>
+                        <select {...register("collectionId", { valueAsNumber: true })} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                          <option value="">-- Chọn bộ sưu tập --</option>
+                          {collections?.map((col: any) => (
+                            <option key={col.id} value={col.id}>{col.name}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                     <div className="space-y-4">
                       <div>
@@ -258,12 +308,63 @@ export const Products = () => {
 
                 {activeTab === 'images' && (
                   <div className="space-y-4">
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:bg-gray-50 transition-colors cursor-pointer">
-                       <ImageIcon size={48} className="text-gray-300 mx-auto mb-4" />
-                       <p className="text-sm text-gray-600 font-medium">Kéo thả ảnh vào đây hoặc click để tải lên</p>
-                       <p className="text-xs text-gray-400 mt-2">Hỗ trợ JPG, PNG, WEBP (Tối đa 5MB)</p>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Thêm URL hình ảnh
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="https://example.com/image.jpg"
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              const input = e.target as HTMLInputElement;
+                              if (input.value.trim()) {
+                                setImageUrls(prev => [...prev, input.value.trim()]);
+                                input.value = '';
+                              }
+                            }
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
+                            if (input.value.trim()) {
+                              setImageUrls(prev => [...prev, input.value.trim()]);
+                              input.value = '';
+                            }
+                          }}
+                          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-gray-800 transition-colors"
+                        >
+                          Thêm
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        💡 Nhập URL ảnh và nhấn Enter hoặc click "Thêm". Ảnh đầu tiên sẽ là ảnh bìa.
+                      </p>
                     </div>
-                    {/* // TODO: Add preview gallery for uploaded images */}
+                    
+                    {imageUrls.length > 0 && (
+                      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-4 mt-6">
+                        {imageUrls.map((url, idx) => (
+                          <div key={idx} className="relative group aspect-square rounded-lg border border-gray-200 overflow-hidden bg-gray-50">
+                            <img src={url} alt="" className="w-full h-full object-contain mix-blend-multiply" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              <button 
+                                type="button"
+                                onClick={() => setImageUrls(imageUrls.filter((_, i) => i !== idx))} 
+                                className="w-8 h-8 rounded-full bg-white text-danger flex items-center justify-center hover:bg-danger hover:text-white transition-colors"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                            {idx === 0 && <div className="absolute top-1 left-1 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded">Ảnh bìa</div>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 

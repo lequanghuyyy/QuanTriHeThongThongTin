@@ -9,15 +9,32 @@ import { ProductCardSkeleton } from '../../components/common/ProductCardSkeleton
 import { ProductSidebar } from '../../components/common/ProductSidebar';
 import { Pagination } from '../../components/common/Pagination';
 
+const mapCategorySlugToProductType = (slug?: string | null): ProductFilterParams['productType'] => {
+  if (!slug) return undefined;
+
+  const normalized = slug.trim().toLowerCase();
+  if (normalized === 'gong-kinh') return 'FRAME';
+  if (normalized === 'trong-kinh') return 'LENS';
+  if (normalized === 'kinh-mat') return 'SUNGLASSES';
+  if (normalized === 'phu-kien') return 'ACCESSORY';
+
+  return undefined;
+};
+
 export const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const rawCategoryParam = searchParams.get("categorySlug") || searchParams.get("category");
+  const mappedProductType = mapCategorySlugToProductType(rawCategoryParam);
+  const productTypeParam = (searchParams.get("productType") || mappedProductType || undefined) as ProductFilterParams['productType'];
+  const categorySlugParam = mappedProductType ? undefined : (searchParams.get("categorySlug") || searchParams.get("category") || undefined);
 
   const filterParams: ProductFilterParams = {
     page: Number(searchParams.get("page")) || 0,
     size: 20,
     sort: searchParams.get("sort") || "createdAt,desc",
-    categorySlug: searchParams.get("categorySlug") || undefined,
+    categorySlug: categorySlugParam,
+    productType: productTypeParam,
     brand: searchParams.get("brand") || undefined,
     minPrice: searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : undefined,
     maxPrice: searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined,
@@ -42,6 +59,19 @@ export const ProductList = () => {
   const updateFilter = (key: string, value: string | null) => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
+
+      if (key === 'categorySlug') {
+        const mappedFromCategory = mapCategorySlugToProductType(value);
+        next.delete('category');
+
+        if (mappedFromCategory) {
+          next.delete('categorySlug');
+          next.set('productType', mappedFromCategory);
+          next.set('page', '0');
+          return next;
+        }
+      }
+
       if (value === null || value === "") {
         next.delete(key);
       } else {

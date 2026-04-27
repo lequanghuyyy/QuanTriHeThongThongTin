@@ -11,6 +11,6 @@ public interface CollectionService {
     List<CollectionResponse> getAllCollectionsForAdmin();
     CollectionResponse createCollection(CollectionRequest request);
     CollectionResponse updateCollection(Long id, CollectionRequest request);
-    void toggleCollectionStatus(Long id);
+    CollectionResponse toggleCollectionStatus(Long id);
     void deleteCollection(Long id);
 }

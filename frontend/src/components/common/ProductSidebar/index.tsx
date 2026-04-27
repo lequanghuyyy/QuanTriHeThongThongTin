@@ -39,7 +39,8 @@ const CategoryNode = ({ category, activeSlug, onSelect }: { category: Category, 
 };
 
 export const ProductSidebar = ({ searchParams, onFilterChange }: ProductSidebarProps) => {
-  const activeCategorySlug = searchParams.get('categorySlug') || undefined;
+  const activeCategorySlug = searchParams.get('categorySlug') || searchParams.get('category') || undefined;
+  const activeProductType = searchParams.get('productType') || '';
   const activeBrand = searchParams.get('brand') || '';
   const minPriceParam = searchParams.get('minPrice') || '';
   const maxPriceParam = searchParams.get('maxPrice') || '';
@@ -65,8 +66,8 @@ export const ProductSidebar = ({ searchParams, onFilterChange }: ProductSidebarP
     if (debouncedMax !== maxPriceParam) onFilterChange('maxPrice', debouncedMax || null);
   }, [debouncedMax, maxPriceParam, onFilterChange]);
 
-  const isTrongKinh = activeCategorySlug?.includes('trong-kinh');
-  const isGongKinhOrMat = activeCategorySlug?.includes('gong-kinh') || activeCategorySlug?.includes('kinh-mat') || !isTrongKinh;
+  const isTrongKinh = activeProductType === 'LENS' || activeCategorySlug?.includes('trong-kinh');
+  const isGongKinhOrMat = activeProductType === 'FRAME' || activeProductType === 'SUNGLASSES' || activeCategorySlug?.includes('gong-kinh') || activeCategorySlug?.includes('kinh-mat') || (!isTrongKinh && !activeProductType);
 
   return (
     <div className="w-full">

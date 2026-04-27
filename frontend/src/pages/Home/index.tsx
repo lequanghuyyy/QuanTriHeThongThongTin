@@ -117,9 +117,9 @@ const USPBar = () => {
 // ----------------------------------------------------------------------
 const BestSellers = () => {
   const tabs = [
-    { label: 'Gọng Kính', value: 'gong-kinh' },
-    { label: 'Kính Mát', value: 'kinh-mat' },
-    { label: 'Tròng Kính', value: 'trong-kinh' },
+    { label: 'Gọng Kính', value: 'FRAME' },
+    { label: 'Kính Mát', value: 'SUNGLASSES' },
+    { label: 'Tròng Kính', value: 'LENS' },
   ];
   const [activeTab, setActiveTab] = useState(tabs[0].value);
 
@@ -161,7 +161,7 @@ const BestSellers = () => {
       </div>
       
       <div className="mt-12 text-center">
-        <Link to={`/san-pham?category=${activeTab}`} className="inline-block border border-primary text-primary px-8 py-3 rounded-button hover:bg-primary hover:text-white transition-colors font-medium text-sm">
+        <Link to={`/san-pham?productType=${activeTab}`} className="inline-block border border-primary text-primary px-8 py-3 rounded-button hover:bg-primary hover:text-white transition-colors font-medium text-sm">
           XEM TẤT CẢ
         </Link>
       </div>

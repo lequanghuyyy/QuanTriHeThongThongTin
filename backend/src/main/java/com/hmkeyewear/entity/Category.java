@@ -39,7 +39,8 @@ public class Category extends BaseEntity {
     private int level;
 
     @Builder.Default
-    private boolean isActive = true;
+    @Column(name = "is_active")
+    private boolean active = true;
 
     private int sortOrder;
 }

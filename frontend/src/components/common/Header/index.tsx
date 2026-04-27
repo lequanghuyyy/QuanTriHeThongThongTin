@@ -62,12 +62,12 @@ export const Header = () => {
         <nav className="hidden md:flex items-center gap-8 font-medium text-sm">
           <Link to="/" className="hover:text-primary/70 transition-colors uppercase">Trang Chủ</Link>
           <div className="group relative py-8">
-            <Link to="/san-pham?category=gong-kinh" className="hover:text-primary/70 transition-colors uppercase">Gọng Kính</Link>
+            <Link to="/san-pham?productType=FRAME" className="hover:text-primary/70 transition-colors uppercase">Gọng Kính</Link>
           </div>
           <div className="group relative py-8">
-            <Link to="/san-pham?category=trong-kinh" className="hover:text-primary/70 transition-colors uppercase">Tròng Kính</Link>
+            <Link to="/san-pham?productType=LENS" className="hover:text-primary/70 transition-colors uppercase">Tròng Kính</Link>
           </div>
-          <Link to="/san-pham?category=phu-kien" className="hover:text-primary/70 transition-colors uppercase">Phụ Kiện</Link>
+          <Link to="/san-pham?productType=ACCESSORY" className="hover:text-primary/70 transition-colors uppercase">Phụ Kiện</Link>
         </nav>
 
         {/* Right: Actions */}

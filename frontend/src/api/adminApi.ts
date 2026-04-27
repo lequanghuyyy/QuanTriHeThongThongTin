@@ -3,6 +3,47 @@ import type { Page } from '../types/api.types';
 import type { Product } from '../types/product.types';
 import type { Order } from '../types/order.types';
 
+const toBoolean = (value: unknown): boolean => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return normalized === '1' || normalized === 'true';
+  }
+  return false;
+};
+
+const normalizeIsActive = <T extends Record<string, any>>(item: T): T & { isActive: boolean } => {
+  return {
+    ...item,
+    isActive: toBoolean(item.isActive ?? item.active ?? item.is_active),
+  };
+};
+
+const normalizeCategoryTree = (category: Record<string, any>): Record<string, any> => {
+  const normalizedCategory = normalizeIsActive(category);
+
+  if (!Array.isArray(category.children)) {
+    return normalizedCategory;
+  }
+
+  return {
+    ...normalizedCategory,
+    children: category.children.map((child: Record<string, any>) => normalizeCategoryTree(child)),
+  };
+};
+
+const normalizeProduct = (product: Record<string, any>): Record<string, any> => {
+  return normalizeIsActive(product);
+};
+
+const normalizeProductPage = (page: Page<Product>): Page<Product> => {
+  return {
+    ...page,
+    content: page.content.map((product: Product) => normalizeProduct(product) as Product),
+  };
+};
+
 export const adminApi = {
   getDashboardOverview: () => api.get<never, any>("/admin/dashboard/overview"),
   getRevenueChart: (params: { period: string }) => api.get<never, any>("/admin/dashboard/revenue-chart", { params }),
@@ -11,9 +52,9 @@ export const adminApi = {
   getLowStockAlerts: () => api.get<never, any>("/admin/dashboard/low-stock-alerts"),
   
   // Products management
-  getProducts: (params: any) => api.get<never, Page<Product>>("/admin/products", { params }),
-  createProduct: (data: any) => api.post<never, Product>("/admin/products", data),
-  updateProduct: (id: number, data: any) => api.put<never, Product>(`/admin/products/${id}`, data),
+  getProducts: (params: any) => api.get<never, Page<Product>>("/admin/products", { params }).then((page) => normalizeProductPage(page)),
+  createProduct: (data: any) => api.post<never, Product>("/admin/products", data).then((product) => normalizeProduct(product) as Product),
+  updateProduct: (id: number, data: any) => api.put<never, Product>(`/admin/products/${id}`, data).then((product) => normalizeProduct(product) as Product),
   toggleProductStatus: (id: number) => api.put<never, void>(`/admin/products/${id}/toggle-status`),
   deleteProduct: (id: number) => api.delete<never, void>(`/admin/products/${id}`),
 
@@ -22,18 +63,28 @@ export const adminApi = {
   updateOrderStatus: (orderCode: string, data: any) => api.put<never, Order>(`/admin/orders/${orderCode}/status`, data),
 
   // Categories management
-  getCategories: () => api.get<never, any[]>("/admin/categories"),
-  createCategory: (data: any) => api.post<never, any>("/admin/categories", data),
-  updateCategory: (id: number, data: any) => api.put<never, any>(`/admin/categories/${id}`, data),
+  getCategories: () => api.get<never, any[]>("/admin/categories").then((categories) =>
+    categories.map((category) => normalizeCategoryTree(category))
+  ),
+  createCategory: (data: any) => api.post<never, any>("/admin/categories", data).then((category) => normalizeCategoryTree(category)),
+  updateCategory: (id: number, data: any) => api.put<never, any>(`/admin/categories/${id}`, data).then((category) => normalizeCategoryTree(category)),
   toggleCategoryStatus: (id: number) => api.put<never, void>(`/admin/categories/${id}/toggle-status`),
   deleteCategory: (id: number) => api.delete<never, void>(`/admin/categories/${id}`),
 
   // Collections management
-  getCollections: () => api.get<never, any[]>("/admin/collections"),
-  createCollection: (data: any) => api.post<never, any>("/admin/collections", data),
-  updateCollection: (id: number, data: any) => api.put<never, any>(`/admin/collections/${id}`, data),
-  toggleCollectionStatus: (id: number) => api.put<never, void>(`/admin/collections/${id}/toggle-status`),
+  getCollections: () => api.get<never, any[]>("/admin/collections").then((collections) =>
+    collections.map((collection) => normalizeIsActive(collection))
+  ),
+  createCollection: (data: any) => api.post<never, any>("/admin/collections", data).then((collection) => normalizeIsActive(collection)),
+  updateCollection: (id: number, data: any) => api.put<never, any>(`/admin/collections/${id}`, data).then((collection) => normalizeIsActive(collection)),
+  toggleCollectionStatus: (id: number) => api.put<never, any>(`/admin/collections/${id}/toggle-status`),
   deleteCollection: (id: number) => api.delete<never, void>(`/admin/collections/${id}`),
+
+  // Users management
+  getUsers: (params: any) => api.get<never, Page<any>>("/admin/users", { params }),
+  getUserById: (id: string) => api.get<never, any>(`/admin/users/${id}`),
+  toggleUserActive: (id: string) => api.put<never, void>(`/admin/users/${id}/toggle-active`),
+  changeUserRole: (id: string, role: string) => api.put<never, void>(`/admin/users/${id}/role`, { role }),
 
   uploadImages: (files: FileList | File[]) => {
     const formData = new FormData();

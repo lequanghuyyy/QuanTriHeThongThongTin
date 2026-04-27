@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Optional<Category> findBySlugAndIsActiveTrue(String slug);
-    List<Category> findByLevelAndIsActiveTrueOrderBySortOrderAsc(int level);
+    Optional<Category> findBySlugAndActiveTrue(String slug);
+    List<Category> findByLevelAndActiveTrueOrderBySortOrderAsc(int level);
     List<Category> findByLevelOrderBySortOrderAsc(int level);
 }

@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../api/adminApi';
 import { productApi } from '../../api/productApi';
 import { formatVND } from '../../utils/formatters';
-import { Search, Plus, Edit2, Trash2, Power, PowerOff, X } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Power, PowerOff, X, Upload } from 'lucide-react';
 import clsx from 'clsx';
 import { useForm, useFieldArray } from 'react-hook-form';
 
@@ -12,6 +12,68 @@ const toast = {
   success: (msg: string) => alert(msg),
   error: (msg: string) => alert(msg)
 };
+
+const isProductActive = (product: any): boolean => {
+  const value = product?.isActive ?? product?.active ?? product?.is_active;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return normalized === '1' || normalized === 'true';
+  }
+  return false;
+};
+
+const normalizeColorHex = (value?: string): string => {
+  const raw = (value ?? '').trim();
+  if (!raw) return '#000000';
+
+  const normalized = raw.startsWith('#') ? raw : `#${raw}`;
+  if (/^#[0-9a-fA-F]{6}$/.test(normalized)) {
+    return normalized.toLowerCase();
+  }
+
+  return '#000000';
+};
+
+type ProductTypeValue = 'FRAME' | 'LENS' | 'SUNGLASSES' | 'ACCESSORY';
+type GenderValue = 'MALE' | 'FEMALE' | 'UNISEX' | 'KIDS';
+
+type ProductFormValues = {
+  name: string;
+  sku: string;
+  basePrice: number;
+  description: string;
+  shortDescription: string;
+  categoryId: number | null;
+  collectionId: number | null;
+  productType: ProductTypeValue | '';
+  gender: GenderValue | '';
+  lensIndex: string;
+  lensCoating: string;
+  material: string;
+  frameShape: string;
+  variants: any[];
+};
+
+const toNullableEnum = <T extends string>(value: T | '' | null | undefined): T | null => {
+  if (!value) return null;
+  return value;
+};
+
+const toNullableText = (value: string | null | undefined): string | null => {
+  const trimmed = (value ?? '').trim();
+  return trimmed ? trimmed : null;
+};
+
+const normalizeEnumOption = <T extends string>(value: unknown, allowed: readonly T[]): T | '' => {
+  if (typeof value !== 'string') return '';
+  const normalized = value.trim().toUpperCase() as T;
+  return allowed.includes(normalized) ? normalized : '';
+};
+
+const PRODUCT_TYPE_OPTIONS = ['FRAME', 'LENS', 'SUNGLASSES', 'ACCESSORY'] as const;
+const GENDER_OPTIONS = ['MALE', 'FEMALE', 'UNISEX', 'KIDS'] as const;
 
 export const Products = () => {
   const queryClient = useQueryClient();
@@ -59,7 +121,29 @@ export const Products = () => {
   });
 
   const saveMutation = useMutation({
-    mutationFn: (data: any) => editingProduct ? adminApi.updateProduct(editingProduct.id, { ...data, imageUrls }) : adminApi.createProduct({ ...data, imageUrls }),
+    mutationFn: (data: ProductFormValues) => {
+      const isLensProduct = data.productType === 'LENS';
+      const isFrameOrSunglasses = data.productType === 'FRAME' || data.productType === 'SUNGLASSES';
+
+      const payload = {
+        ...data,
+        productType: toNullableEnum(data.productType),
+        gender: toNullableEnum(data.gender),
+        lensIndex: isLensProduct ? toNullableText(data.lensIndex) : null,
+        lensCoating: isLensProduct ? toNullableText(data.lensCoating) : null,
+        material: isFrameOrSunglasses ? toNullableText(data.material) : null,
+        frameShape: isFrameOrSunglasses ? toNullableText(data.frameShape) : null,
+        imageUrls,
+        variants: (data.variants || []).map((variant: any) => ({
+          ...variant,
+          colorHex: normalizeColorHex(variant?.colorHex),
+        })),
+      };
+
+      return editingProduct
+        ? adminApi.updateProduct(editingProduct.id, payload)
+        : adminApi.createProduct(payload);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success(editingProduct ? "Cập nhật thành công" : "Thêm mới thành công");
@@ -67,7 +151,20 @@ export const Products = () => {
     }
   });
 
-  const { register, handleSubmit, control, reset, setValue } = useForm({
+  const uploadImagesMutation = useMutation({
+    mutationFn: (files: FileList | File[]) => adminApi.uploadImages(files),
+    onSuccess: (uploadedUrls) => {
+      if (!uploadedUrls?.length) return;
+      setImageUrls((prev) => [...prev, ...uploadedUrls]);
+      toast.success(`Đã tải lên ${uploadedUrls.length} ảnh`);
+    },
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || 'Tải ảnh lên thất bại';
+      toast.error(message);
+    }
+  });
+
+  const { register, handleSubmit, control, reset, setValue, watch } = useForm<ProductFormValues>({
     defaultValues: {
       name: '',
       sku: '',
@@ -76,6 +173,12 @@ export const Products = () => {
       shortDescription: '',
       categoryId: null as number | null,
       collectionId: null as number | null,
+      productType: '',
+      gender: '',
+      lensIndex: '',
+      lensCoating: '',
+      material: '',
+      frameShape: '',
       variants: [] as any[]
     }
   });
@@ -97,14 +200,20 @@ export const Products = () => {
         shortDescription: product.shortDescription,
         categoryId: product.category?.id || null,
         collectionId: product.collection?.id || null,
+        productType: normalizeEnumOption<ProductTypeValue>(product.productType, PRODUCT_TYPE_OPTIONS),
+        gender: normalizeEnumOption<GenderValue>(product.gender, GENDER_OPTIONS),
+        lensIndex: product.lensIndex || '',
+        lensCoating: product.lensCoating || '',
+        material: product.material || '',
+        frameShape: product.frameShape || '',
         variants: product.variants || []
       });
     } else {
       setEditingProduct(null);
       setImageUrls([]);
       reset({
-        name: '', sku: '', basePrice: 0, description: '', shortDescription: '', 
-        categoryId: null, collectionId: null, variants: []
+        name: '', sku: '', basePrice: 0, description: '', shortDescription: '',
+        categoryId: null, collectionId: null, productType: '', gender: '', lensIndex: '', lensCoating: '', material: '', frameShape: '', variants: []
       });
     }
     setActiveTab('general');
@@ -112,6 +221,9 @@ export const Products = () => {
   };
 
   const products = productsData?.content || [];
+  const selectedProductType = watch('productType');
+  const isLensProduct = selectedProductType === 'LENS';
+  const isFrameOrSunglasses = selectedProductType === 'FRAME' || selectedProductType === 'SUNGLASSES';
 
   return (
     <div className="p-8 animate-fade-in">
@@ -175,6 +287,9 @@ export const Products = () => {
                 <tr><td colSpan={7} className="text-center py-12 text-gray-500">Không tìm thấy sản phẩm nào.</td></tr>
               ) : (
                 products.map((product: any) => (
+                  (() => {
+                    const active = isProductActive(product);
+                    return (
                   <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -200,14 +315,14 @@ export const Products = () => {
                       {product.variants?.reduce((sum: number, v: any) => sum + v.stockQuantity, 0) || 0}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className={clsx("px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", product.isActive ? "bg-success/10 text-success" : "bg-gray-100 text-gray-500")}>
-                        {product.isActive ? 'Đang bán' : 'Ngừng bán'}
+                      <span className={clsx("px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider", active ? "bg-success/10 text-success" : "bg-gray-100 text-gray-500")}>
+                        {active ? 'Đang bán' : 'Ngừng bán'}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => toggleStatusMutation.mutate(product.id)} className="p-1.5 text-gray-400 hover:text-primary transition-colors" title={product.isActive ? "Ngừng bán" : "Mở bán"}>
-                          {product.isActive ? <PowerOff size={16} /> : <Power size={16} />}
+                        <button onClick={() => toggleStatusMutation.mutate(product.id)} className="p-1.5 text-gray-400 hover:text-primary transition-colors" title={active ? "Ngừng bán" : "Mở bán"}>
+                          {active ? <PowerOff size={16} /> : <Power size={16} />}
                         </button>
                         <button onClick={() => openModal(product)} className="p-1.5 text-gray-400 hover:text-blue-500 transition-colors" title="Sửa">
                           <Edit2 size={16} />
@@ -218,6 +333,8 @@ export const Products = () => {
                       </div>
                     </td>
                   </tr>
+                    );
+                  })()
                 ))
               )}
             </tbody>
@@ -292,8 +409,60 @@ export const Products = () => {
                           ))}
                         </select>
                       </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Loại sản phẩm</label>
+                        <select {...register("productType")} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                          <option value="">-- Chọn loại sản phẩm --</option>
+                          <option value="FRAME">Gọng kính</option>
+                          <option value="LENS">Tròng kính</option>
+                          <option value="SUNGLASSES">Kính mát</option>
+                          <option value="ACCESSORY">Phụ kiện</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Giới tính</label>
+                        <select {...register("gender")} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary">
+                          <option value="">-- Chọn giới tính --</option>
+                          <option value="MALE">Nam</option>
+                          <option value="FEMALE">Nữ</option>
+                          <option value="UNISEX">Unisex</option>
+                          <option value="KIDS">Trẻ em</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="space-y-4">
+                      {(isLensProduct || isFrameOrSunglasses) && (
+                        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
+                          <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Thông tin đặc thù kính</h4>
+
+                          {isLensProduct && (
+                            <>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Chiết suất tròng (lensIndex)</label>
+                                <input {...register('lensIndex')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" placeholder="VD: 1.56, 1.60" />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Lớp phủ tròng (lensCoating)</label>
+                                <input {...register('lensCoating')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" placeholder="VD: Blue Cut, chống chói" />
+                              </div>
+                            </>
+                          )}
+
+                          {isFrameOrSunglasses && (
+                            <>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Chất liệu gọng (material)</label>
+                                <input {...register('material')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" placeholder="VD: Titanium, Acetate" />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Dáng gọng (frameShape)</label>
+                                <input {...register('frameShape')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" placeholder="VD: Aviator, Round" />
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      )}
+
                       <div>
                         <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Mô tả ngắn</label>
                         <textarea {...register("shortDescription")} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary h-24"></textarea>
@@ -309,40 +478,29 @@ export const Products = () => {
                 {activeTab === 'images' && (
                   <div className="space-y-4">
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Thêm URL hình ảnh
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="https://example.com/image.jpg"
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              const input = e.target as HTMLInputElement;
-                              if (input.value.trim()) {
-                                setImageUrls(prev => [...prev, input.value.trim()]);
-                                input.value = '';
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Chọn ảnh từ thư mục</label>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <label className="flex-1 cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700">
+                          <Upload size={16} />
+                          {uploadImagesMutation.isPending ? 'Đang tải ảnh...' : 'Chọn ảnh từ máy'}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            disabled={uploadImagesMutation.isPending}
+                            onChange={(e) => {
+                              const files = e.target.files;
+                              if (files && files.length > 0) {
+                                uploadImagesMutation.mutate(files);
+                                e.currentTarget.value = '';
                               }
-                            }
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
-                            if (input.value.trim()) {
-                              setImageUrls(prev => [...prev, input.value.trim()]);
-                              input.value = '';
-                            }
-                          }}
-                          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-gray-800 transition-colors"
-                        >
-                          Thêm
-                        </button>
+                            }}
+                          />
+                        </label>
                       </div>
                       <p className="text-xs text-gray-500 mt-2">
-                        💡 Nhập URL ảnh và nhấn Enter hoặc click "Thêm". Ảnh đầu tiên sẽ là ảnh bìa.
+                        Chọn một hoặc nhiều ảnh từ thiết bị. Ảnh đầu tiên trong danh sách sẽ là ảnh bìa.
                       </p>
                     </div>
                     
@@ -393,11 +551,20 @@ export const Products = () => {
                         </thead>
                         <tbody className="divide-y">
                           {fields.map((field, index) => (
+                            (() => {
+                              const currentColorHex = normalizeColorHex(watch(`variants.${index}.colorHex`));
+                              return (
                             <tr key={field.id}>
                               <td className="px-2 py-2"><input {...register(`variants.${index}.colorName`)} className="w-full px-2 py-1 border rounded text-xs" placeholder="Tên màu" /></td>
                               <td className="px-2 py-2 flex items-center gap-2">
-                                <input type="color" {...register(`variants.${index}.colorHex`)} className="w-6 h-6 p-0 border-0" />
-                                <input {...register(`variants.${index}.colorHex`)} className="w-16 px-2 py-1 border rounded text-xs" />
+                                <input type="hidden" {...register(`variants.${index}.colorHex`)} />
+                                <input
+                                  type="color"
+                                  value={currentColorHex}
+                                  onChange={(e) => setValue(`variants.${index}.colorHex`, normalizeColorHex(e.target.value), { shouldDirty: true })}
+                                  className="w-6 h-6 p-0 border-0"
+                                />
+                                <input value={currentColorHex} readOnly className="w-20 px-2 py-1 border rounded text-xs bg-gray-50 text-gray-700" />
                               </td>
                               <td className="px-2 py-2"><input {...register(`variants.${index}.size`)} className="w-full px-2 py-1 border rounded text-xs" placeholder="Size" /></td>
                               <td className="px-2 py-2"><input type="number" {...register(`variants.${index}.stockQuantity`)} className="w-full px-2 py-1 border rounded text-xs text-right" /></td>
@@ -406,6 +573,8 @@ export const Products = () => {
                                 <button type="button" onClick={() => remove(index)} className="text-danger hover:bg-danger/10 p-1 rounded"><Trash2 size={14}/></button>
                               </td>
                             </tr>
+                              );
+                            })()
                           ))}
                         </tbody>
                       </table>

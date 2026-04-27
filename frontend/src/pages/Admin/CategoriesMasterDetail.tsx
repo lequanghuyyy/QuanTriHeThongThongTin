@@ -37,6 +37,10 @@ export const Categories = () => {
     mutationFn: (id: number) => adminApi.toggleCategoryStatus(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      // Update selected category state
+      if (selectedCategory?.id === toggleStatusMutation.variables) {
+        setSelectedCategory(prev => prev ? { ...prev, isActive: !prev.isActive } : null);
+      }
       toast.success("Đã thay đổi trạng thái");
     },
     onError: (error: any) => {

@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Cacheable(value = "categories", key = "'tree'")
     @Transactional(readOnly = true)
     public List<CategoryTreeResponse> getCategoryTree() {
-        return categoryRepository.findByLevelAndIsActiveTrueOrderBySortOrderAsc(0).stream()
+        return categoryRepository.findByLevelAndActiveTrueOrderBySortOrderAsc(0).stream()
                 .map(categoryMapper::toTreeResponse)
                 .collect(Collectors.toList());
     }
@@ -98,12 +98,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "categories", allEntries = true)
-    public void toggleCategoryStatus(Long id) {
+    public CategoryTreeResponse toggleCategoryStatus(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         category.setActive(!category.isActive());
-        categoryRepository.save(category);
+        Category saved = categoryRepository.save(category);
+        return categoryMapper.toTreeResponse(saved);
     }
 
     @Override

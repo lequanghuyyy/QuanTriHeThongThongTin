@@ -10,6 +10,6 @@ public interface CategoryService {
     List<CategoryTreeResponse> getAllCategoriesForAdmin();
     CategoryTreeResponse createCategory(CategoryRequest request);
     CategoryTreeResponse updateCategory(Long id, CategoryRequest request);
-    void toggleCategoryStatus(Long id);
+    CategoryTreeResponse toggleCategoryStatus(Long id);
     void deleteCategory(Long id);
 }

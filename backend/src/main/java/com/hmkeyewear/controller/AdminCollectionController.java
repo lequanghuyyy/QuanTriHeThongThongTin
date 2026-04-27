@@ -38,9 +38,9 @@ public class AdminCollectionController {
 
     @PutMapping("/{id}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> toggleCollectionStatus(@PathVariable Long id) {
-        collectionService.toggleCollectionStatus(id);
-        return ResponseEntity.ok(ApiResponse.success(null));
+    public ResponseEntity<ApiResponse<CollectionResponse>> toggleCollectionStatus(@PathVariable Long id) {
+        CollectionResponse updated = collectionService.toggleCollectionStatus(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã thay đổi trạng thái", updated));
     }
 
     @DeleteMapping("/{id}")

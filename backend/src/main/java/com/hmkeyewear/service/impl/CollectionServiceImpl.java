@@ -23,14 +23,14 @@ public class CollectionServiceImpl implements CollectionService {
 
     @Override
     public List<CollectionResponse> getAllActiveCollections() {
-        return collectionRepository.findAllByIsActiveTrue().stream()
+        return collectionRepository.findAllByActiveTrue().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public CollectionResponse getCollectionBySlug(String slug) {
-        Collection collection = collectionRepository.findBySlugAndIsActiveTrue(slug)
+        Collection collection = collectionRepository.findBySlugAndActiveTrue(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
         return toResponse(collection);
     }
@@ -84,11 +84,12 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     @Transactional
     @CacheEvict(value = "collections", allEntries = true)
-    public void toggleCollectionStatus(Long id) {
+    public CollectionResponse toggleCollectionStatus(Long id) {
         Collection collection = collectionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Collection not found"));
         collection.setActive(!collection.isActive());
-        collectionRepository.save(collection);
+        Collection saved = collectionRepository.save(collection);
+        return toResponse(saved);
     }
 
     @Override

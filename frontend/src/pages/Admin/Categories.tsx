@@ -35,12 +35,44 @@ export const Categories = () => {
 
   const toggleStatusMutation = useMutation({
     mutationFn: (id: number) => adminApi.toggleCategoryStatus(id),
+    onMutate: async (id) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['admin-categories'] });
+      
+      // Snapshot previous value
+      const previousCategories = queryClient.getQueryData(['admin-categories']);
+      
+      // Optimistically update
+      queryClient.setQueryData(['admin-categories'], (old: any) => {
+        if (!old) return old;
+        const updateCategory = (cats: Category[]): Category[] => {
+          return cats.map(cat => {
+            if (cat.id === id) {
+              return { ...cat, isActive: !cat.isActive };
+            }
+            if (cat.children) {
+              return { ...cat, children: updateCategory(cat.children) };
+            }
+            return cat;
+          });
+        };
+        return updateCategory(old);
+      });
+      
+      return { previousCategories };
+    },
+    onError: (error: any, id, context) => {
+      // Rollback on error
+      if (context?.previousCategories) {
+        queryClient.setQueryData(['admin-categories'], context.previousCategories);
+      }
+      toast.error(error?.response?.data?.message || "Không thể thay đổi trạng thái");
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       toast.success("Đã thay đổi trạng thái");
     },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Không thể thay đổi trạng thái");
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
     }
   });
 
@@ -122,12 +154,15 @@ export const Categories = () => {
             {category.imageUrl && (
               <img src={category.imageUrl} alt={category.name} className="w-12 h-12 object-cover rounded" />
             )}
-            <div>
+            <div className="flex-1">
               <div className="font-medium">{category.name}</div>
               <div className="text-sm text-gray-500">{category.slug}</div>
               {category.description && (
                 <div className="text-sm text-gray-600 mt-1">{category.description}</div>
               )}
+            </div>
+            <div className="text-sm text-gray-500 mr-4">
+              Thứ tự: <span className="font-medium text-gray-700">{category.sortOrder}</span>
             </div>
           </div>
 
@@ -136,7 +171,7 @@ export const Categories = () => {
               "px-3 py-1 rounded-full text-xs font-medium",
               category.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
             )}>
-              {category.isActive ? "Hoạt động" : "Tạm ẩn"}
+              {category.isActive ? "Hiển thị" : "Đã ẩn"}
             </span>
 
             <button

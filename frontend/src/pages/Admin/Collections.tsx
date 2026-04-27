@@ -35,8 +35,12 @@ export const Collections = () => {
 
   const toggleStatusMutation = useMutation({
     mutationFn: (id: number) => adminApi.toggleCollectionStatus(id),
-    onSuccess: () => {
+    onSuccess: (data, id) => {
       queryClient.invalidateQueries({ queryKey: ['admin-collections'] });
+      // Update selected collection state
+      if (selectedCollection?.id === id) {
+        setSelectedCollection(prev => prev ? { ...prev, isActive: !prev.isActive } : null);
+      }
       toast.success("Đã thay đổi trạng thái");
     },
     onError: (error: any) => {

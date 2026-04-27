@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface CollectionRepository extends JpaRepository<Collection, Long> {
-    Optional<Collection> findBySlugAndIsActiveTrue(String slug);
-    List<Collection> findAllByIsActiveTrue();
+    Optional<Collection> findBySlugAndActiveTrue(String slug);
+    List<Collection> findAllByActiveTrue();
 }

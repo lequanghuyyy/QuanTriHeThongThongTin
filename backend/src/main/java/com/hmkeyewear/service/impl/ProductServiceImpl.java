@@ -43,14 +43,14 @@ public class ProductServiceImpl implements ProductService {
     public ProductDetailResponse getProductBySlug(String slug) {
         Product product = productRepository.findBySlugAndIsActiveTrue(slug)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-        return productMapper.toDetailResponse(product);
+        return toDetailResponseWithActive(product);
     }
 
     @Override
     public ProductDetailResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-        return productMapper.toDetailResponse(product);
+        return toDetailResponseWithActive(product);
     }
 
     @Override
@@ -116,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
             }
             return predicates;
         };
-        return productRepository.findAll(spec, pageable).map(productMapper::toDetailResponse);
+        return productRepository.findAll(spec, pageable).map(this::toDetailResponseWithActive);
     }
 
     private String generateSlug(String name) {
@@ -136,7 +136,9 @@ public class ProductServiceImpl implements ProductService {
         product.setBasePrice(request.getBasePrice());
         product.setSalePrice(request.getSalePrice() != null ? request.getSalePrice() : request.getBasePrice());
         product.setLensIndex(request.getLensIndex());
+        product.setLensCoating(request.getLensCoating());
         product.setMaterial(request.getMaterial());
+        product.setFrameShape(request.getFrameShape());
         product.setGender(request.getGender());
         product.setActive(request.getIsActive() != null ? request.getIsActive() : true);
 
@@ -179,7 +181,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product savedProduct = productRepository.save(product);
-        return productMapper.toDetailResponse(savedProduct);
+        return toDetailResponseWithActive(savedProduct);
     }
 
     @Override
@@ -202,7 +204,9 @@ public class ProductServiceImpl implements ProductService {
         product.setBasePrice(request.getBasePrice());
         product.setSalePrice(request.getSalePrice() != null ? request.getSalePrice() : request.getBasePrice());
         product.setLensIndex(request.getLensIndex());
+        product.setLensCoating(request.getLensCoating());
         product.setMaterial(request.getMaterial());
+        product.setFrameShape(request.getFrameShape());
         product.setGender(request.getGender());
         if (request.getIsActive() != null) {
             product.setActive(request.getIsActive());
@@ -318,7 +322,13 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product savedProduct = productRepository.save(product);
-        return productMapper.toDetailResponse(savedProduct);
+        return toDetailResponseWithActive(savedProduct);
+    }
+
+    private ProductDetailResponse toDetailResponseWithActive(Product product) {
+        ProductDetailResponse response = productMapper.toDetailResponse(product);
+        response.setActive(product.isActive());
+        return response;
     }
 
     @Override

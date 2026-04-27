@@ -58,8 +58,10 @@ export const ProductDetail = () => {
       if (product.variants?.length > 0) {
         setSelectedVariant(product.variants[0]);
       }
-      const primaryImg = product.images?.find(img => img.isPrimary)?.imageUrl || product.thumbnailUrl;
-      setMainImage(primaryImg);
+      const primaryImg = product.images?.find(img => img.isPrimary)?.imageUrl;
+      const firstImage = product.images?.[0]?.imageUrl;
+      const fallbackImage = product.thumbnailUrl || 'https://placehold.co/800x800/E8E8E8/474747?text=No+Image';
+      setMainImage(primaryImg || firstImage || fallbackImage);
     }
   }, [product]);
 
@@ -151,6 +153,12 @@ export const ProductDetail = () => {
               src={mainImage || 'https://placehold.co/800x800/E8E8E8/474747?text=No+Image'} 
               alt={product.name} 
               className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+              onError={(e) => {
+                const fallback = product.thumbnailUrl || product.images?.[0]?.imageUrl || 'https://placehold.co/800x800/E8E8E8/474747?text=No+Image';
+                if (e.currentTarget.src !== fallback) {
+                  e.currentTarget.src = fallback;
+                }
+              }}
             />
             {product.salePrice && product.discountPercent > 0 && (
               <div className="absolute top-4 left-4 bg-danger text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">

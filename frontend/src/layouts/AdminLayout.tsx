@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LogOut, LayoutDashboard, Box, ShoppingCart, Tags, Home, Package } from 'lucide-react';
+import { LogOut, LayoutDashboard, Box, ShoppingCart, Tags, Home, Package, Users } from 'lucide-react';
 import { authApi } from '../api/authApi';
 
 export const AdminLayout = ({ children }: { children: ReactNode }) => {
@@ -44,6 +44,9 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
           </Link>
           <Link to="/admin/bo-suu-tap" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
             <Package size={18} /> Bộ sưu tập
+          </Link>
+          <Link to="/admin/nguoi-dung" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
+            <Users size={18} /> Người dùng
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-200">

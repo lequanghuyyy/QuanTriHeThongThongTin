@@ -20,7 +20,9 @@ public class ProductRequest {
     private BigDecimal basePrice;
     private BigDecimal salePrice;
     private String lensIndex;
+    private String lensCoating;
     private String material;
+    private String frameShape;
     private Gender gender;
     private Boolean isActive;
     

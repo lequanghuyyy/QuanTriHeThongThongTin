@@ -23,7 +23,10 @@ public class AuthResponse {
         private String id;
         private String email;
         private String fullName;
+        private String phone;
         private String role;
         private String avatar;
+        private boolean active;
+        private String createdAt;
     }
 }

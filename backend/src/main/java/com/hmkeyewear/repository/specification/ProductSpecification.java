@@ -46,7 +46,8 @@ public class ProductSpecification {
     private static Specification<Product> hasType(String productType) {
         return (root, query, cb) -> {
             if (!StringUtils.hasText(productType)) return cb.conjunction();
-            return cb.equal(root.get("productType"), productType);
+            String normalized = productType.trim().toUpperCase();
+            return cb.equal(root.get("productType"), normalized);
         };
     }
 

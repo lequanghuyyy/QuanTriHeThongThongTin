@@ -30,6 +30,7 @@ import { Products as AdminProducts } from './pages/Admin/Products';
 import { Orders as AdminOrders } from './pages/Admin/Orders';
 import { Categories as AdminCategories } from './pages/Admin/CategoriesMasterDetail';
 import { Collections as AdminCollections } from './pages/Admin/Collections';
+import AdminUsers from './pages/Admin/Users';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuthStore();
@@ -94,6 +95,7 @@ function App() {
         <Route path="/admin/don-hang" element={<AdminOrders />} />
         <Route path="/admin/danh-muc" element={<AdminCategories />} />
         <Route path="/admin/bo-suu-tap" element={<AdminCollections />} />
+        <Route path="/admin/nguoi-dung" element={<AdminUsers />} />
       </Route>
       </Routes>
     </>

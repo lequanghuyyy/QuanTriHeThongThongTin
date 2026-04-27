@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
     @Mapping(target = "children", source = "children")
+    @Mapping(target = "isActive", source = "active")
     CategoryTreeResponse toTreeResponse(Category category);
 }

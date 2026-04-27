@@ -38,9 +38,9 @@ public class AdminCategoryController {
 
     @PutMapping("/{id}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> toggleCategoryStatus(@PathVariable Long id) {
-        categoryService.toggleCategoryStatus(id);
-        return ResponseEntity.ok(ApiResponse.success(null));
+    public ResponseEntity<ApiResponse<CategoryTreeResponse>> toggleCategoryStatus(@PathVariable Long id) {
+        CategoryTreeResponse updated = categoryService.toggleCategoryStatus(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã thay đổi trạng thái", updated));
     }
 
     @DeleteMapping("/{id}")

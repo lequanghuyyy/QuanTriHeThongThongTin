@@ -32,7 +32,8 @@ public class Collection extends BaseEntity {
     private String season;
 
     @Builder.Default
-    private boolean isActive = true;
+    @Column(name = "is_active")
+    private boolean active = true;
 
     private LocalDate startDate;
 

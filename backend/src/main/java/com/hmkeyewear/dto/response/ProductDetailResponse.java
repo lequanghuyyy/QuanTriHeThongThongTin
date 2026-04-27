@@ -19,10 +19,12 @@ public class ProductDetailResponse {
     private String slug;
     private String description;
     private String shortDescription;
+    private String productType;
     private String brand;
     private BigDecimal basePrice;
     private BigDecimal salePrice;
     private Double discountPercent;
+    private boolean isActive;
     private boolean isBestSeller;
     private boolean isFeatured;
     private double averageRating;

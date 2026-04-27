@@ -1,4 +1,5 @@
 import { axiosInstance as api } from './axiosInstance';
+import { useAuthStore } from '../store/authStore';
 import type { Page } from '../types/api.types';
 import type { Product } from '../types/product.types';
 import type { Order } from '../types/order.types';
@@ -50,7 +51,7 @@ export const adminApi = {
   getOrderStatusChart: () => api.get<never, any>("/admin/dashboard/order-status-chart"),
   getTopProducts: () => api.get<never, any>("/admin/dashboard/top-products"),
   getLowStockAlerts: () => api.get<never, any>("/admin/dashboard/low-stock-alerts"),
-  
+
   // Products management
   getProducts: (params: any) => api.get<never, Page<Product>>("/admin/products", { params }).then((page) => normalizeProductPage(page)),
   createProduct: (data: any) => api.post<never, Product>("/admin/products", data).then((product) => normalizeProduct(product) as Product),
@@ -86,11 +87,33 @@ export const adminApi = {
   toggleUserActive: (id: string) => api.put<never, void>(`/admin/users/${id}/toggle-active`),
   changeUserRole: (id: string, role: string) => api.put<never, void>(`/admin/users/${id}/role`, { role }),
 
-  uploadImages: (files: FileList | File[]) => {
+  uploadImages: async (files: File[]): Promise<string[]> => {
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
       formData.append('files', files[i]);
     }
-    return api.post<never, string[]>("/admin/upload/multiple", formData);
-  }
+    console.log('Files count:', files.length);
+    for (const [key, value] of (formData as any).entries()) {
+      console.log('FormData entry:', key, value);
+    }
+    const accessToken = useAuthStore.getState().accessToken;
+    const baseURL = (import.meta.env.VITE_API_URL as string) || 'http://localhost:8080/api/v1';
+
+    const response = await fetch(`${baseURL}/admin/upload/multiple`, {
+      method: 'POST',
+      headers: {
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err?.message || `Upload failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+    // Unwrap ApiResponse<List<String>> wrapper: { data: string[] }
+    return (result?.data ?? result) as string[];
+  },
 };

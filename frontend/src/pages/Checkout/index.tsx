@@ -126,7 +126,7 @@ export const Checkout = () => {
       note: note.trim() || undefined,
       couponCode: passedCoupon,
       items: cart.items.map((item: any) => ({
-        productVariantId: item.variant.id,
+        productVariantId: item.productVariantId,
         quantity: item.quantity
       }))
     };
@@ -318,13 +318,13 @@ export const Checkout = () => {
             
             <div className="flex flex-col gap-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {cart.items.map((item: any) => (
-                <div key={item.cartItemId} className="flex gap-4">
+                <div key={item.id} className="flex gap-4">
                   <div className="w-16 h-16 bg-white border border-gray-100 rounded flex items-center justify-center shrink-0">
-                    <img src={item.product.thumbnailUrl} alt={item.product.name} className="w-full h-full object-contain mix-blend-multiply p-1" />
+                    <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply p-1" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-gray-900 truncate pr-2">{item.product.name}</h4>
-                    <div className="text-xs text-gray-500 mb-1">{item.variant.colorName}</div>
+                    <h4 className="text-sm font-medium text-gray-900 truncate pr-2">{item.productName}</h4>
+                    <div className="text-xs text-gray-500 mb-1">{item.colorName}</div>
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-500">SL: {item.quantity}</span>
                       <span className="font-medium text-gray-900">{formatVND(item.totalPrice)}</span>

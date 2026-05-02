@@ -15,4 +15,6 @@ public class OrderItemResponse {
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
+    private String imageUrl; // Variant image or product thumbnail
+    private String slug; // For linking to product detail
 }

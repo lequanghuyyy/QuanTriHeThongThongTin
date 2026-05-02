@@ -1,5 +1,6 @@
 package com.hmkeyewear.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,6 +18,9 @@ public class CartItemResponse {
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
+    
+    @JsonProperty("isAvailable")
     private boolean isAvailable;
+    
     private int stockQuantity;
 }

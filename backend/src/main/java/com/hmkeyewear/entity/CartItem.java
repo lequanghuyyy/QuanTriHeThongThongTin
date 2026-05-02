@@ -11,7 +11,9 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "cart_items")
+@Table(name = "cart_items", indexes = {
+    @Index(name = "idx_session_id", columnList = "session_id")
+})
 public class CartItem {
 
     @Id
@@ -21,6 +23,9 @@ public class CartItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "session_id")
+    private String sessionId; // For guest cart tracking
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_variant_id")

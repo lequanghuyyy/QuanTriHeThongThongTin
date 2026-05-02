@@ -11,8 +11,9 @@ export interface OrderItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
-  productVariant: ProductVariant;
-  canReview: boolean;
+  imageUrl: string; // Variant image or product thumbnail
+  slug: string; // For linking to product detail
+  canReview?: boolean; // Optional, only for user orders
 }
 
 export interface ShippingAddress {

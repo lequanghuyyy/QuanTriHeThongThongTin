@@ -146,7 +146,7 @@ public class OrderServiceImpl implements OrderService {
         orderItemRepository.saveAll(orderItems);
 
         // Clear Cart
-        cartService.clearCart(userEmail);
+        cartService.clearCart(userEmail, null);
 
         return buildOrderDetailResponse(savedOrder, orderItems);
     }
@@ -269,15 +269,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderDetailResponse buildOrderDetailResponse(Order order, List<OrderItem> items) {
-        List<OrderItemResponse> itemResponses = items.stream().map(item -> OrderItemResponse.builder()
+        List<OrderItemResponse> itemResponses = items.stream().map(item -> {
+            ProductVariant variant = item.getProductVariant();
+            Product product = variant.getProduct();
+            
+            // Use variant image if available, otherwise use product thumbnail
+            String imageUrl = variant.getImageUrl() != null && !variant.getImageUrl().isEmpty() 
+                ? variant.getImageUrl() 
+                : product.getThumbnailUrl();
+            
+            return OrderItemResponse.builder()
                 .id(item.getId())
-                .productVariantId(item.getProductVariant().getId())
+                .productVariantId(variant.getId())
                 .productName(item.getProductName())
                 .variantName(item.getVariantName())
                 .quantity(item.getQuantity())
                 .unitPrice(item.getUnitPrice())
                 .totalPrice(item.getTotalPrice())
-                .build()).collect(Collectors.toList());
+                .imageUrl(imageUrl)
+                .slug(product.getSlug())
+                .build();
+        }).collect(Collectors.toList());
 
         return OrderDetailResponse.builder()
                 .orderCode(order.getOrderCode())

@@ -121,10 +121,12 @@ export const OrderDetail = () => {
               {order.items.map((item: any) => (
                 <div key={item.id} className="flex gap-4 items-center pb-4 border-b border-gray-50 last:border-0 last:pb-0">
                   <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded p-1 shrink-0">
-                    <img src={item.productVariant.imageUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />
+                    <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-gray-900">{item.productName}</h4>
+                    <Link to={`/san-pham/${item.slug}`} className="font-medium text-gray-900 hover:text-primary transition-colors">
+                      {item.productName}
+                    </Link>
                     <p className="text-sm text-gray-500 mt-1">{item.variantName}</p>
                     <p className="text-sm text-gray-500 mt-1">{formatVND(item.unitPrice)} x {item.quantity}</p>
                   </div>

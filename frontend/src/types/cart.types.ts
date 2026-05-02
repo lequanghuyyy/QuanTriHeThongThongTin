@@ -1,9 +1,12 @@
 import type { ProductVariant } from "./product.types";
 
 export interface CartItem {
-  cartItemId: number;
-  product: { id: number; name: string; slug: string; thumbnailUrl: string };
-  variant: ProductVariant;
+  id: number;
+  productVariantId: number;
+  productName: string;
+  slug: string;
+  colorName: string;
+  thumbnailUrl: string;
   quantity: number;
   unitPrice: number;
   totalPrice: number;

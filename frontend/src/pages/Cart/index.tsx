@@ -15,13 +15,16 @@ const toast = {
 };
 
 const CartItemRow = ({ item }: { item: CartItem }) => {
+  console.log('[CartItemRow] Rendering item:', item);
+  console.log('[CartItemRow] isAvailable:', item.isAvailable, 'stockQuantity:', item.stockQuantity);
+  
   const queryClient = useQueryClient();
   const setItemCount = useCartStore(state => state.setItemCount);
   const [localQuantity, setLocalQuantity] = useState(item.quantity);
   const debouncedQuantity = useDebounce(localQuantity, 500);
 
   const updateMutation = useMutation({
-    mutationFn: (qty: number) => cartApi.updateItem(item.cartItemId, qty),
+    mutationFn: (qty: number) => cartApi.updateItem(item.id, qty),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       if (res?.itemCount !== undefined) {
@@ -41,7 +44,7 @@ const CartItemRow = ({ item }: { item: CartItem }) => {
   }, [debouncedQuantity, item.quantity]);
 
   const removeMutation = useMutation({
-    mutationFn: () => cartApi.removeItem(item.cartItemId),
+    mutationFn: () => cartApi.removeItem(item.id),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       if (res?.itemCount !== undefined) {
@@ -61,20 +64,20 @@ const CartItemRow = ({ item }: { item: CartItem }) => {
 
   return (
     <div className="flex items-start gap-4 py-6 border-b border-gray-100 last:border-0 relative">
-      <Link to={`/san-pham/${item.product.slug}`} className="w-24 h-24 bg-gray-50 rounded-image overflow-hidden flex-shrink-0 border border-gray-100 group">
-        <img src={item.product.thumbnailUrl || 'https://placehold.co/200x200'} alt={item.product.name} className="w-full h-full object-contain mix-blend-multiply p-2 transition-transform duration-300 group-hover:scale-105" />
+      <Link to={`/san-pham/${item.slug}`} className="w-24 h-24 bg-gray-50 rounded-image overflow-hidden flex-shrink-0 border border-gray-100 group">
+        <img src={item.thumbnailUrl || 'https://placehold.co/200x200'} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply p-2 transition-transform duration-300 group-hover:scale-105" />
       </Link>
       
       <div className="flex-1 min-w-0">
         <div className="flex justify-between items-start mb-1">
-          <Link to={`/san-pham/${item.product.slug}`} className="font-serif font-medium text-lg text-gray-900 hover:text-primary truncate pr-4 transition-colors">
-            {item.product.name}
+          <Link to={`/san-pham/${item.slug}`} className="font-serif font-medium text-lg text-gray-900 hover:text-primary truncate pr-4 transition-colors">
+            {item.productName}
           </Link>
           <span className="font-medium text-gray-900 whitespace-nowrap">{formatVND(item.unitPrice)}</span>
         </div>
         
         <div className="text-sm text-gray-500 mb-3 flex items-center gap-2">
-          {item.variant.colorName} {item.variant.size ? `/ ${item.variant.size}` : ''}
+          {item.colorName}
           {(!item.isAvailable || item.stockQuantity === 0) && (
              <span className="text-[10px] font-bold text-danger bg-danger/10 px-2 py-0.5 rounded-sm ml-2 tracking-wide uppercase">Hết hàng</span>
           )}
@@ -124,7 +127,12 @@ export const Cart = () => {
 
   const { data: cartData, isLoading, isError } = useQuery({
     queryKey: ['cart'],
-    queryFn: () => cartApi.getCart(),
+    queryFn: async () => {
+      console.log('[Cart Debug] Fetching cart data...');
+      const result = await cartApi.getCart();
+      console.log('[Cart Debug] Cart data received:', result);
+      return result;
+    },
   });
 
   const validateCouponMutation = useMutation({
@@ -186,7 +194,7 @@ export const Cart = () => {
         <div className="w-full lg:w-[60%] flex flex-col">
           <div className="border-t border-gray-900">
              {cart.items.map((item: CartItem) => (
-               <CartItemRow key={item.cartItemId} item={item} />
+               <CartItemRow key={item.id} item={item} />
              ))}
           </div>
         </div>

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final com.hmkeyewear.service.interfaces.CartService cartService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
@@ -24,8 +25,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(ApiResponse.success("Login successful", authService.login(request)));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(
+            @Valid @RequestBody LoginRequest request,
+            @RequestHeader(value = "X-Session-Id", required = false) String sessionId
+    ) {
+        AuthResponse authResponse = authService.login(request);
+        
+        // Merge guest cart if sessionId is provided
+        if (sessionId != null && !sessionId.isEmpty()) {
+            try {
+                cartService.mergeGuestCartToUser(sessionId, request.getEmail());
+            } catch (Exception e) {
+                // Log error but don't fail login
+                System.err.println("Failed to merge guest cart: " + e.getMessage());
+            }
+        }
+        
+        return ResponseEntity.ok(ApiResponse.success("Login successful", authResponse));
     }
 
     @PostMapping("/refresh")

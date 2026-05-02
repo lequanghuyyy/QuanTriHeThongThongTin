@@ -553,7 +553,7 @@ export const Products = () => {
                           <th className="px-3 py-2 font-medium">Hex</th>
                           <th className="px-3 py-2 font-medium">Size</th>
                           <th className="px-3 py-2 font-medium text-right">Tồn kho</th>
-                          <th className="px-3 py-2 font-medium text-right">+ Giá</th>
+                          <th className="px-3 py-2 font-medium text-right" title="Giá phụ thêm cho variant này (thường là 0)">+ Giá phụ</th>
                           <th className="px-3 py-2 text-center">Xóa</th>
                         </tr>
                       </thead>
@@ -576,7 +576,15 @@ export const Products = () => {
                                 </td>
                                 <td className="px-2 py-2"><input {...register(`variants.${index}.size`)} className="w-full px-2 py-1 border rounded text-xs" placeholder="Size" /></td>
                                 <td className="px-2 py-2"><input type="number" {...register(`variants.${index}.stockQuantity`)} className="w-full px-2 py-1 border rounded text-xs text-right" /></td>
-                                <td className="px-2 py-2"><input type="number" {...register(`variants.${index}.additionalPrice`)} className="w-full px-2 py-1 border rounded text-xs text-right" /></td>
+                                <td className="px-2 py-2">
+                                  <input 
+                                    type="number" 
+                                    {...register(`variants.${index}.additionalPrice`)} 
+                                    className="w-full px-2 py-1 border rounded text-xs text-right" 
+                                    placeholder="0"
+                                    title="Giá phụ thêm (VD: màu đặc biệt +10,000đ). Để 0 nếu không có."
+                                  />
+                                </td>
                                 <td className="px-2 py-2 text-center">
                                   <button type="button" onClick={() => remove(index)} className="text-danger hover:bg-danger/10 p-1 rounded"><Trash2 size={14} /></button>
                                 </td>

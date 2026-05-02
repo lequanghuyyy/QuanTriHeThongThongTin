@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { getOrCreateSessionId } from '../utils/sessionManager';
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1',
@@ -12,6 +13,14 @@ axiosInstance.interceptors.request.use(
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    
+    // Add session ID for guest cart support
+    const sessionId = getOrCreateSessionId();
+    if (sessionId && config.headers) {
+      config.headers['X-Session-Id'] = sessionId;
+      console.log('[Cart Debug] Sending request with session ID:', sessionId);
+    }
+    
     return config;
   },
   (error) => Promise.reject(error)
@@ -21,7 +30,11 @@ axiosInstance.interceptors.response.use(
   (response) => {
     // Backend wrap response in ApiResponse<T>, we return response.data.data
     // which is the T data object.
-    return response.data.data;
+    if (response.data && response.data.data !== undefined) {
+      return response.data.data;
+    }
+    // Fallback to full response.data if structure is different
+    return response.data;
   },
   async (error) => {
     const originalRequest = error.config;

@@ -221,10 +221,8 @@ return (
             value={filterParams.productType} 
             onChange={(val: string) => updateFilter('productType', val)}
             options={[
-              { label: 'Gọng kính', value: 'FRAME' },
-              { label: 'Tròng kính', value: 'LENS' },
-              { label: 'Kính mát', value: 'SUNGLASSES' },
-              { label: 'Phụ kiện', value: 'ACCESSORY' }
+              {label: 'Nam', value: 'MALE'},
+              { label: 'Nữ', value: 'FEMALE' },
             ]}
           />
           <FilterPill 
@@ -248,16 +246,7 @@ return (
               { label: 'Mắt mèo', value: 'CATEYE' }
             ]}
           />
-          <FilterPill 
-            label="Mẫu mã" 
-            value={searchParams.get('style')} 
-            onChange={(val: string) => updateFilter('style', val)}
-            options={[
-              { label: 'Nguyên khung', value: 'FULL_RIM' },
-              { label: 'Nửa viền', value: 'HALF_RIM' },
-              { label: 'Kính khoan (Không viền)', value: 'RIMLESS' }
-            ]}
-          />
+          
           <FilterPill 
             label="Thương hiệu" 
             value={filterParams.brand} 

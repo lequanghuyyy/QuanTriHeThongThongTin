@@ -1,7 +1,5 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { orderApi } from '../../api/orderApi';
-import { Package, Clock, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Overview = () => {
@@ -15,32 +13,36 @@ export const Overview = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-serif text-gray-900">Tổng quan tài khoản</h1>
+      {/* Tăng mb-5 lên mb-8 và thêm font-sans font-bold */}
+      <h1 className="text-2xl font-sans font-bold text-gray-900 mb-8">Tổng quan tài khoản</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+        {/* Card: Đơn hàng */}
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
           <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-            <Package size={20} />
+            <span className="material-symbols-outlined text-[20px]">inventory_2</span>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-1">Đơn hàng của bạn</h3>
+          <h3 className="font-sans font-bold text-gray-900 mb-1">Đơn hàng của bạn</h3>
           <p className="text-sm text-gray-500 mb-4">Kiểm tra trạng thái và lịch sử đơn hàng</p>
           <Link to="/tai-khoan/don-hang" className="text-sm text-primary font-medium hover:underline">Xem đơn hàng &rarr;</Link>
         </div>
         
+        {/* Card: Địa chỉ */}
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
           <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-            <MapPin size={20} />
+            <span className="material-symbols-outlined text-[20px]">location_on</span>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-1">Sổ địa chỉ</h3>
+          <h3 className="font-sans font-bold text-gray-900 mb-1">Sổ địa chỉ</h3>
           <p className="text-sm text-gray-500 mb-4">Quản lý địa chỉ nhận hàng của bạn</p>
           <Link to="/tai-khoan/dia-chi" className="text-sm text-primary font-medium hover:underline">Quản lý địa chỉ &rarr;</Link>
         </div>
         
+        {/* Card: Thông tin cá nhân */}
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
           <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-            <Clock size={20} />
+            <span className="material-symbols-outlined text-[20px]">person</span>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-1">Thông tin cá nhân</h3>
+          <h3 className="font-sans font-bold text-gray-900 mb-1">Thông tin cá nhân</h3>
           <p className="text-sm text-gray-500 mb-4">Cập nhật thông tin và bảo mật</p>
           <Link to="/tai-khoan/thong-tin" className="text-sm text-primary font-medium hover:underline">Cập nhật ngay &rarr;</Link>
         </div>
@@ -48,7 +50,7 @@ export const Overview = () => {
 
       <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="font-semibold text-gray-900">Đơn hàng gần đây</h2>
+          <h2 className="font-sans font-bold text-gray-900">Đơn hàng gần đây</h2>
           <Link to="/tai-khoan/don-hang" className="text-sm text-gray-500 hover:text-primary">Xem tất cả</Link>
         </div>
         <div className="p-6">

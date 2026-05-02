@@ -52,7 +52,7 @@ const AdminUsers = () => {
     <div className="p-8 animate-fade-in relative">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-serif text-gray-900 mb-1">Quản lý Người dùng</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Quản Lý Người Dùng</h1>
           <p className="text-gray-500 text-sm">Quản lý tài khoản và phân quyền người dùng.</p>
         </div>
       </div>

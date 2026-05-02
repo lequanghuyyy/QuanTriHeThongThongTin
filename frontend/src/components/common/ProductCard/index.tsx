@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
 import type { Product } from '../../../types/product.types';
 import { formatVND } from '../../../utils/formatters';
 import { useCartStore } from '../../../store/cartStore';
@@ -35,11 +34,13 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Link 
       to={`/san-pham/${product.slug}`} 
-      className="group flex flex-col block bg-white border border-gray-100 rounded-card overflow-hidden hover:shadow-lg transition-all duration-300 relative"
+      // Tăng padding lên p-3 (nhỉnh hơn p-2.5 một chút)
+      className="group flex flex-col block bg-[#E8E8E8] p-4 rounded-[20px] hover:shadow-md transition-all duration-300 relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+      {/* Badges: Chỉnh lại vị trí top/left tương ứng với padding */}
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
         {product.salePrice && product.discountPercent > 0 && (
           <span className="bg-danger text-white text-[10px] font-bold px-2 py-1 rounded">
             GIẢM {product.discountPercent}%
@@ -52,38 +53,44 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </div>
 
-      <div className="relative aspect-square overflow-hidden bg-gray-50 flex items-center justify-center p-4">
+      {/* Khối chứa hình ảnh: Thêm rounded-xl để bo tròn */}
+      <div className="relative aspect-square flex items-center justify-center overflow-hidden mb-3 rounded-xl">
         <img 
           src={displayImage || 'https://placehold.co/400x400/E8E8E8/474747?text=No+Image'} 
           alt={product.name} 
-          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 mix-blend-multiply"
+          // Thêm rounded-xl cho ảnh để bo góc mượt mà
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 mix-blend-multiply rounded-xl"
         />
         
+        {/* Nút thêm vào giỏ hàng */}
         <button 
           onClick={handleAddToCart}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-primary text-white w-[90%] py-2.5 rounded-button font-medium text-sm flex items-center justify-center gap-2 hover:bg-gray-800 shadow-md"
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-primary text-white w-[90%] py-2.5 rounded-button font-medium text-sm flex items-center justify-center gap-2 hover:bg-gray-800 shadow-md"
         >
-          <ShoppingCart size={16} /> Mua ngay
+          <span className="material-symbols-outlined text-[16px]">shopping_cart</span> Mua ngay
         </button>
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
-        <h3 className="font-semibold text-sm line-clamp-2 mb-2 text-gray-800 group-hover:text-primary transition-colors h-10">
+      {/* Thông tin sản phẩm nằm trực tiếp trên nền xám */}
+      <div className="px-1 flex flex-col flex-grow">
+        <h3 className="text-lg font-bold text-black leading-normal mb-2">
           {product.name}
         </h3>
         
         <div className="mt-auto">
-          <div className="flex items-center gap-2 mb-3">
+          {/* Box giá tiền */}
+          <div className="flex items-center gap-2 mb-2.5">
             {product.salePrice ? (
               <>
-                <span className="font-bold text-danger">{formatVND(product.salePrice)}</span>
-                <span className="text-xs text-gray-400 line-through">{formatVND(product.basePrice)}</span>
+                <span className="font-bold text-[15px] text-danger">{formatVND(product.salePrice)}</span>
+                <span className="text-[13px] text-black line-through">{formatVND(product.basePrice)}</span>
               </>
             ) : (
-              <span className="font-bold text-gray-900">{formatVND(product.basePrice)}</span>
+              <span className="font-bold text-[15px] text-gray-900">{formatVND(product.basePrice)}</span>
             )}
           </div>
 
+          {/* Dải màu sắc variants */}
           <div className="flex items-center gap-1.5 h-4">
             {colors.slice(0, maxColors).map((color, idx) => (
               <div 
@@ -94,7 +101,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               />
             ))}
             {colors.length > maxColors && (
-              <span className="text-xs text-gray-500 font-medium ml-1">+{colors.length - maxColors}</span>
+              <span className="text-[11px] text-gray-500 font-medium ml-1">+{colors.length - maxColors}</span>
             )}
           </div>
         </div>

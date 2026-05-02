@@ -1,6 +1,5 @@
 import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { Package, User, MapPin, Star, LayoutDashboard, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { authApi } from '../../api/authApi';
 
@@ -20,11 +19,11 @@ export const CustomerDashboardLayout = () => {
   };
 
   const navItems = [
-    { name: 'Tổng quan', path: '/tai-khoan', icon: LayoutDashboard },
-    { name: 'Đơn hàng', path: '/tai-khoan/don-hang', icon: Package },
-    { name: 'Thông tin cá nhân', path: '/tai-khoan/thong-tin', icon: User },
-    { name: 'Địa chỉ', path: '/tai-khoan/dia-chi', icon: MapPin },
-    { name: 'Đánh giá của tôi', path: '/tai-khoan/danh-gia', icon: Star },
+    { name: 'Tổng quan', path: '/tai-khoan', icon: 'dashboard' },
+    { name: 'Đơn hàng', path: '/tai-khoan/don-hang', icon: 'inventory_2' },
+    { name: 'Thông tin cá nhân', path: '/tai-khoan/thong-tin', icon: 'person' },
+    { name: 'Địa chỉ', path: '/tai-khoan/dia-chi', icon: 'location_on' },
+    { name: 'Đánh giá của tôi', path: '/tai-khoan/danh-gia', icon: 'star' },
   ];
 
   return (
@@ -48,7 +47,6 @@ export const CustomerDashboardLayout = () => {
             <ul className="flex flex-col">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path || (item.path !== '/tai-khoan' && location.pathname.startsWith(item.path));
-                const Icon = item.icon;
                 return (
                   <li key={item.path}>
                     <Link
@@ -60,7 +58,7 @@ export const CustomerDashboardLayout = () => {
                           : "text-gray-600 border-transparent hover:bg-gray-50 hover:text-primary"
                       )}
                     >
-                      <Icon size={18} />
+                      <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
                       {item.name}
                     </Link>
                   </li>
@@ -71,7 +69,7 @@ export const CustomerDashboardLayout = () => {
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-6 py-4 text-sm font-medium text-danger border-l-4 border-transparent hover:bg-danger/5 transition-colors"
                 >
-                  <LogOut size={18} />
+                  <span className="material-symbols-outlined text-[18px]">logout</span>
                   Đăng xuất
                 </button>
               </li>

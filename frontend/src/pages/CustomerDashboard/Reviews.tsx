@@ -14,7 +14,7 @@ export const Reviews = () => {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-serif text-gray-900 mb-6">Đánh giá của tôi</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Đánh giá của tôi</h1>
 
       {isLoading ? (
         <div className="text-center py-8 text-gray-500">Đang tải đánh giá...</div>

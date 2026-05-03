@@ -64,6 +64,11 @@ export const productApi = {
   getCategories: () => api.get<never, Category[]>("/categories"),
   getCollections: () => api.get<never, Collection[]>("/collections"),
   getCollectionBySlug: (slug: string) => api.get<never, Collection>(`/collections/${slug}`),
-  getReviews: (slug: string, params: PageParams & { rating?: number }) =>
-    api.get<never, ReviewSummary>(`/products/${slug}/reviews`, { params }),
+  getReviews: (slug: string, params: PageParams & { rating?: number }) => {
+    // Remove undefined values from params
+    const cleanParams = Object.fromEntries(
+      Object.entries(params).filter(([_, v]) => v !== undefined)
+    );
+    return api.get<never, ReviewSummary>(`/products/${slug}/reviews`, { params: cleanParams });
+  },
 };

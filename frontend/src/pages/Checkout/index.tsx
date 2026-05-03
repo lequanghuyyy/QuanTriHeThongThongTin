@@ -161,10 +161,14 @@ export const Checkout = () => {
             ) : (
               <div className="flex flex-col gap-4 mb-6">
                 {addresses.map((addr: any) => (
-                  <label key={addr.id} className={clsx(
-                    "flex items-start p-4 border rounded-lg cursor-pointer transition-all",
-                    selectedAddressId === addr.id ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
-                  )}>
+                  <label 
+                    key={addr.id} 
+                    onClick={() => setSelectedAddressId(addr.id)}
+                    className={clsx(
+                      "flex items-start p-4 border rounded-lg cursor-pointer transition-all",
+                      selectedAddressId === addr.id ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
+                    )}
+                  >
                     <div className="pt-1 mr-4">
                       <div className={clsx(
                         "w-5 h-5 rounded-full border-2 flex items-center justify-center",
@@ -253,10 +257,13 @@ export const Checkout = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-              <label className={clsx(
-                "flex items-center p-4 border rounded-lg cursor-pointer transition-all",
-                paymentMethod === 'COD' ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
-              )}>
+              <label 
+                onClick={() => setPaymentMethod('COD')}
+                className={clsx(
+                  "flex items-center p-4 border rounded-lg cursor-pointer transition-all",
+                  paymentMethod === 'COD' ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
+                )}
+              >
                 <div className="mr-4">
                   <div className={clsx(
                     "w-5 h-5 rounded-full border-2 flex items-center justify-center",
@@ -272,10 +279,13 @@ export const Checkout = () => {
                 </div>
               </label>
 
-              <label className={clsx(
-                "flex items-center p-4 border rounded-lg cursor-pointer transition-all",
-                paymentMethod === 'BANK_TRANSFER' ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
-              )}>
+              <label 
+                onClick={() => setPaymentMethod('BANK_TRANSFER')}
+                className={clsx(
+                  "flex items-center p-4 border rounded-lg cursor-pointer transition-all",
+                  paymentMethod === 'BANK_TRANSFER' ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
+                )}
+              >
                 <div className="mr-4">
                   <div className={clsx(
                     "w-5 h-5 rounded-full border-2 flex items-center justify-center",

@@ -34,7 +34,7 @@ export const ProductDetail = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   
   // Reviews state
-  const [reviewPage, setReviewPage] = useState(1);
+  const [reviewPage, setReviewPage] = useState(0); // API uses 0-based pagination
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(undefined);
 
   const { data: product, isLoading, isError } = useQuery({
@@ -45,7 +45,13 @@ export const ProductDetail = () => {
 
   const { data: reviewsData } = useQuery({
     queryKey: ['reviews', slug, reviewPage, ratingFilter],
-    queryFn: () => productApi.getReviews(slug!, { page: reviewPage, size: 5, rating: ratingFilter }),
+    queryFn: () => {
+      const params: any = { page: reviewPage, size: 5 };
+      if (ratingFilter !== undefined) {
+        params.rating = ratingFilter;
+      }
+      return productApi.getReviews(slug!, params);
+    },
     enabled: !!slug
   });
 
@@ -489,7 +495,10 @@ export const ProductDetail = () => {
                         const count = reviewsData.summary?.ratingDistribution?.[star as 1|2|3|4|5] || 0;
                         const percent = (reviewsData.summary?.totalCount || 0) > 0 ? (count / (reviewsData.summary?.totalCount || 1)) * 100 : 0;
                         return (
-                          <div key={star} className="flex items-center gap-3 text-sm cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setRatingFilter(ratingFilter === star ? undefined : star)}>
+                          <div key={star} className="flex items-center gap-3 text-sm cursor-pointer hover:opacity-80 transition-opacity" onClick={() => {
+                            setRatingFilter(ratingFilter === star ? undefined : star);
+                            setReviewPage(0); // Reset to first page when filter changes
+                          }}>
                             <span className={clsx("w-3 text-gray-600 font-medium", ratingFilter === star && "text-primary font-bold")}>{star}</span>
                             <Star size={14} fill="currentColor" className="text-yellow-400" />
                             <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -510,7 +519,10 @@ export const ProductDetail = () => {
                       </h3>
                       <div className="flex items-center gap-3">
                         {ratingFilter && (
-                          <button onClick={() => setRatingFilter(undefined)} className="text-sm text-primary underline">Xóa bộ lọc</button>
+                          <button onClick={() => {
+                            setRatingFilter(undefined);
+                            setReviewPage(0);
+                          }} className="text-sm text-primary underline">Xóa bộ lọc</button>
                         )}
                         <button
                           onClick={() => setShowReviewModal(true)}
@@ -581,10 +593,10 @@ export const ProductDetail = () => {
                         {[...Array(reviewsData.reviews.totalPages)].map((_, i) => (
                           <button
                             key={i}
-                            onClick={() => setReviewPage(i + 1)}
+                            onClick={() => setReviewPage(i)}
                             className={clsx(
                               "w-8 h-8 flex items-center justify-center rounded text-sm font-medium transition-colors",
-                              reviewPage === i + 1 ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              reviewPage === i ? "bg-primary text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                             )}
                           >
                             {i + 1}

@@ -13,6 +13,7 @@ import com.hmkeyewear.repository.ProductVariantRepository;
 import com.hmkeyewear.repository.UserRepository;
 import com.hmkeyewear.service.interfaces.DashboardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
@@ -90,33 +92,73 @@ public class DashboardServiceImpl implements DashboardService {
         int days = switch (period) {
             case "7d" -> 7;
             case "30d" -> 30;
-            case "90d" -> 90;
+            case "3m" -> 90;
             case "12m" -> 365;
             default -> 7;
         };
 
-        Instant start = Instant.now().minus(days, ChronoUnit.DAYS);
-        List<Order> recentOrders = orderRepository.findAll().stream()
-                .filter(o -> o.getCreatedAt().isAfter(start) && o.getStatus() != OrderStatus.CANCELLED)
+        // Get start of day for proper date comparison
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        LocalDate startDate = today.minusDays(days - 1);
+        Instant start = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        
+        log.info("Getting revenue chart for period: {}, days: {}, start: {}", period, days, start);
+        
+        List<Order> allOrders = orderRepository.findAll();
+        log.info("Total orders in database: {}", allOrders.size());
+        
+        List<Order> recentOrders = allOrders.stream()
+                .filter(o -> {
+                    boolean hasCreatedAt = o.getCreatedAt() != null;
+                    boolean isAfterStart = hasCreatedAt && !o.getCreatedAt().isBefore(start);
+                    boolean isNotCancelled = o.getStatus() != OrderStatus.CANCELLED;
+                    
+                    if (hasCreatedAt && isAfterStart && isNotCancelled) {
+                        log.debug("Including order: {} created at: {}, status: {}, amount: {}", 
+                                o.getOrderCode(), o.getCreatedAt(), o.getStatus(), o.getTotalAmount());
+                    }
+                    
+                    return hasCreatedAt && isAfterStart && isNotCancelled;
+                })
                 .collect(Collectors.toList());
+        
+        log.info("Filtered orders for chart: {}", recentOrders.size());
 
-        Map<String, BigDecimal> revenueByDay = new TreeMap<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM").withZone(ZoneId.systemDefault());
+        // Initialize map with all dates in range
+        Map<String, BigDecimal> revenueByDay = new LinkedHashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
 
-        for (int i = days - 1; i >= 0; i--) {
-            revenueByDay.put(formatter.format(Instant.now().minus(i, ChronoUnit.DAYS)), BigDecimal.ZERO);
+        for (int i = 0; i < days; i++) {
+            LocalDate date = startDate.plusDays(i);
+            revenueByDay.put(date.format(formatter), BigDecimal.ZERO);
         }
 
+        // Aggregate revenue by day
         for (Order order : recentOrders) {
-            String day = formatter.format(order.getCreatedAt());
-            if (revenueByDay.containsKey(day)) {
-                revenueByDay.put(day, revenueByDay.get(day).add(order.getTotalAmount()));
+            LocalDate orderDate = order.getCreatedAt().atZone(ZoneId.systemDefault()).toLocalDate();
+            String dayKey = orderDate.format(formatter);
+            
+            if (revenueByDay.containsKey(dayKey)) {
+                BigDecimal currentRevenue = revenueByDay.get(dayKey);
+                BigDecimal newRevenue = currentRevenue.add(order.getTotalAmount());
+                revenueByDay.put(dayKey, newRevenue);
+                log.debug("Added revenue for {}: {} (total now: {})", dayKey, order.getTotalAmount(), newRevenue);
+            } else {
+                log.warn("Order date {} not in expected range", dayKey);
             }
         }
 
+        List<RevenueDataPoint> dataPoints = revenueByDay.entrySet().stream()
+                .map(entry -> RevenueDataPoint.builder()
+                        .date(entry.getKey())
+                        .revenue(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+        
+        log.info("Generated {} data points for revenue chart", dataPoints.size());
+
         return RevenueChartResponse.builder()
-                .labels(new ArrayList<>(revenueByDay.keySet()))
-                .data(new ArrayList<>(revenueByDay.values()))
+                .data(dataPoints)
                 .build();
     }
 

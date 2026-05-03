@@ -13,36 +13,91 @@ const COLORS = ['#059668', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#64748b'
 export const Dashboard = () => {
   const [period, setPeriod] = useState('30d');
 
-  const { data: overviewData } = useQuery({
+  const { data: overviewData, error: overviewError } = useQuery({
     queryKey: ['admin-dashboard', 'overview'],
     queryFn: () => adminApi.getDashboardOverview(),
   });
 
-  const { data: revenueData } = useQuery({
+  const { data: revenueData, error: revenueError } = useQuery({
     queryKey: ['admin-dashboard', 'revenue', period],
     queryFn: () => adminApi.getRevenueChart({ period }),
   });
 
-  const { data: statusData } = useQuery({
+  const { data: statusData, error: statusError } = useQuery({
     queryKey: ['admin-dashboard', 'order-status'],
     queryFn: () => adminApi.getOrderStatusChart(),
   });
 
-  const { data: topProductsData } = useQuery({
+  const { data: topProductsData, error: topProductsError } = useQuery({
     queryKey: ['admin-dashboard', 'top-products'],
     queryFn: () => adminApi.getTopProducts(),
   });
 
-  const { data: lowStockData } = useQuery({
+  const { data: lowStockData, error: lowStockError } = useQuery({
     queryKey: ['admin-dashboard', 'low-stock'],
     queryFn: () => adminApi.getLowStockAlerts(),
   });
+  
+  // Debug logging
+  console.log('=== Dashboard Data Debug ===');
+  console.log('Overview data:', overviewData);
+  console.log('Overview error:', overviewError);
+  console.log('Revenue data:', revenueData);
+  console.log('Revenue error:', revenueError);
+  console.log('Status data:', statusData);
+  console.log('Status error:', statusError);
+  console.log('Top products data:', topProductsData);
+  console.log('Top products data type:', typeof topProductsData?.data, Array.isArray(topProductsData?.data));
+  console.log('Top products error:', topProductsError);
+  console.log('Low stock data:', lowStockData);
+  console.log('Low stock data type:', typeof lowStockData?.data, 'has content:', lowStockData?.data?.content);
+  console.log('Low stock error:', lowStockError);
 
-  const overview = overviewData?.data || { todayRevenue: 0, todayOrders: 0, newCustomers: 0, pendingOrders: 0 };
+  const overview = overviewData || { 
+    today: { revenue: 0, orders: 0, newCustomers: 0 },
+    thisMonth: { revenue: 0, orders: 0, newCustomers: 0 },
+    thisYear: { revenue: 0, orders: 0, newCustomers: null },
+    pendingOrders: 0,
+    lowStockProducts: 0
+  };
+  
+  console.log('Processed overview:', overview);
+  
+  // Revenue chart data - axios already unwrapped to { data: [...] }
   const revenueChart = revenueData?.data || [];
-  const statusChart = statusData?.data || [];
-  const topProducts = topProductsData?.data || [];
-  const lowStockAlerts = lowStockData?.data || [];
+  console.log('Processed revenueChart:', revenueChart);
+  
+  // Transform status chart from { PENDING: 5, CONFIRMED: 10 } to [{ status, count }]
+  const statusChart = statusData ? Object.entries(statusData).map(([status, count]) => ({
+    status,
+    count
+  })) : [];
+  console.log('Processed statusChart:', statusChart);
+  
+  // Transform top products data - axios already unwrapped to array
+  const topProducts = Array.isArray(topProductsData) 
+    ? topProductsData.map((item: any) => ({
+        id: item.product?.id,
+        name: item.product?.name,
+        imageUrl: item.product?.thumbnailUrl,
+        soldCount: item.totalSold,
+        revenue: item.totalRevenue
+      }))
+    : [];
+  console.log('Processed topProducts:', topProducts);
+  
+  // Transform low stock alerts - axios unwrapped to Page object with content array
+  const lowStockAlerts = Array.isArray(lowStockData?.content)
+    ? lowStockData.content.map((item: any) => ({
+        id: item.variantId,
+        name: item.productName,
+        variantName: item.variantName,
+        sku: item.sku,
+        stockQuantity: item.stockQuantity,
+        imageUrl: item.thumbnailUrl
+      }))
+    : [];
+  console.log('Processed lowStockAlerts:', lowStockAlerts);
 
   return (
     <div className="p-8 animate-fade-in space-y-8 font-sans">
@@ -58,7 +113,7 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Doanh thu hôm nay</p>
-             <h3 className="text-2xl font-sans font-bold text-gray-900">{formatVND(overview.todayRevenue)}</h3>
+             <h3 className="text-2xl font-sans font-bold text-gray-900">{formatVND(overview.today.revenue)}</h3>
            </div>
            <div className="w-12 h-12 bg-green-50 text-success rounded-full flex items-center justify-center">
              <span className="material-symbols-outlined text-[24px]">trending_up</span>
@@ -68,7 +123,7 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Đơn hàng hôm nay</p>
-             <h3 className="text-2xl font-sans font-bold text-gray-900">{overview.todayOrders}</h3>
+             <h3 className="text-2xl font-sans font-bold text-gray-900">{overview.today.orders}</h3>
            </div>
            <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center">
              <span className="material-symbols-outlined text-[24px]">shopping_bag</span>
@@ -78,7 +133,7 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Khách mới</p>
-             <h3 className="text-2xl font-sans font-bold text-gray-900">{overview.newCustomers}</h3>
+             <h3 className="text-2xl font-sans font-bold text-gray-900">{overview.today.newCustomers || 0}</h3>
            </div>
            <div className="w-12 h-12 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center">
              <span className="material-symbols-outlined text-[24px]">group</span>

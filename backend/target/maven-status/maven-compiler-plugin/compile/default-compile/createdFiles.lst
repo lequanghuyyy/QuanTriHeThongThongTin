@@ -11,6 +11,7 @@ com\hmkeyewear\enums\Gender.class
 com\hmkeyewear\config\SecurityConfig.class
 com\hmkeyewear\dto\response\CollectionResponse.class
 com\hmkeyewear\mapper\ProductMapperImpl.class
+com\hmkeyewear\dto\response\RevenueDataPoint$RevenueDataPointBuilder.class
 com\hmkeyewear\dto\response\CartItemResponse$CartItemResponseBuilder.class
 com\hmkeyewear\service\interfaces\UserService.class
 com\hmkeyewear\controller\AdminReviewController.class
@@ -122,6 +123,7 @@ com\hmkeyewear\dto\response\AddressResponse$AddressResponseBuilder.class
 com\hmkeyewear\dto\request\CreateReviewRequest.class
 com\hmkeyewear\service\interfaces\CollectionService.class
 com\hmkeyewear\controller\ProductController.class
+com\hmkeyewear\dto\response\RevenueDataPoint.class
 com\hmkeyewear\entity\Order.class
 com\hmkeyewear\service\impl\ReviewServiceImpl.class
 com\hmkeyewear\config\CloudinaryConfig.class

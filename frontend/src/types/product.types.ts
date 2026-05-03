@@ -88,12 +88,14 @@ export interface Collection {
 
 export interface Review {
   id: number;
-  user: { id: string; fullName: string; avatar: string | null };
+  userName: string;
+  userAvatar: string | null;
   rating: number;
   title: string;
   content: string;
   isVerifiedPurchase: boolean;
   createdAt: string;
+  imageUrls?: string[];
 }
 
 export interface ReviewSummary {

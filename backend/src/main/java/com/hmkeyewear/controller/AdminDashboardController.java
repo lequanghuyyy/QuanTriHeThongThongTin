@@ -22,10 +22,27 @@ public class AdminDashboardController {
     public ResponseEntity<ApiResponse<DashboardOverviewResponse>> getOverview() {
         return ResponseEntity.ok(ApiResponse.success(dashboardService.getOverview()));
     }
+    
+    @GetMapping("/test")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> test() {
+        return ResponseEntity.ok(ApiResponse.success(Map.of(
+            "message", "Dashboard API is working",
+            "timestamp", java.time.Instant.now().toString()
+        )));
+    }
 
     @GetMapping("/revenue-chart")
     public ResponseEntity<ApiResponse<RevenueChartResponse>> getRevenueChart(@RequestParam(defaultValue = "7d") String period) {
         return ResponseEntity.ok(ApiResponse.success(dashboardService.getRevenueChart(period)));
+    }
+    
+    @GetMapping("/debug/orders")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> debugOrders() {
+        // Debug endpoint to check order data
+        var orders = dashboardService.getClass();
+        return ResponseEntity.ok(ApiResponse.success(Map.of(
+            "message", "Check server logs for order details"
+        )));
     }
 
     @GetMapping("/top-products")

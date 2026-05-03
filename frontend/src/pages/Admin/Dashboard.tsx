@@ -6,7 +6,6 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend 
 } from 'recharts';
-import { TrendingUp, Users, ShoppingBag, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 
 const COLORS = ['#059668', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#64748b'];
@@ -46,10 +45,10 @@ export const Dashboard = () => {
   const lowStockAlerts = lowStockData?.data || [];
 
   return (
-    <div className="p-8 animate-fade-in space-y-8">
+    <div className="p-8 animate-fade-in space-y-8 font-sans">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-serif text-gray-900 mb-2">Executive Overview</h1>
+          <h1 className="text-3xl font-sans font-bold text-gray-900 mb-2">Executive Overview</h1>
           <p className="text-gray-500">Tóm tắt hoạt động kinh doanh và hiệu suất.</p>
         </div>
       </div>
@@ -59,40 +58,40 @@ export const Dashboard = () => {
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Doanh thu hôm nay</p>
-             <h3 className="text-2xl font-bold text-gray-900">{formatVND(overview.todayRevenue)}</h3>
+             <h3 className="text-2xl font-sans font-bold text-gray-900">{formatVND(overview.todayRevenue)}</h3>
            </div>
            <div className="w-12 h-12 bg-green-50 text-success rounded-full flex items-center justify-center">
-             <TrendingUp size={24} />
+             <span className="material-symbols-outlined text-[24px]">trending_up</span>
            </div>
         </div>
         
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Đơn hàng hôm nay</p>
-             <h3 className="text-2xl font-bold text-gray-900">{overview.todayOrders}</h3>
+             <h3 className="text-2xl font-sans font-bold text-gray-900">{overview.todayOrders}</h3>
            </div>
            <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center">
-             <ShoppingBag size={24} />
+             <span className="material-symbols-outlined text-[24px]">shopping_bag</span>
            </div>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Khách mới</p>
-             <h3 className="text-2xl font-bold text-gray-900">{overview.newCustomers}</h3>
+             <h3 className="text-2xl font-sans font-bold text-gray-900">{overview.newCustomers}</h3>
            </div>
            <div className="w-12 h-12 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center">
-             <Users size={24} />
+             <span className="material-symbols-outlined text-[24px]">group</span>
            </div>
         </div>
 
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between border-l-4 border-l-orange-500">
            <div>
              <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-1">Chờ xử lý</p>
-             <h3 className="text-2xl font-bold text-orange-500">{overview.pendingOrders}</h3>
+             <h3 className="text-2xl font-sans font-bold text-orange-500">{overview.pendingOrders}</h3>
            </div>
            <div className="w-12 h-12 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center">
-             <AlertCircle size={24} />
+             <span className="material-symbols-outlined text-[24px]">error</span>
            </div>
         </div>
       </div>
@@ -101,7 +100,7 @@ export const Dashboard = () => {
         {/* Revenue Chart */}
         <div className="lg:col-span-2 bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="font-semibold text-gray-900 uppercase tracking-widest text-sm">Biểu đồ doanh thu</h2>
+            <h2 className="font-sans font-semibold text-gray-900 uppercase tracking-widest text-sm">Biểu đồ doanh thu</h2>
             <div className="flex gap-2">
               {['7d', '30d', '3m', '12m'].map(p => (
                 <button 
@@ -121,9 +120,9 @@ export const Dashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenueChart}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
-                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#888' }} axisLine={false} tickLine={false} />
-                <YAxis tickFormatter={(val) => `${val / 1000000}M`} tick={{ fontSize: 12, fill: '#888' }} axisLine={false} tickLine={false} />
-                <RechartsTooltip formatter={(value: number) => formatVND(value)} labelStyle={{ color: '#333' }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#888', fontFamily: 'Inter, sans-serif' }} axisLine={false} tickLine={false} />
+                <YAxis tickFormatter={(val) => `${val / 1000000}M`} tick={{ fontSize: 12, fill: '#888', fontFamily: 'Inter, sans-serif' }} axisLine={false} tickLine={false} />
+                <RechartsTooltip formatter={(value: number) => formatVND(value)} labelStyle={{ color: '#333', fontFamily: 'Inter, sans-serif' }} contentStyle={{ fontFamily: 'Inter, sans-serif' }} />
                 <Line type="monotone" dataKey="revenue" stroke="#000" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
@@ -132,7 +131,7 @@ export const Dashboard = () => {
 
         {/* Order Status Pie Chart */}
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm flex flex-col">
-          <h2 className="font-semibold text-gray-900 uppercase tracking-widest text-sm mb-6">Trạng thái đơn hàng</h2>
+          <h2 className="font-sans font-semibold text-gray-900 uppercase tracking-widest text-sm mb-6">Trạng thái đơn hàng</h2>
           <div className="flex-1 min-h-[300px]">
              <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -150,8 +149,8 @@ export const Dashboard = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <RechartsTooltip />
-                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px' }} />
+                <RechartsTooltip contentStyle={{ fontFamily: 'Inter, sans-serif' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', fontFamily: 'Inter, sans-serif' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -161,7 +160,7 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Top Products */}
         <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
-          <h2 className="font-semibold text-gray-900 uppercase tracking-widest text-sm mb-6">Top sản phẩm bán chạy (Tháng)</h2>
+          <h2 className="font-sans font-semibold text-gray-900 uppercase tracking-widest text-sm mb-6">Top sản phẩm bán chạy (Tháng)</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-gray-500 uppercase bg-gray-50">
@@ -193,8 +192,8 @@ export const Dashboard = () => {
         {/* Low Stock Alerts */}
         <div className="bg-gray-900 p-6 rounded-lg shadow-sm text-white">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="font-semibold text-white uppercase tracking-widest text-sm flex items-center gap-2">
-              <AlertCircle size={18} className="text-orange-400" /> Cảnh báo tồn kho
+            <h2 className="font-sans font-semibold text-white uppercase tracking-widest text-sm flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px] text-orange-400">error</span> Cảnh báo tồn kho
             </h2>
           </div>
           <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">

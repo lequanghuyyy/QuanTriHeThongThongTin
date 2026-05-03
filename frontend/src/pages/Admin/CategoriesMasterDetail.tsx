@@ -153,7 +153,7 @@ export const Categories = () => {
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Quản lý Danh mục</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Quản Lý Danh Mục</h1>
           <p className="text-sm text-gray-500 mt-1">Phân loại sản phẩm theo cấu trúc cây</p>
         </div>
         <button

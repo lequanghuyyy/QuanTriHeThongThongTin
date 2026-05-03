@@ -69,7 +69,7 @@ export const Orders = () => {
     <div className="p-8 animate-fade-in relative">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-serif text-gray-900 mb-1">Quản lý Đơn hàng</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Quản Lý Đơn Hàng</h1>
           <p className="text-gray-500 text-sm">Theo dõi và xử lý đơn đặt hàng từ khách.</p>
         </div>
       </div>

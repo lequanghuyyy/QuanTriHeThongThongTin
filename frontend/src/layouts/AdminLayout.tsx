@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { LogOut, LayoutDashboard, Box, ShoppingCart, Tags, Home, Package, Users } from 'lucide-react';
 import { authApi } from '../api/authApi';
+import logoUrl from "../assets/logo1.png";
 
 export const AdminLayout = ({ children }: { children: ReactNode }) => {
   const { user, clearAuth } = useAuthStore();
@@ -25,36 +25,39 @@ export const AdminLayout = ({ children }: { children: ReactNode }) => {
       <aside className="w-64 bg-white border-r border-gray-200 fixed h-full flex flex-col z-20">
         <div className="p-6 border-b border-gray-200">
           <Link to="/" className="flex flex-col items-center">
-            <span className="font-serif font-bold text-2xl tracking-widest leading-none text-primary">HMK</span>
-            <span className="text-[10px] tracking-[0.3em] font-sans text-primary">ADMIN</span>
+            <img 
+          src={logoUrl} // Sử dụng biến đã import ở Bước 1
+          alt="HMK Eyewear Logo" 
+          className="h-30 w-auto object-contain" // Đặt chiều cao (h-10 tương đương 40px), w-auto để giữ tỷ lệ
+        />
           </Link>
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           <Link to="/admin" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
-            <LayoutDashboard size={18} /> Tổng quan
+            <span className="material-symbols-outlined text-[18px]">dashboard</span> Tổng quan
           </Link>
           <Link to="/admin/san-pham" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
-            <Box size={18} /> Sản phẩm
+            <span className="material-symbols-outlined text-[18px]">inventory_2</span> Sản phẩm
           </Link>
           <Link to="/admin/don-hang" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
-            <ShoppingCart size={18} /> Đơn hàng
+            <span className="material-symbols-outlined text-[18px]">shopping_cart</span> Đơn hàng
           </Link>
           <Link to="/admin/danh-muc" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
-            <Tags size={18} /> Danh mục
+            <span className="material-symbols-outlined text-[18px]">sell</span> Danh mục
           </Link>
           <Link to="/admin/bo-suu-tap" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
-            <Package size={18} /> Bộ sưu tập
+            <span className="material-symbols-outlined text-[18px]">collections</span> Bộ sưu tập
           </Link>
           <Link to="/admin/nguoi-dung" className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors">
-            <Users size={18} /> Người dùng
+            <span className="material-symbols-outlined text-[18px]">group</span> Người dùng
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-200">
           <Link to="/" className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors mb-2">
-            <Home size={18} /> Về trang chủ
+            <span className="material-symbols-outlined text-[18px]">home</span> Về trang chủ
           </Link>
           <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-danger hover:bg-red-50 rounded-lg transition-colors w-full text-left">
-            <LogOut size={18} /> Đăng xuất
+            <span className="material-symbols-outlined text-[18px]">logout</span> Đăng xuất
           </button>
         </div>
       </aside>

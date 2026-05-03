@@ -68,9 +68,9 @@ export const Profile = () => {
 
   return (
     <div className="animate-fade-in space-y-8">
-      <h1 className="text-2xl font-serif text-gray-900 mb-6">Thông tin cá nhân</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Thông tin cá nhân</h1>
 
-      <div className="bg-white p-6 md:p-8 rounded-lg border border-gray-100 shadow-sm">
+      <div className="bg-white p-6 md:p-8 rounded-lg border border-gray-100 shadow-sm mt-8">
         <h2 className="text-lg font-semibold text-gray-900 mb-6">Hồ sơ của bạn</h2>
         
         <form onSubmit={handleSubmitProfile(data => profileMutation.mutate(data))}>

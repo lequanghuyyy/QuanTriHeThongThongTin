@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { SlidersHorizontal, SearchX, X } from 'lucide-react';
 import { productApi } from '../../api/productApi';
 import type { ProductFilterParams, Category } from '../../types/product.types';
 import { ProductCard } from '../../components/common/ProductCard';
 import { ProductCardSkeleton } from '../../components/common/ProductCardSkeleton';
 import { ProductSidebar } from '../../components/common/ProductSidebar';
 import { Pagination } from '../../components/common/Pagination';
+import mainBanner from '../../assets/Group90.jpg';
 
 const mapCategorySlugToProductType = (slug?: string | null): ProductFilterParams['productType'] => {
   if (!slug) return undefined;
@@ -20,6 +20,25 @@ const mapCategorySlugToProductType = (slug?: string | null): ProductFilterParams
 
   return undefined;
 };
+
+// --- Component phụ trợ FilterPill ---
+const FilterPill = ({ label, value, onChange, options = [] }: any) => (
+  <div className="relative inline-block">
+    <select
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value || null)}
+      className="appearance-none border border-black bg-transparent text-gray-900 rounded-full pl-4 pr-8 py-1.5 text-sm hover:bg-gray-50 focus:outline-none cursor-pointer transition-colors max-w-[150px] truncate"
+    >
+      <option value="">{label}</option>
+      {options.map((opt: any) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+    <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-gray-600">
+      expand_more
+    </span>
+  </div>
+);
 
 export const ProductList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,8 +64,22 @@ export const ProductList = () => {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ["products", filterParams],
-    queryFn: () => productApi.getList(filterParams),
+    // Đã thêm 'style' vào queryKey để React Query biết khi nào cần fetch lại data
+    queryKey: [
+      "products", 
+      filterParams, 
+      searchParams.get('material'), 
+      searchParams.get('shape'), 
+      searchParams.get('feature'),
+      searchParams.get('style') // New
+    ],
+    queryFn: () => productApi.getList({
+      ...filterParams,
+      material: searchParams.get("material") || undefined,
+      shape: searchParams.get("shape") || undefined,
+      feature: searchParams.get("feature") || undefined,
+      style: searchParams.get("style") || undefined, // Truyền tham số style xuống API
+    } as any),
     placeholderData: keepPreviousData,
   });
 
@@ -82,6 +115,22 @@ export const ProductList = () => {
     });
   };
 
+  const handlePriceRangeChange = (val: string | null) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (!val) {
+        next.delete('minPrice');
+        next.delete('maxPrice');
+      } else {
+        const [min, max] = val.split('-');
+        if (min) next.set('minPrice', min); else next.delete('minPrice');
+        if (max) next.set('maxPrice', max); else next.delete('maxPrice');
+      }
+      next.set("page", "0");
+      return next;
+    });
+  };
+
   const handlePageChange = (page: number) => {
     updateFilter("page", page.toString());
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -98,7 +147,6 @@ export const ProductList = () => {
     }
   });
 
-  // Breadcrumb path logic
   const breadcrumbPath = useMemo(() => {
     if (!categories || !filterParams.categorySlug) return [];
     
@@ -121,75 +169,146 @@ export const ProductList = () => {
     return path;
   }, [categories, filterParams.categorySlug]);
 
-  return (
-    <div className="container mx-auto px-4 md:px-8 py-8">
-      {/* Breadcrumb */}
-      <nav className="text-sm text-gray-500 mb-8 flex gap-2 items-center overflow-x-auto whitespace-nowrap scrollbar-hide">
-        <Link to="/" className="hover:text-primary">Trang chủ</Link>
-        <span>&gt;</span>
-        <Link to="/san-pham" className="hover:text-primary">Sản phẩm</Link>
-        {breadcrumbPath.map((cat, idx) => (
-          <span key={cat.id} className="flex gap-2 items-center">
-            <span>&gt;</span>
-            <span className={idx === breadcrumbPath.length - 1 ? 'text-gray-900 font-medium' : ''}>
-              {cat.name}
+  const currentCategoryTitle = useMemo(() => {
+    if (filterParams.keyword) return `Kết quả tìm kiếm: "${filterParams.keyword}"`;
+    if (breadcrumbPath.length > 0) return breadcrumbPath[breadcrumbPath.length - 1].name;
+    if (filterParams.productType === 'FRAME') return 'Gọng Kính';
+    if (filterParams.productType === 'SUNGLASSES') return 'Kính Mát';
+    if (filterParams.productType === 'LENS') return 'Tròng Kính';
+    return 'Tất Cả Sản Phẩm';
+  }, [breadcrumbPath, filterParams]);
+
+
+return (
+    <div className="w-full flex flex-col">
+      
+      {/* 1. HÌNH ẢNH BANNER PHÍA TRÊN CÙNG (DÍNH SÁT HEADER) */}
+      <div className="w-full max-w-[1200px] mx-auto">
+        <img 
+          src={mainBanner} 
+          alt="Banner Gọng Kính" 
+          className="w-full h-auto max-h-[400px] object-cover"
+        />
+      </div>
+
+      {/* 2. PHẦN NỘI DUNG CHÍNH (Giữ nguyên khoảng cách 2 bên và ở dưới) */}
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 overflow-hidden">
+        
+        {/* Breadcrumb */}
+        <nav className="text-sm text-gray-500 flex gap-2 items-center overflow-x-auto whitespace-nowrap scrollbar-hide max-w-full mb-6">
+          <Link to="/" className="hover:text-primary">Trang chủ</Link>
+          <span>/</span>
+          <Link to="/san-pham" className="hover:text-primary">Sản phẩm</Link>
+          {breadcrumbPath.map((cat) => (
+            <span key={cat.id} className="flex gap-2 items-center">
+              <span>/</span>
+              <span className="text-gray-900">{cat.name}</span>
             </span>
-          </span>
-        ))}
-      </nav>
+          ))}
+        </nav>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* Desktop Sidebar */}
-        <aside className="hidden lg:block w-[240px] flex-shrink-0 sticky top-24">
-          <div className="flex justify-between items-center mb-6 border-b border-gray-200 pb-2">
-            <h2 className="font-bold text-lg font-serif">BỘ LỌC</h2>
-            {hasActiveFilters && (
-              <button onClick={clearAllFilters} className="text-xs text-danger hover:underline">Xóa tất cả</button>
-            )}
+        {/* Tiêu đề chính nằm ở giữa */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl md:text-[28px] font-bold text-gray-900 leading-tight">
+            {currentCategoryTitle}
+          </h1>
+        </div>
+
+        {/* Filter Pills nằm dưới tiêu đề và được căn giữa */}
+        <div className="hidden lg:flex flex-wrap justify-center items-center gap-2.5 mb-8">
+          <FilterPill 
+            label="Tất cả" 
+            value={filterParams.productType} 
+            onChange={(val: string) => updateFilter('productType', val)}
+            options={[
+              {label: 'Nam', value: 'MALE'},
+              { label: 'Nữ', value: 'FEMALE' },
+            ]}
+          />
+          <FilterPill 
+            label="Chất liệu" 
+            value={searchParams.get('material')} 
+            onChange={(val: string) => updateFilter('material', val)}
+            options={[
+              { label: 'Kim loại', value: 'METAL' },
+              { label: 'Nhựa', value: 'PLASTIC' },
+              { label: 'Titanium', value: 'TITANIUM' }
+            ]}
+          />
+          <FilterPill 
+            label="Hình dáng" 
+            value={searchParams.get('shape')} 
+            onChange={(val: string) => updateFilter('shape', val)}
+            options={[
+              { label: 'Tròn', value: 'ROUND' },
+              { label: 'Vuông', value: 'SQUARE' },
+              { label: 'Chữ nhật', value: 'RECTANGLE' },
+              { label: 'Mắt mèo', value: 'CATEYE' }
+            ]}
+          />
+          
+          <FilterPill 
+            label="Thương hiệu" 
+            value={filterParams.brand} 
+            onChange={(val: string) => updateFilter('brand', val)}
+            options={[
+              { label: 'HMK Eyewear', value: 'HMK' },
+              { label: 'Dior', value: 'DIOR' },
+              { label: 'Gucci', value: 'GUCCI' }
+            ]}
+          />
+          <FilterPill 
+            label="Tính năng" 
+            value={searchParams.get('feature')} 
+            onChange={(val: string) => updateFilter('feature', val)}
+            options={[
+              { label: 'Chống tia UV', value: 'UV' },
+              { label: 'Chống ánh sáng xanh', value: 'BLUE_LIGHT' },
+              { label: 'Đổi màu', value: 'PHOTOCHROMIC' }
+            ]}
+          />
+          <FilterPill 
+            label="Giá" 
+            value={
+              searchParams.get('minPrice') && searchParams.get('maxPrice') 
+                ? `${searchParams.get('minPrice')}-${searchParams.get('maxPrice')}`
+                : searchParams.get('minPrice') 
+                ? `${searchParams.get('minPrice')}-`
+                : searchParams.get('maxPrice')
+                ? `0-${searchParams.get('maxPrice')}`
+                : ''
+            } 
+            onChange={handlePriceRangeChange}
+            options={[
+              { label: 'Dưới 500.000đ', value: '0-500000' },
+              { label: '500.000đ - 1.000.000đ', value: '500000-1000000' },
+              { label: 'Trên 1.000.000đ', value: '1000000-' }
+            ]}
+          />
+
+          {hasActiveFilters && (
+            <button onClick={clearAllFilters} className="text-sm text-danger hover:underline ml-2 whitespace-nowrap">
+              Xóa lọc
+            </button>
+          )}
+        </div>
+
+        {/* Nút lọc Mobile và Số lượng */}
+        <div className="flex justify-between items-center mb-6">
+          <button 
+            className="lg:hidden flex items-center gap-2 border border-gray-400 px-4 py-1.5 rounded-full bg-white hover:bg-gray-50 text-sm"
+            onClick={() => setIsMobileFilterOpen(true)}
+          >
+            <span className="material-symbols-outlined text-[18px]">tune</span> Lọc
+          </button>
+          
+          <div className="text-sm text-gray-500 lg:hidden">
+            Tìm thấy <span className="font-bold text-gray-900">{data?.totalElements || 0}</span> SP
           </div>
-          <ProductSidebar searchParams={searchParams} onFilterChange={updateFilter} />
-        </aside>
+        </div>
 
-        {/* Main Content */}
-        <div className="flex-1 w-full min-w-0">
-          {/* Header Row */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-center gap-4">
-              {/* Mobile Filter Toggle */}
-              <button 
-                className="lg:hidden flex items-center gap-2 border border-gray-300 px-4 py-2 rounded bg-white hover:bg-gray-50 text-sm font-medium"
-                onClick={() => setIsMobileFilterOpen(true)}
-              >
-                <SlidersHorizontal size={16} />
-                Lọc
-              </button>
-              
-              <div className="text-sm text-gray-600">
-                {filterParams.keyword ? (
-                  <span>Kết quả tìm kiếm cho "{filterParams.keyword}" - Tìm thấy <span className="font-bold text-gray-900">{data?.totalElements || 0}</span> sản phẩm</span>
-                ) : (
-                  <span>Tìm thấy <span className="font-bold text-gray-900">{data?.totalElements || 0}</span> sản phẩm</span>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 self-end md:self-auto">
-              <span className="text-sm text-gray-500 whitespace-nowrap">Sắp xếp:</span>
-              <select 
-                value={filterParams.sort}
-                onChange={(e) => updateFilter('sort', e.target.value)}
-                className="border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:border-primary bg-white"
-              >
-                <option value="createdAt,desc">Mới nhất</option>
-                <option value="totalSold,desc">Bán chạy nhất</option>
-                <option value="price,asc">Giá tăng dần</option>
-                <option value="price,desc">Giá giảm dần</option>
-                <option value="averageRating,desc">Đánh giá cao nhất</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Product Grid */}
+        {/* Main Content Grid */}
+        <div className="w-full">
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -198,68 +317,67 @@ export const ProductList = () => {
             </div>
           ) : data?.content.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <SearchX size={64} className="text-gray-300 mb-6" />
+              <span className="material-symbols-outlined text-[64px] text-gray-300 mb-6">search_off</span>
               <h3 className="text-xl font-bold mb-2">Không tìm thấy sản phẩm phù hợp</h3>
               <p className="text-gray-500 mb-8">Vui lòng điều chỉnh lại bộ lọc hoặc từ khóa tìm kiếm</p>
-              <div className="flex gap-4">
-                {hasActiveFilters && (
-                  <button onClick={clearAllFilters} className="px-6 py-2 border border-primary text-primary rounded-button font-medium hover:bg-primary/5 transition-colors">
-                    Xóa bộ lọc
-                  </button>
-                )}
-                <Link to="/san-pham" className="px-6 py-2 bg-primary text-white rounded-button font-medium hover:bg-gray-800 transition-colors">
-                  Xem tất cả sản phẩm
-                </Link>
-              </div>
+              {hasActiveFilters && (
+                <button onClick={clearAllFilters} className="px-6 py-2 border border-primary text-primary rounded-button font-medium hover:bg-primary/5 transition-colors">
+                  Xóa tất cả bộ lọc
+                </button>
+              )}
             </div>
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 {data?.content.map(product => (
-                  <ProductCard key={product.id} product={product} />
+                  <div key={product.id} className="w-full max-w-full overflow-hidden">
+                    <ProductCard product={product} />
+                  </div>
                 ))}
               </div>
 
               {/* Pagination */}
               {data && (
-                <Pagination 
-                  currentPage={data.number} 
-                  totalPages={data.totalPages} 
-                  onPageChange={handlePageChange} 
-                />
+                <div className="mt-8">
+                  <Pagination 
+                    currentPage={data.number} 
+                    totalPages={data.totalPages} 
+                    onPageChange={handlePageChange} 
+                  />
+                </div>
               )}
             </>
           )}
         </div>
-      </div>
 
-      {/* Mobile Filter Bottom Sheet Overlay */}
-      {isMobileFilterOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileFilterOpen(false)} />
-          <div className="absolute bottom-0 left-0 w-full bg-white rounded-t-3xl h-[85vh] flex flex-col transform transition-transform duration-300 ease-out">
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-white rounded-t-3xl shrink-0">
-              <h2 className="font-bold text-lg">BỘ LỌC</h2>
-              <button onClick={() => setIsMobileFilterOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                <X size={20} />
-              </button>
-            </div>
-            
-            <div className="p-6 overflow-y-auto flex-1">
-              <ProductSidebar searchParams={searchParams} onFilterChange={updateFilter} />
-            </div>
+        {/* Mobile Filter Bottom Sheet Overlay */}
+        {isMobileFilterOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div className="absolute inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileFilterOpen(false)} />
+            <div className="absolute bottom-0 left-0 w-full bg-white rounded-t-3xl h-[85vh] flex flex-col transform transition-transform duration-300 ease-out">
+              <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-white rounded-t-3xl shrink-0">
+                <h2 className="font-bold text-lg">BỘ LỌC</h2>
+                <button onClick={() => setIsMobileFilterOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                  <span className="material-symbols-outlined text-[20px]">close</span>
+                </button>
+              </div>
+              
+              <div className="p-6 overflow-y-auto flex-1">
+                <ProductSidebar searchParams={searchParams} onFilterChange={updateFilter} />
+              </div>
 
-            <div className="p-4 border-t border-gray-200 flex gap-4 bg-white shrink-0">
-              <button onClick={() => { clearAllFilters(); setIsMobileFilterOpen(false); }} className="flex-1 py-3 border border-gray-300 rounded font-medium text-sm">
-                Thiết lập lại
-              </button>
-              <button onClick={() => setIsMobileFilterOpen(false)} className="flex-1 py-3 bg-primary text-white rounded font-medium text-sm">
-                Áp dụng
-              </button>
+              <div className="p-4 border-t border-gray-200 flex gap-4 bg-white shrink-0">
+                <button onClick={() => { clearAllFilters(); setIsMobileFilterOpen(false); }} className="flex-1 py-3 border border-gray-300 rounded font-medium text-sm">
+                  Thiết lập lại
+                </button>
+                <button onClick={() => setIsMobileFilterOpen(false)} className="flex-1 py-3 bg-primary text-white rounded font-medium text-sm">
+                  Áp dụng
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

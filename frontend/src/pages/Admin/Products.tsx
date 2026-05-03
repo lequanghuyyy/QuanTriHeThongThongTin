@@ -229,7 +229,7 @@ export const Products = () => {
     <div className="p-8 animate-fade-in">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-serif text-gray-900 mb-1">Quản lý Sản phẩm</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Quản Lý Sản Phẩm</h1>
           <p className="text-gray-500 text-sm">Danh sách và thông tin chi tiết các sản phẩm trong kho.</p>
         </div>
         <button

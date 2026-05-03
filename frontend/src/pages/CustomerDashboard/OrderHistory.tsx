@@ -60,9 +60,9 @@ export const OrderHistory = () => {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-serif text-gray-900 mb-6">Lịch sử đơn hàng</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Lịch sử đơn hàng</h1>
 
-      <div className="bg-white rounded-lg border border-gray-100 shadow-sm mb-6">
+      <div className="bg-white rounded-lg border border-gray-100 shadow-sm mt-8">
         <div className="flex overflow-x-auto hide-scrollbar border-b border-gray-100">
           {tabs.map((tab) => (
             <button

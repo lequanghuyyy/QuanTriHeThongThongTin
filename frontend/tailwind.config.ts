@@ -26,8 +26,7 @@ export default {
         success: '#059668',
       },
       fontFamily: {
-        sans: ['"Be Vietnam Pro"', 'sans-serif'],
-        serif: ['"Playfair Display"', 'serif'],
+        sans: ['Inter', 'sans-serif'],
       },
       borderRadius: {
         card: '8px',

@@ -105,7 +105,7 @@ export const Addresses = () => {
   return (
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-serif text-gray-900">Sổ địa chỉ</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Sổ địa chỉ</h1>
         <button 
           onClick={() => handleOpenModal()}
           className="flex items-center gap-2 bg-primary text-white px-4 py-2 text-sm font-medium rounded hover:bg-gray-800 transition-colors"
@@ -117,7 +117,7 @@ export const Addresses = () => {
       {isLoading ? (
         <div className="text-center py-8 text-gray-500">Đang tải sổ địa chỉ...</div>
       ) : addresses.length === 0 ? (
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-12 text-center flex flex-col items-center">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-12 text-center flex flex-col items-center mt-8">
           <MapPin size={48} className="text-gray-200 mb-4" />
           <p className="text-gray-500 mb-4">Bạn chưa có địa chỉ giao hàng nào.</p>
           <button onClick={() => handleOpenModal()} className="text-primary font-medium hover:underline">Thêm địa chỉ đầu tiên</button>

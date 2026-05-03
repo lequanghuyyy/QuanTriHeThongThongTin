@@ -8,12 +8,7 @@ import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { Package, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 const tabs = [
   { label: 'Tất cả', value: undefined },

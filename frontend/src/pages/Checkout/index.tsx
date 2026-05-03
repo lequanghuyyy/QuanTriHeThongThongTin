@@ -11,8 +11,9 @@ import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
 import { formatVND } from '../../utils/formatters';
 import type { CheckoutRequest, PaymentMethod } from '../../types/order.types';
-import { CreditCard, Wallet, Plus, Lock } from 'lucide-react';
+import { CreditCard, Wallet, Plus, Lock, X, CheckCircle } from 'lucide-react';
 import clsx from 'clsx';
+import { toast } from '../../utils/toast';
 
 const addressSchema = z.object({
   recipientName: z.string().min(2, "Vui lòng nhập họ tên"),
@@ -24,12 +25,6 @@ const addressSchema = z.object({
 });
 
 type AddressForm = z.infer<typeof addressSchema>;
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
 
 export const Checkout = () => {
   const { isAuthenticated } = useAuthStore();
@@ -45,6 +40,10 @@ export const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('COD');
   const [note, setNote] = useState('');
   const [isAddingAddress, setIsAddingAddress] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrOrderCode, setQrOrderCode] = useState('');
+  const [qrAmount, setQrAmount] = useState(0);
+  const [countdown, setCountdown] = useState(5);
 
   // Queries
   const { data: cartData, isLoading: isCartLoading } = useQuery({
@@ -65,16 +64,48 @@ export const Checkout = () => {
     }
   }, [addressesData, selectedAddressId]);
 
+  // Countdown timer cho QR modal
+  useEffect(() => {
+    if (!showQRModal || countdown <= 0) return;
+    
+    const timer = setTimeout(() => {
+      setCountdown(countdown - 1);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [showQRModal, countdown]);
+
+  // Xử lý khi countdown về 0
+  useEffect(() => {
+    if (showQRModal && countdown === 0) {
+      setShowQRModal(false);
+      toast.success("Thanh toán thành công!");
+      setTimeout(() => {
+        navigate('/tai-khoan/don-hang');
+      }, 500);
+    }
+  }, [showQRModal, countdown, navigate]);
+
   // Mutations
   const checkoutMutation = useMutation({
     mutationFn: (data: CheckoutRequest) => orderApi.checkout(data),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
       clearCount();
-      navigate(`/tai-khoan/don-hang/${res.orderCode}`, {
-        state: { isNewOrder: true }
-      });
-      toast.success("Đặt hàng thành công!");
+      
+      // Nếu là chuyển khoản, hiện modal QR
+      if (paymentMethod === 'BANK_TRANSFER') {
+        setQrOrderCode(res.orderCode);
+        setQrAmount(res.totalAmount);
+        setCountdown(5); // Reset countdown về 5
+        setShowQRModal(true);
+      } else {
+        // COD thì chuyển thẳng
+        navigate(`/tai-khoan/don-hang/${res.orderCode}`, {
+          state: { isNewOrder: true }
+        });
+        toast.success("Đặt hàng thành công!");
+      }
     },
     onError: () => toast.error("Có lỗi xảy ra khi đặt hàng")
   });
@@ -141,9 +172,21 @@ export const Checkout = () => {
   // For UI mockup, we will assume backend applies it based on couponCode.
   // To be safe, let's just show couponCode text without amount if we didn't re-fetch.
   
+  // Generate QR code URL (sử dụng VietQR API)
+  const generateQRUrl = () => {
+    const bankId = '970422'; // MB Bank
+    const accountNo = '0123456789'; // Số tài khoản demo
+    const accountName = 'HMKEY EYEWEAR';
+    const amount = qrAmount;
+    const description = `Thanh toan don hang ${qrOrderCode}`;
+    
+    return `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(description)}&accountName=${encodeURIComponent(accountName)}`;
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
-      <div className="flex flex-col lg:flex-row gap-12">
+    <>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
+        <div className="flex flex-col lg:flex-row gap-12">
         {/* Left: Checkout Steps */}
         <div className="w-full lg:w-[60%] flex flex-col gap-12">
           
@@ -388,7 +431,79 @@ export const Checkout = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+
+      {/* QR Payment Modal */}
+      {showQRModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 relative animate-fade-in">
+            <button 
+              onClick={() => {
+                setShowQRModal(false);
+                toast.success("Thanh toán thành công!");
+                setTimeout(() => {
+                  navigate('/tai-khoan/don-hang');
+                }, 500);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="text-center">
+              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle size={32} className="text-success" />
+              </div>
+              
+              <h2 className="text-2xl font-serif text-gray-900 mb-2">Đặt hàng thành công!</h2>
+              <p className="text-sm text-gray-500 mb-6">Mã đơn hàng: <span className="font-semibold text-gray-900">#{qrOrderCode}</span></p>
+
+              <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                <p className="text-sm text-gray-600 mb-4">Quét mã QR để thanh toán</p>
+                <div className="bg-white p-4 rounded-lg inline-block">
+                  <img 
+                    src={generateQRUrl()} 
+                    alt="QR Code" 
+                    className="w-64 h-64 mx-auto"
+                    onError={(e) => {
+                      // Fallback nếu API không hoạt động
+                      e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(`Thanh toan don hang ${qrOrderCode} - ${formatVND(qrAmount)}`)}`;
+                    }}
+                  />
+                </div>
+                <div className="mt-4 text-center">
+                  <p className="text-xs text-gray-500 mb-1">Số tiền cần thanh toán</p>
+                  <p className="text-2xl font-bold text-primary">{formatVND(qrAmount)}</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-800">
+                  <span className="font-semibold">Lưu ý:</span> Vui lòng chuyển khoản đúng nội dung để đơn hàng được xử lý nhanh chóng
+                </p>
+              </div>
+
+              <div className="text-sm text-gray-500">
+                Tự động chuyển trang sau <span className="font-bold text-primary">{countdown}s</span>
+              </div>
+
+              <button
+                onClick={() => {
+                  setShowQRModal(false);
+                  toast.success("Thanh toán thành công!");
+                  setTimeout(() => {
+                    navigate('/tai-khoan/don-hang');
+                  }, 500);
+                }}
+                className="mt-4 w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+              >
+                Xem danh sách đơn hàng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

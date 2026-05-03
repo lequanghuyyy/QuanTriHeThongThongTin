@@ -14,12 +14,7 @@ import {
   CheckCircle2, MessageSquare
 } from 'lucide-react';
 import clsx from 'clsx';
-
-// Temporary mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 export const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();

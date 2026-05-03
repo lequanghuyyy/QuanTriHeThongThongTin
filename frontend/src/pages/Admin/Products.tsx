@@ -6,12 +6,7 @@ import { formatVND } from '../../utils/formatters';
 import { Search, Plus, Edit2, Trash2, Power, PowerOff, X, Upload } from 'lucide-react';
 import clsx from 'clsx';
 import { useForm, useFieldArray } from 'react-hook-form';
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 const isProductActive = (product: any): boolean => {
   const value = product?.isActive ?? product?.active ?? product?.is_active;

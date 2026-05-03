@@ -1,0 +1,235 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="System Architecture" id="arch">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;HMK Eyewear E-Commerce Platform - System Architecture&lt;/b&gt;" 
+          style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;" 
+          vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Client Layer -->
+        <mxCell id="client-layer" value="&lt;b&gt;CLIENT LAYER&lt;/b&gt;" 
+          style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" 
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="1200" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="web-app" value="&lt;b&gt;React Web App&lt;/b&gt;&lt;br&gt;(Vite + TypeScript)&lt;br&gt;&lt;br&gt;• React Router&lt;br&gt;• TanStack Query&lt;br&gt;• Zustand State&lt;br&gt;• Tailwind CSS&lt;br&gt;• React Hook Form" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" 
+          vertex="1" parent="client-layer">
+          <mxGeometry x="50" y="40" width="250" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mobile-web" value="&lt;b&gt;Mobile Browser&lt;/b&gt;&lt;br&gt;(Responsive Design)&lt;br&gt;&lt;br&gt;• Touch Optimized&lt;br&gt;• Progressive Web App&lt;br&gt;• Mobile First" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" 
+          vertex="1" parent="client-layer">
+          <mxGeometry x="350" y="40" width="250" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="admin-dashboard" value="&lt;b&gt;Admin Dashboard&lt;/b&gt;&lt;br&gt;(React SPA)&lt;br&gt;&lt;br&gt;• Product Management&lt;br&gt;• Order Management&lt;br&gt;• Analytics Dashboard&lt;br&gt;• User Management" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" 
+          vertex="1" parent="client-layer">
+          <mxGeometry x="650" y="40" width="250" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="customer-portal" value="&lt;b&gt;Customer Portal&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Product Catalog&lt;br&gt;• Shopping Cart&lt;br&gt;• Checkout&lt;br&gt;• Order Tracking&lt;br&gt;• Reviews" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=10;" 
+          vertex="1" parent="client-layer">
+          <mxGeometry x="950" y="40" width="200" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway -->
+        <mxCell id="api-gateway" value="&lt;b&gt;API Gateway / Load Balancer&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Request Routing&lt;br&gt;• Rate Limiting&lt;br&gt;• SSL/TLS Termination" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" 
+          vertex="1" parent="1">
+          <mxGeometry x="550" y="280" width="300" height="80" as="geometry" />
+        </mxCell>
+
+        <!-- Backend Layer -->
+        <mxCell id="backend-layer" value="&lt;b&gt;BACKEND LAYER (Spring Boot)&lt;/b&gt;" 
+          style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" 
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="410" width="1200" height="320" as="geometry" />
+        </mxCell>
+
+        <mxCell id="spring-boot" value="&lt;b&gt;Spring Boot Application&lt;/b&gt;&lt;br&gt;(Java 17)&lt;br&gt;&lt;br&gt;• Spring Web MVC&lt;br&gt;• Spring Security&lt;br&gt;• Spring Data JPA&lt;br&gt;• Spring Mail&lt;br&gt;• OAuth2 Client" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="50" y="40" width="200" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="controllers" value="&lt;b&gt;REST Controllers&lt;/b&gt;&lt;br&gt;&lt;br&gt;• AuthController&lt;br&gt;• ProductController&lt;br&gt;• OrderController&lt;br&gt;• CartController&lt;br&gt;• ReviewController&lt;br&gt;• AdminControllers" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="300" y="40" width="200" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="services" value="&lt;b&gt;Business Logic&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Service Layer&lt;br&gt;• DTOs&lt;br&gt;• MapStruct Mappers&lt;br&gt;• Validation&lt;br&gt;• Business Rules" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="550" y="40" width="200" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="repositories" value="&lt;b&gt;Data Access Layer&lt;/b&gt;&lt;br&gt;&lt;br&gt;• JPA Repositories&lt;br&gt;• Custom Queries&lt;br&gt;• Entity Graphs&lt;br&gt;• Specifications" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="800" y="40" width="200" height="130" as="geometry" />
+        </mxCell>
+
+        <mxCell id="security" value="&lt;b&gt;Security Layer&lt;/b&gt;&lt;br&gt;&lt;br&gt;• JWT Authentication&lt;br&gt;• OAuth2 (Google)&lt;br&gt;• Role-based Access&lt;br&gt;• CORS Configuration&lt;br&gt;• Password Encryption" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="50" y="190" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="validation" value="&lt;b&gt;Validation &amp; Error Handling&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Bean Validation&lt;br&gt;• Global Exception Handler&lt;br&gt;• Custom Exceptions&lt;br&gt;• API Response Format" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="300" y="190" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="file-upload" value="&lt;b&gt;File Upload Service&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Cloudinary Integration&lt;br&gt;• Image Optimization&lt;br&gt;• CDN Delivery" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="550" y="190" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="email-service" value="&lt;b&gt;Email Service&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Order Confirmation&lt;br&gt;• Password Reset&lt;br&gt;• Notifications" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="backend-layer">
+          <mxGeometry x="800" y="190" width="200" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Data Layer -->
+        <mxCell id="data-layer" value="&lt;b&gt;DATA &amp; CACHE LAYER&lt;/b&gt;" 
+          style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontSize=14;" 
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="780" width="1200" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="mysql" value="&lt;b&gt;MySQL Database&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Users&lt;br&gt;• Products&lt;br&gt;• Orders&lt;br&gt;• Reviews&lt;br&gt;• Categories&lt;br&gt;• Collections" 
+          style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=20;" 
+          vertex="1" parent="data-layer">
+          <mxGeometry x="100" y="40" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="redis" value="&lt;b&gt;Redis Cache&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Session Storage&lt;br&gt;• Token Blacklist&lt;br&gt;• Cache Layer&lt;br&gt;• Rate Limiting" 
+          style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=20;" 
+          vertex="1" parent="data-layer">
+          <mxGeometry x="450" y="40" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cloudinary" value="&lt;b&gt;Cloudinary CDN&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Image Storage&lt;br&gt;• Image Optimization&lt;br&gt;• CDN Delivery&lt;br&gt;• Transformations" 
+          style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;align=left;spacingLeft=20;" 
+          vertex="1" parent="data-layer">
+          <mxGeometry x="800" y="40" width="250" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- External Services -->
+        <mxCell id="external-layer" value="&lt;b&gt;EXTERNAL SERVICES&lt;/b&gt;" 
+          style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;" 
+          vertex="1" parent="1">
+          <mxGeometry x="100" y="1010" width="1200" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="google-oauth" value="&lt;b&gt;Google OAuth2&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Social Login&lt;br&gt;• User Profile" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="external-layer">
+          <mxGeometry x="100" y="40" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="smtp" value="&lt;b&gt;SMTP Server&lt;/b&gt;&lt;br&gt;(Gmail)&lt;br&gt;&lt;br&gt;• Email Delivery&lt;br&gt;• Transactional Emails" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="external-layer">
+          <mxGeometry x="350" y="40" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="payment" value="&lt;b&gt;Payment Gateway&lt;/b&gt;&lt;br&gt;&lt;br&gt;• COD&lt;br&gt;• Online Payment&lt;br&gt;• Payment Processing" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="external-layer">
+          <mxGeometry x="600" y="40" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="shipping" value="&lt;b&gt;Shipping Provider&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Order Tracking&lt;br&gt;• Shipping Rates&lt;br&gt;• Delivery Status" 
+          style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;align=left;spacingLeft=10;" 
+          vertex="1" parent="external-layer">
+          <mxGeometry x="850" y="40" width="200" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Connections -->
+        <!-- Client to API Gateway -->
+        <mxCell id="conn1" value="HTTPS" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1" source="web-app" target="api-gateway">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn2" value="HTTPS" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="mobile-web" target="api-gateway">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn3" value="HTTPS" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.75;entryY=0;" edge="1" parent="1" source="admin-dashboard" target="api-gateway">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- API Gateway to Backend -->
+        <mxCell id="conn4" value="REST API" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="api-gateway" target="backend-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Backend to Data Layer -->
+        <mxCell id="conn5" value="JDBC" style="endArrow=classic;startArrow=classic;html=1;exitX=0.25;exitY=1;entryX=0.25;entryY=0;" edge="1" parent="1" source="backend-layer" target="data-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn6" value="Redis Protocol" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="backend-layer" target="data-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn7" value="REST API" style="endArrow=classic;startArrow=classic;html=1;exitX=0.75;exitY=1;entryX=0.75;entryY=0;" edge="1" parent="1" source="backend-layer" target="data-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Backend to External Services -->
+        <mxCell id="conn8" value="OAuth2" style="endArrow=classic;startArrow=classic;html=1;exitX=0.15;exitY=1;entryX=0.15;entryY=0;" edge="1" parent="1" source="backend-layer" target="external-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn9" value="SMTP" style="endArrow=classic;html=1;exitX=0.35;exitY=1;entryX=0.35;entryY=0;" edge="1" parent="1" source="backend-layer" target="external-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn10" value="API" style="endArrow=classic;startArrow=classic;html=1;exitX=0.6;exitY=1;entryX=0.6;entryY=0;" edge="1" parent="1" source="backend-layer" target="external-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="conn11" value="API" style="endArrow=classic;startArrow=classic;html=1;exitX=0.85;exitY=1;entryX=0.85;entryY=0;" edge="1" parent="1" source="backend-layer" target="external-layer">
+          <mxGeometry width="50" height="50" relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Tech Stack Legend -->
+        <mxCell id="legend" value="&lt;b&gt;TECHNOLOGY STACK&lt;/b&gt;" 
+          style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" 
+          vertex="1" parent="1">
+          <mxGeometry x="1350" y="80" width="220" height="400" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-frontend" value="&lt;b&gt;Frontend:&lt;/b&gt;&lt;br&gt;• React 19&lt;br&gt;• TypeScript 6&lt;br&gt;• Vite 8&lt;br&gt;• TanStack Query 5&lt;br&gt;• Zustand 5&lt;br&gt;• React Router 7&lt;br&gt;• Tailwind CSS 4&lt;br&gt;• React Hook Form 7&lt;br&gt;• Zod 4&lt;br&gt;• Axios&lt;br&gt;• Recharts" 
+          style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;spacingLeft=10;" 
+          vertex="1" parent="legend">
+          <mxGeometry y="30" width="220" height="180" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend-backend" value="&lt;b&gt;Backend:&lt;/b&gt;&lt;br&gt;• Java 17&lt;br&gt;• Spring Boot 3.2.4&lt;br&gt;• Spring Security&lt;br&gt;• Spring Data JPA&lt;br&gt;• JWT (jjwt 0.12.5)&lt;br&gt;• MapStruct 1.5.5&lt;br&gt;• Lombok&lt;br&gt;• MySQL Connector&lt;br&gt;• Redis&lt;br&gt;• Cloudinary SDK" 
+          style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;spacingLeft=10;" 
+          vertex="1" parent="legend">
+          <mxGeometry y="210" width="220" height="190" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

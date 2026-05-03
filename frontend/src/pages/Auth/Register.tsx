@@ -8,6 +8,7 @@ import { authApi } from '../../api/authApi';
 import { Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react';
 import clsx from 'clsx';
 import type { RegisterRequest } from '../../types/user.types';
+import { toast } from '../../utils/toast';
 
 const registerSchema = z.object({
   fullName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
@@ -23,12 +24,6 @@ const registerSchema = z.object({
 });
 
 type RegisterForm = z.infer<typeof registerSchema>;
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
 
 export const Register = () => {
   const [showPassword, setShowPassword] = useState(false);

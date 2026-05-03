@@ -1,0 +1,352 @@
+{
+  "diagram": {
+    "name": "HMK Eyewear - System Architecture",
+    "version": "1.0",
+    "cells": [
+      {
+        "id": "0"
+      },
+      {
+        "id": "1",
+        "parent": "0"
+      },
+      {
+        "id": "client-layer",
+        "value": "Client Layer",
+        "style": "swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;",
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 40,
+          "y": 40,
+          "width": 800,
+          "height": 120
+        }
+      },
+      {
+        "id": "web-client",
+        "value": "React Web App\n(Vite + TypeScript)\n- React Router\n- TanStack Query\n- Zustand\n- Tailwind CSS",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;",
+        "vertex": "1",
+        "parent": "client-layer",
+        "geometry": {
+          "x": 50,
+          "y": 40,
+          "width": 200,
+          "height": 70
+        }
+      },
+      {
+        "id": "mobile-client",
+        "value": "Mobile Browser\n(Responsive Design)",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;",
+        "vertex": "1",
+        "parent": "client-layer",
+        "geometry": {
+          "x": 300,
+          "y": 40,
+          "width": 200,
+          "height": 70
+        }
+      },
+      {
+        "id": "admin-client",
+        "value": "Admin Dashboard\n(React SPA)",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;",
+        "vertex": "1",
+        "parent": "client-layer",
+        "geometry": {
+          "x": 550,
+          "y": 40,
+          "width": 200,
+          "height": 70
+        }
+      },
+      {
+        "id": "api-gateway",
+        "value": "API Gateway / Load Balancer",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;",
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 340,
+          "y": 200,
+          "width": 200,
+          "height": 60
+        }
+      },
+      {
+        "id": "backend-layer",
+        "value": "Backend Layer",
+        "style": "swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;",
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 40,
+          "y": 300,
+          "width": 800,
+          "height": 280
+        }
+      },
+      {
+        "id": "spring-boot",
+        "value": "Spring Boot Application\n(Java 17)\n\n- Spring Web MVC\n- Spring Security + JWT\n- Spring Data JPA\n- Spring Mail\n- OAuth2 Client",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;",
+        "vertex": "1",
+        "parent": "backend-layer",
+        "geometry": {
+          "x": 50,
+          "y": 40,
+          "width": 250,
+          "height": 120
+        }
+      },
+      {
+        "id": "controllers",
+        "value": "REST Controllers\n- Auth\n- Products\n- Orders\n- Cart\n- Reviews\n- Admin",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;",
+        "vertex": "1",
+        "parent": "backend-layer",
+        "geometry": {
+          "x": 350,
+          "y": 40,
+          "width": 180,
+          "height": 100
+        }
+      },
+      {
+        "id": "services",
+        "value": "Business Logic\n- Service Layer\n- DTOs\n- MapStruct Mappers\n- Validation",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;",
+        "vertex": "1",
+        "parent": "backend-layer",
+        "geometry": {
+          "x": 570,
+          "y": 40,
+          "width": 180,
+          "height": 100
+        }
+      },
+      {
+        "id": "security",
+        "value": "Security Layer\n- JWT Authentication\n- OAuth2 (Google)\n- Role-based Access\n- CORS Config",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;",
+        "vertex": "1",
+        "parent": "backend-layer",
+        "geometry": {
+          "x": 50,
+          "y": 170,
+          "width": 250,
+          "height": 90
+        }
+      },
+      {
+        "id": "repositories",
+        "value": "Data Access Layer\n- JPA Repositories\n- Custom Queries\n- Entity Graphs",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;",
+        "vertex": "1",
+        "parent": "backend-layer",
+        "geometry": {
+          "x": 350,
+          "y": 170,
+          "width": 180,
+          "height": 90
+        }
+      },
+      {
+        "id": "data-layer",
+        "value": "Data & Cache Layer",
+        "style": "swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;",
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 40,
+          "y": 620,
+          "width": 800,
+          "height": 150
+        }
+      },
+      {
+        "id": "mysql",
+        "value": "MySQL Database\n- Users\n- Products\n- Orders\n- Reviews\n- Categories\n- Collections",
+        "style": "shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f5f5f5;strokeColor=#666666;",
+        "vertex": "1",
+        "parent": "data-layer",
+        "geometry": {
+          "x": 50,
+          "y": 40,
+          "width": 200,
+          "height": 90
+        }
+      },
+      {
+        "id": "redis",
+        "value": "Redis Cache\n- Session Storage\n- Token Blacklist\n- Cache Layer",
+        "style": "shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;",
+        "vertex": "1",
+        "parent": "data-layer",
+        "geometry": {
+          "x": 300,
+          "y": 40,
+          "width": 200,
+          "height": 90
+        }
+      },
+      {
+        "id": "cloudinary",
+        "value": "Cloudinary\n- Image Storage\n- CDN\n- Image Optimization",
+        "style": "shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;",
+        "vertex": "1",
+        "parent": "data-layer",
+        "geometry": {
+          "x": 550,
+          "y": 40,
+          "width": 200,
+          "height": 90
+        }
+      },
+      {
+        "id": "external-services",
+        "value": "External Services",
+        "style": "swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#ffe6cc;strokeColor=#d79b00;",
+        "vertex": "1",
+        "parent": "1",
+        "geometry": {
+          "x": 900,
+          "y": 300,
+          "width": 280,
+          "height": 280
+        }
+      },
+      {
+        "id": "google-oauth",
+        "value": "Google OAuth2\n- Social Login",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;",
+        "vertex": "1",
+        "parent": "external-services",
+        "geometry": {
+          "x": 40,
+          "y": 40,
+          "width": 200,
+          "height": 50
+        }
+      },
+      {
+        "id": "smtp",
+        "value": "SMTP Server\n- Email Notifications\n- Order Confirmations",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;",
+        "vertex": "1",
+        "parent": "external-services",
+        "geometry": {
+          "x": 40,
+          "y": 110,
+          "width": 200,
+          "height": 60
+        }
+      },
+      {
+        "id": "payment-gateway",
+        "value": "Payment Gateway\n- COD\n- Online Payment",
+        "style": "rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;",
+        "vertex": "1",
+        "parent": "external-services",
+        "geometry": {
+          "x": 40,
+          "y": 190,
+          "width": 200,
+          "height": 60
+        }
+      },
+      {
+        "id": "edge-web-client",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "web-client",
+        "target": "api-gateway"
+      },
+      {
+        "id": "edge-mobile-client",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "mobile-client",
+        "target": "api-gateway"
+      },
+      {
+        "id": "edge-admin-client",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "admin-client",
+        "target": "api-gateway"
+      },
+      {
+        "id": "edge-gateway-backend",
+        "value": "HTTPS/REST",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "api-gateway",
+        "target": "spring-boot"
+      },
+      {
+        "id": "edge-backend-mysql",
+        "value": "JDBC",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "repositories",
+        "target": "mysql"
+      },
+      {
+        "id": "edge-backend-redis",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "spring-boot",
+        "target": "redis"
+      },
+      {
+        "id": "edge-backend-cloudinary",
+        "value": "REST API",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "spring-boot",
+        "target": "cloudinary"
+      },
+      {
+        "id": "edge-backend-oauth",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "security",
+        "target": "google-oauth"
+      },
+      {
+        "id": "edge-backend-smtp",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "spring-boot",
+        "target": "smtp"
+      },
+      {
+        "id": "edge-backend-payment",
+        "value": "",
+        "style": "edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;",
+        "edge": "1",
+        "parent": "1",
+        "source": "services",
+        "target": "payment-gateway"
+      }
+    ]
+  }
+}

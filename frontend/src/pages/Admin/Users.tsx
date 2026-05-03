@@ -4,11 +4,7 @@ import { adminApi } from '../../api/adminApi';
 import { formatDate } from '../../utils/formatters';
 import { Search, Eye, X, UserCheck, UserX, Shield } from 'lucide-react';
 import clsx from 'clsx';
-
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 const AdminUsers = () => {
   const queryClient = useQueryClient();

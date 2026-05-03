@@ -7,12 +7,7 @@ import { formatVND } from '../../utils/formatters';
 import { useDebounce } from '../../hooks/useDebounce';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
 import type { CartItem } from '../../types/cart.types';
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 const CartItemRow = ({ item }: { item: CartItem }) => {
   console.log('[CartItemRow] Rendering item:', item);

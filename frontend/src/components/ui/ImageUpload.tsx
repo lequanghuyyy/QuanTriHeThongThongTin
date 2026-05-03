@@ -40,7 +40,7 @@ export const ImageUpload = ({ value, onChange, maxFiles = 5 }: ImageUploadProps)
 
   const processFiles = async (files: File[]) => {
     if (value.length + files.length > maxFiles) {
-      alert(`Chỉ được tải lên tối đa ${maxFiles} ảnh.`);
+      toast.warning(`Chỉ được tải lên tối đa ${maxFiles} ảnh.`);
       return;
     }
 

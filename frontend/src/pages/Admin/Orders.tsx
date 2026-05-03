@@ -6,12 +6,7 @@ import { Search, Eye, X, Save, Truck, CreditCard } from 'lucide-react';
 import clsx from 'clsx';
 import type { OrderStatus } from '../../types/order.types';
 import { useForm } from 'react-hook-form';
-
-// Mock toast
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 const statusOptions = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPING', 'DELIVERED', 'CANCELLED', 'REFUNDED'];
 

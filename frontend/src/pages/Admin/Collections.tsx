@@ -4,11 +4,7 @@ import { adminApi } from '../../api/adminApi';
 import { Plus, Edit2, Trash2, Power, PowerOff, X, Package } from 'lucide-react';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
-
-const toast = {
-  success: (msg: string) => alert(msg),
-  error: (msg: string) => alert(msg)
-};
+import { toast } from '../../utils/toast';
 
 interface Collection {
   id: number;

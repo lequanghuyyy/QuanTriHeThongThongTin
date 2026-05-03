@@ -1,31 +1,60 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Product } from '../../../types/product.types';
 import { formatVND } from '../../../utils/formatters';
 import { useCartStore } from '../../../store/cartStore';
+import { cartApi } from '../../../api/cartApi';
+import { toast } from '../../../utils/toast';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const { incrementCount } = useCartStore();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { setItemCount } = useCartStore();
   const [isHovered, setIsHovered] = useState(false);
 
   const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.thumbnailUrl;
   const secondaryImage = product.images?.find(img => !img.isPrimary)?.imageUrl || primaryImage;
   const displayImage = isHovered ? secondaryImage : primaryImage;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const addToCartMutation = useMutation({
+    mutationFn: ({ variantId, quantity }: { variantId: number; quantity: number }) => {
+      return cartApi.addItem(variantId, quantity);
+    },
+    onSuccess: (response) => {
+      const cart = response;
+      if (cart && typeof cart.itemCount === 'number') {
+        setItemCount(cart.itemCount);
+      }
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: () => toast.error("Không thể thêm vào giỏ"),
+  });
+
+  const handleBuyNow = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
     const availableVariant = product.variants?.find(v => v.stockQuantity > 0);
-    if (availableVariant || product.variants?.length === 0) {
-      incrementCount(1);
-      alert('Đã thêm vào giỏ hàng');
-    } else {
-      alert('Sản phẩm đã hết hàng');
+    
+    if (!availableVariant) {
+      toast.error('Sản phẩm đã hết hàng');
+      return;
     }
+
+    addToCartMutation.mutate(
+      { variantId: availableVariant.id, quantity: 1 },
+      {
+        onSuccess: () => {
+          toast.success("Đã thêm vào giỏ hàng!");
+          navigate('/gio-hang');
+        }
+      }
+    );
   };
 
   const colors = product.variants?.map(v => v.colorHex).filter((v, i, a) => a.indexOf(v) === i) || [];
@@ -62,10 +91,11 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 mix-blend-multiply rounded-xl"
         />
         
-        {/* Nút thêm vào giỏ hàng */}
+        {/* Nút mua ngay */}
         <button 
-          onClick={handleAddToCart}
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-primary text-white w-[90%] py-2.5 rounded-button font-medium text-sm flex items-center justify-center gap-2 hover:bg-gray-800 shadow-md"
+          onClick={handleBuyNow}
+          disabled={addToCartMutation.isPending || !product.variants?.some(v => v.stockQuantity > 0)}
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-primary text-white w-[90%] py-2.5 rounded-button font-medium text-sm flex items-center justify-center gap-2 hover:bg-gray-800 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="material-symbols-outlined text-[16px]">shopping_cart</span> Mua ngay
         </button>

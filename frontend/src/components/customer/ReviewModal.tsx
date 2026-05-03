@@ -4,6 +4,7 @@ import { reviewApi, type CreateReviewRequest, type ReviewableItem } from '../../
 import { axiosInstance } from '../../api/axiosInstance';
 import { Star, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
+import { toast } from '../../utils/toast';
 
 interface ReviewModalProps {
   item: ReviewableItem;
@@ -28,11 +29,11 @@ export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
       queryClient.invalidateQueries({ queryKey: ['product', item.productSlug] });
       queryClient.invalidateQueries({ queryKey: ['my-reviews'] });
       queryClient.invalidateQueries({ queryKey: ['reviewable-items'] });
-      alert('Đánh giá của bạn đã được gửi thành công!');
+      toast.success('Đánh giá của bạn đã được gửi thành công!');
       onClose();
     },
     onError: (error: any) => {
-      alert(error.response?.data?.message || 'Không thể gửi đánh giá');
+      toast.error(error.response?.data?.message || 'Không thể gửi đánh giá');
     },
   });
 
@@ -42,7 +43,7 @@ export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
 
     // Limit to 5 images total
     if (images.length + files.length > 5) {
-      alert('Bạn chỉ có thể upload tối đa 5 ảnh');
+      toast.warning('Bạn chỉ có thể upload tối đa 5 ảnh');
       return;
     }
 
@@ -72,7 +73,7 @@ export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
       const uploadedUrls = await Promise.all(uploadPromises);
       setImages((prev) => [...prev, ...uploadedUrls]);
     } catch (error: any) {
-      alert(error.message || 'Không thể upload ảnh');
+      toast.error(error.message || 'Không thể upload ảnh');
     } finally {
       setUploading(false);
     }
@@ -85,7 +86,7 @@ export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) {
-      alert('Vui lòng điền đầy đủ thông tin');
+      toast.warning('Vui lòng điền đầy đủ thông tin');
       return;
     }
     createReviewMutation.mutate({

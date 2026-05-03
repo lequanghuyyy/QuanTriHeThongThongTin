@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm as useHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,6 +44,7 @@ export const Checkout = () => {
   const [qrOrderCode, setQrOrderCode] = useState('');
   const [qrAmount, setQrAmount] = useState(0);
   const [countdown, setCountdown] = useState(5);
+  const [isCheckoutSuccess, setIsCheckoutSuccess] = useState(false); // Flag để bỏ qua check cart empty
 
   // Queries
   const { data: cartData, isLoading: isCartLoading } = useQuery({
@@ -64,8 +65,14 @@ export const Checkout = () => {
     }
   }, [addressesData, selectedAddressId]);
 
+  // Debug modal state
+  useEffect(() => {
+    console.log('[QR Modal Debug] Modal state changed:', { showQRModal, qrOrderCode, qrAmount });
+  }, [showQRModal, qrOrderCode, qrAmount]);
+
   // Countdown timer cho QR modal
   useEffect(() => {
+    console.log('[QR Modal Debug] showQRModal:', showQRModal, 'countdown:', countdown);
     if (!showQRModal || countdown <= 0) return;
     
     const timer = setTimeout(() => {
@@ -90,24 +97,34 @@ export const Checkout = () => {
   const checkoutMutation = useMutation({
     mutationFn: (data: CheckoutRequest) => orderApi.checkout(data),
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-      clearCount();
+      console.log('[Checkout Debug] Response:', res);
+      setIsCheckoutSuccess(true); // Đánh dấu checkout thành công
       
       // Nếu là chuyển khoản, hiện modal QR
       if (paymentMethod === 'BANK_TRANSFER') {
+        console.log('[Checkout Debug] Setting QR data:', { orderCode: res.orderCode, totalAmount: res.totalAmount });
         setQrOrderCode(res.orderCode);
         setQrAmount(res.totalAmount);
         setCountdown(5); // Reset countdown về 5
         setShowQRModal(true);
+        
+        // Invalidate cart sau khi đã set state
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
+        clearCount();
       } else {
         // COD thì chuyển thẳng
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
+        clearCount();
         navigate(`/tai-khoan/don-hang/${res.orderCode}`, {
           state: { isNewOrder: true }
         });
         toast.success("Đặt hàng thành công!");
       }
     },
-    onError: () => toast.error("Có lỗi xảy ra khi đặt hàng")
+    onError: (error) => {
+      console.error('[Checkout Debug] Error:', error);
+      toast.error("Có lỗi xảy ra khi đặt hàng");
+    }
   });
 
   const addAddressMutation = useMutation({
@@ -137,7 +154,8 @@ export const Checkout = () => {
   const cart = cartData;
   const addresses = addressesData || [];
 
-  if (!cart || cart.items.length === 0) {
+  // Chỉ redirect về giỏ hàng nếu cart trống VÀ chưa checkout thành công
+  if ((!cart || cart.items.length === 0) && !isCheckoutSuccess) {
     return <Navigate to="/gio-hang" replace />;
   }
 
@@ -148,6 +166,12 @@ export const Checkout = () => {
     }
     if (!selectedAddressId) {
       toast.error("Vui lòng chọn địa chỉ giao hàng");
+      return;
+    }
+
+    // Kiểm tra cart có items không
+    if (!cart || !cart.items || cart.items.length === 0) {
+      toast.error("Giỏ hàng trống");
       return;
     }
 
@@ -165,7 +189,7 @@ export const Checkout = () => {
     checkoutMutation.mutate(payload);
   };
 
-  const subtotal = cart.subtotal;
+  const subtotal = cart?.subtotal || 0;
   const shippingFee = 0; // TBD logic
   // Since we don't have discountAmount fetched here natively if we didn't revalidate,
   // ideally we should call validateCoupon again or backend handles it on checkout.
@@ -180,7 +204,10 @@ export const Checkout = () => {
     const amount = qrAmount;
     const description = `Thanh toan don hang ${qrOrderCode}`;
     
-    return `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(description)}&accountName=${encodeURIComponent(accountName)}`;
+    const url = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(description)}&accountName=${encodeURIComponent(accountName)}`;
+    console.log('[QR URL Debug] Generated URL:', url);
+    console.log('[QR URL Debug] Amount:', amount, 'OrderCode:', qrOrderCode);
+    return url;
   };
 
   return (
@@ -370,7 +397,7 @@ export const Checkout = () => {
             <h2 className="text-xl font-serif text-gray-900 mb-6">Tóm tắt đơn hàng</h2>
             
             <div className="flex flex-col gap-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-              {cart.items.map((item: any) => (
+              {cart && cart.items && cart.items.map((item: any) => (
                 <div key={item.id} className="flex gap-4">
                   <div className="w-16 h-16 bg-white border border-gray-100 rounded flex items-center justify-center shrink-0">
                     <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply p-1" />
@@ -436,10 +463,16 @@ export const Checkout = () => {
 
       {/* QR Payment Modal */}
       {showQRModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-8 relative animate-fade-in">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 9999 }} onClick={(e) => {
+          // Chỉ đóng khi click vào backdrop, không phải modal content
+          if (e.target === e.currentTarget) {
+            console.log('[QR Modal Debug] Backdrop clicked');
+          }
+        }}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 relative animate-fade-in" onClick={(e) => e.stopPropagation()}>
             <button 
               onClick={() => {
+                console.log('[QR Modal Debug] Close button clicked');
                 setShowQRModal(false);
                 toast.success("Thanh toán thành công!");
                 setTimeout(() => {
@@ -466,7 +499,9 @@ export const Checkout = () => {
                     src={generateQRUrl()} 
                     alt="QR Code" 
                     className="w-64 h-64 mx-auto"
+                    onLoad={() => console.log('[QR Modal Debug] QR image loaded successfully')}
                     onError={(e) => {
+                      console.error('[QR Modal Debug] QR image failed to load, using fallback');
                       // Fallback nếu API không hoạt động
                       e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(`Thanh toan don hang ${qrOrderCode} - ${formatVND(qrAmount)}`)}`;
                     }}
@@ -490,6 +525,7 @@ export const Checkout = () => {
 
               <button
                 onClick={() => {
+                  console.log('[QR Modal Debug] View orders button clicked');
                   setShowQRModal(false);
                   toast.success("Thanh toán thành công!");
                   setTimeout(() => {

@@ -6,13 +6,13 @@ import { AdminLayout } from './layouts/AdminLayout';
 
 import { Home } from './pages/Home';
 import { ProductList } from './pages/ProductList';
-
 import { ProductDetail } from './pages/ProductDetail';
 import { Cart } from './pages/Cart';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 import { ForgotPassword } from './pages/Auth/ForgotPassword';
 import { OAuth2RedirectHandler } from './pages/Auth/OAuth2RedirectHandler';
+
 const StoreLocator = () => <div className="p-8">StoreLocator</div>
 const CollectionDetail = () => <div className="p-8">CollectionDetail</div>
 
@@ -63,43 +63,49 @@ function App() {
     <>
       <Toaster position="top-right" richColors />
       <Routes>
-      <Route element={<MainLayout><ProtectedRoute><Outlet /></ProtectedRoute></MainLayout>}>
-        <Route path="/thanh-toan" element={<Checkout />} />
-        <Route path="/tai-khoan" element={<CustomerDashboardLayout />}>
-          <Route index element={<Overview />} />
-          <Route path="don-hang" element={<OrderHistory />} />
-          <Route path="don-hang/:orderCode" element={<OrderDetail />} />
-          <Route path="thong-tin" element={<Profile />} />
-          <Route path="dia-chi" element={<Addresses />} />
-          <Route path="danh-gia" element={<Reviews />} />
-        </Route>
-      </Route>
-
-      <Route element={<MainLayout><Outlet /></MainLayout>}>
-        <Route path="/" element={<Home />} />
-        <Route path="/san-pham" element={<ProductList />} />
-        <Route path="/san-pham/:slug" element={<ProductDetail />} />
-        <Route path="/gio-hang" element={<Cart />} />
+        
+       
         <Route path="/dang-nhap" element={<Login />} />
         <Route path="/dang-ky" element={<Register />} />
         <Route path="/quen-mat-khau" element={<ForgotPassword />} />
         <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
-        <Route path="/bo-suu-tap/:slug" element={<CollectionDetail />} />
-        <Route path="/cua-hang" element={<StoreLocator />} />
-      </Route>
 
-      {/* Admin Routes with AdminLayout */}
-      <Route element={<AdminLayout><AdminRoute><Outlet /></AdminRoute></AdminLayout>}>
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/san-pham" element={<AdminProducts />} />
-        <Route path="/admin/don-hang" element={<AdminOrders />} />
-        <Route path="/admin/danh-muc" element={<AdminCategories />} />
-        <Route path="/admin/bo-suu-tap" element={<AdminCollections />} />
-        <Route path="/admin/nguoi-dung" element={<AdminUsers />} />
-      </Route>
+        
+        <Route element={<MainLayout><ProtectedRoute><Outlet /></ProtectedRoute></MainLayout>}>
+          <Route path="/thanh-toan" element={<Checkout />} />
+          <Route path="/tai-khoan" element={<CustomerDashboardLayout />}>
+            <Route index element={<Overview />} />
+            <Route path="don-hang" element={<OrderHistory />} />
+            <Route path="don-hang/:orderCode" element={<OrderDetail />} />
+            <Route path="thong-tin" element={<Profile />} />
+            <Route path="dia-chi" element={<Addresses />} />
+            <Route path="danh-gia" element={<Reviews />} />
+          </Route>
+        </Route>
+
+      
+        <Route element={<MainLayout><Outlet /></MainLayout>}>
+          <Route path="/" element={<Home />} />
+          <Route path="/san-pham" element={<ProductList />} />
+          <Route path="/san-pham/:slug" element={<ProductDetail />} />
+          <Route path="/gio-hang" element={<Cart />} />
+          <Route path="/bo-suu-tap/:slug" element={<CollectionDetail />} />
+          <Route path="/cua-hang" element={<StoreLocator />} />
+        </Route>
+
+        
+        <Route element={<AdminLayout><AdminRoute><Outlet /></AdminRoute></AdminLayout>}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/san-pham" element={<AdminProducts />} />
+          <Route path="/admin/don-hang" element={<AdminOrders />} />
+          <Route path="/admin/danh-muc" element={<AdminCategories />} />
+          <Route path="/admin/bo-suu-tap" element={<AdminCollections />} />
+          <Route path="/admin/nguoi-dung" element={<AdminUsers />} />
+        </Route>
+
       </Routes>
     </>
   )
 }
 
-export default App
+export default App;

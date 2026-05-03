@@ -37,8 +37,8 @@ export const ForgotPassword = () => {
         {!isSuccess ? (
           <>
             <div className="text-center mb-8">
-              <h1 className="font-serif text-3xl text-gray-900 mb-3">Quên mật khẩu?</h1>
-              <p className="text-gray-500 text-sm">Nhập email của bạn và chúng tôi sẽ gửi liên kết để đặt lại mật khẩu.</p>
+              <h1 className="font-bold text-3xl text-black mb-3">Quên mật khẩu?</h1>
+              <p className="text-[#474747] text-sm mt-3">Nhập email của bạn và chúng tôi sẽ gửi liên kết để đặt lại mật khẩu.</p>
             </div>
 
             <form onSubmit={handleSubmit(data => forgotPasswordMutation.mutate(data))} className="space-y-6">
@@ -49,7 +49,7 @@ export const ForgotPassword = () => {
               )}
 
               <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-widest mb-2">Địa chỉ Email</label>
+                <label className="block text-xs font-semibold text-[#474747] uppercase tracking-widest mb-2">Địa chỉ Email</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Mail size={18} className="text-gray-400" />

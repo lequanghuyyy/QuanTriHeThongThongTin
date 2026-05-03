@@ -3,6 +3,9 @@ package com.hmkeyewear.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -28,6 +31,10 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "order_item_id")
     private OrderItem orderItem;
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ReviewImage> images = new ArrayList<>();
+
     private int rating;
 
     private String title;
@@ -38,4 +45,15 @@ public class Review extends BaseEntity {
     private boolean isVerifiedPurchase;
 
     private boolean isApproved;
+    
+    // Helper methods
+    public void addImage(ReviewImage image) {
+        images.add(image);
+        image.setReview(this);
+    }
+    
+    public void removeImage(ReviewImage image) {
+        images.remove(image);
+        image.setReview(null);
+    }
 }

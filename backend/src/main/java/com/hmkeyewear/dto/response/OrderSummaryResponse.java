@@ -9,6 +9,7 @@ import java.time.Instant;
 @Data
 @Builder
 public class OrderSummaryResponse {
+    private Long id;
     private String orderCode;
     private String status;
     private BigDecimal totalAmount;

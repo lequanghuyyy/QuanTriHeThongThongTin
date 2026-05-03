@@ -24,7 +24,7 @@ public class ReviewController {
             Authentication authentication,
             @Valid @RequestBody CreateReviewRequest request
     ) {
-        return ResponseEntity.ok(ApiResponse.success("Review submitted and waiting for approval", reviewService.createReview(authentication.getName(), request)));
+        return ResponseEntity.ok(ApiResponse.success("Review submitted successfully", reviewService.createReview(authentication.getName(), request)));
     }
 
     @GetMapping("/api/v1/products/{slug}/reviews")
@@ -40,5 +40,18 @@ public class ReviewController {
         org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortParams[0]));
         
         return ResponseEntity.ok(ApiResponse.success(reviewService.getProductReviews(slug, rating, pageable)));
+    }
+
+    @GetMapping("/api/v1/reviews/my-reviews")
+    public ResponseEntity<ApiResponse<java.util.List<ReviewResponse>>> getMyReviews(Authentication authentication) {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getMyReviews(authentication.getName())));
+    }
+
+    @GetMapping("/api/v1/orders/{orderCode}/reviewable-items")
+    public ResponseEntity<ApiResponse<java.util.List<com.hmkeyewear.dto.response.ReviewableItemResponse>>> getReviewableItems(
+            Authentication authentication,
+            @PathVariable String orderCode
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(reviewService.getReviewableItems(authentication.getName(), orderCode)));
     }
 }

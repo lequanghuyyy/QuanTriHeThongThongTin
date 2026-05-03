@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { orderApi } from '../../api/orderApi';
+import { reviewApi, type ReviewableItem } from '../../api/reviewApi';
 import { formatVND, formatDate } from '../../utils/formatters';
-import { CheckCircle2, Package, Truck, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, Package, Truck, ArrowLeft, Star } from 'lucide-react';
+import { ReviewModal } from '../../components/customer/ReviewModal';
 import clsx from 'clsx';
 
 const steps = [
@@ -18,11 +20,18 @@ export const OrderDetail = () => {
   const { orderCode } = useParams();
   const location = useLocation();
   const [showConfetti, setShowConfetti] = useState(false);
+  const [reviewingItem, setReviewingItem] = useState<ReviewableItem | null>(null);
 
   const { data: orderData, isLoading } = useQuery({
     queryKey: ['order', orderCode],
     queryFn: () => orderApi.getByCode(orderCode!),
     enabled: !!orderCode,
+  });
+
+  const { data: reviewableItems } = useQuery({
+    queryKey: ['reviewable-items', orderCode],
+    queryFn: () => reviewApi.getReviewableItems(orderCode!),
+    enabled: !!orderCode && orderData?.status === 'DELIVERED',
   });
 
   useEffect(() => {
@@ -37,6 +46,11 @@ export const OrderDetail = () => {
   if (!orderData) return <div className="py-12 text-center text-danger">Không tìm thấy đơn hàng.</div>;
 
   const order = orderData;
+  
+  // Parse shippingAddress if it's a JSON string
+  const shippingAddress = typeof order.shippingAddress === 'string' 
+    ? JSON.parse(order.shippingAddress) 
+    : order.shippingAddress;
 
   // Determine current step index
   let currentStepIndex = steps.findIndex(s => s.status === order.status);
@@ -118,23 +132,39 @@ export const OrderDetail = () => {
           <section className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-6 flex items-center gap-2"><Package size={18}/> Sản phẩm</h3>
             <div className="space-y-4">
-              {order.items.map((item: any) => (
-                <div key={item.id} className="flex gap-4 items-center pb-4 border-b border-gray-50 last:border-0 last:pb-0">
-                  <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded p-1 shrink-0">
-                    <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />
+              {order.items.map((item: any) => {
+                const reviewableItem = reviewableItems?.find((ri: ReviewableItem) => ri.orderItemId === item.id);
+                return (
+                  <div key={item.id} className="flex gap-4 items-center pb-4 border-b border-gray-50 last:border-0 last:pb-0">
+                    <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded p-1 shrink-0">
+                      <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <Link to={`/san-pham/${item.slug}`} className="font-medium text-gray-900 hover:text-primary transition-colors">
+                        {item.productName}
+                      </Link>
+                      <p className="text-sm text-gray-500 mt-1">{item.variantName}</p>
+                      <p className="text-sm text-gray-500 mt-1">{formatVND(item.unitPrice)} x {item.quantity}</p>
+                      {reviewableItem && !reviewableItem.alreadyReviewed && (
+                        <button
+                          onClick={() => setReviewingItem(reviewableItem)}
+                          className="mt-2 inline-flex items-center gap-1.5 text-sm text-primary hover:text-gray-800 font-medium transition-colors"
+                        >
+                          <Star size={14} /> Đánh giá sản phẩm
+                        </button>
+                      )}
+                      {reviewableItem && reviewableItem.alreadyReviewed && (
+                        <span className="mt-2 inline-flex items-center gap-1.5 text-sm text-gray-500">
+                          <CheckCircle2 size={14} className="text-success" /> Đã đánh giá
+                        </span>
+                      )}
+                    </div>
+                    <div className="font-medium text-gray-900 text-right">
+                      {formatVND(item.totalPrice)}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <Link to={`/san-pham/${item.slug}`} className="font-medium text-gray-900 hover:text-primary transition-colors">
-                      {item.productName}
-                    </Link>
-                    <p className="text-sm text-gray-500 mt-1">{item.variantName}</p>
-                    <p className="text-sm text-gray-500 mt-1">{formatVND(item.unitPrice)} x {item.quantity}</p>
-                  </div>
-                  <div className="font-medium text-gray-900 text-right">
-                    {formatVND(item.totalPrice)}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -179,11 +209,11 @@ export const OrderDetail = () => {
           <section className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2"><Truck size={18}/> Giao hàng đến</h3>
             <div className="text-sm space-y-2">
-              <p className="font-medium text-gray-900">{order.shippingAddress.recipientName}</p>
-              <p className="text-gray-600">{order.shippingAddress.phone}</p>
+              <p className="font-medium text-gray-900">{shippingAddress.recipientName}</p>
+              <p className="text-gray-600">{shippingAddress.phone}</p>
               <p className="text-gray-600 leading-relaxed mt-2">
-                {order.shippingAddress.addressDetail}<br/>
-                {order.shippingAddress.ward}, {order.shippingAddress.district}, {order.shippingAddress.province}
+                {shippingAddress.addressDetail}<br/>
+                {shippingAddress.ward}, {shippingAddress.district}, {shippingAddress.province}
               </p>
             </div>
           </section>
@@ -196,6 +226,11 @@ export const OrderDetail = () => {
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      {reviewingItem && (
+        <ReviewModal item={reviewingItem} onClose={() => setReviewingItem(null)} />
+      )}
     </div>
   );
 };

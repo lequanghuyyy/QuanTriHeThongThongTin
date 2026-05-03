@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
     OrderDetailResponse checkout(String userEmail, CheckoutRequest request);
-    Page<OrderSummaryResponse> getUserOrders(String userEmail, Pageable pageable);
+    Page<OrderSummaryResponse> getUserOrders(String userEmail, Pageable pageable, String status);
     OrderDetailResponse getOrderDetails(String userEmail, String orderCode);
     void cancelOrder(String userEmail, String orderCode);
     CouponValidateResponse validateCoupon(String userEmail, CouponValidateRequest request);

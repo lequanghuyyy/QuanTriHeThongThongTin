@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     
     boolean existsByOrderItemIdAndUserId(Long orderItemId, String userId);
+    
+    boolean existsByProductIdAndUserIdAndOrderItemIsNull(Long productId, String userId);
 
     Page<Review> findByProductSlugAndIsApprovedTrue(String slug, Pageable pageable);
 
@@ -22,6 +24,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findApprovedByProductSlugAndRating(String slug, Integer rating, Pageable pageable);
 
     List<Review> findByProductAndIsApprovedTrue(Product product);
+    
+    List<Review> findByUserIdOrderByCreatedAtDesc(String userId);
 
     @Query("SELECT r.rating as rating, COUNT(r) as count FROM Review r WHERE r.product.slug = :slug AND r.isApproved = true GROUP BY r.rating")
     List<Object[]> getRatingDistribution(String slug);

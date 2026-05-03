@@ -97,8 +97,10 @@ export interface Review {
 }
 
 export interface ReviewSummary {
-  averageRating: number;
-  totalCount: number;
-  ratingDistribution: Record<1 | 2 | 3 | 4 | 5, number>;
+  summary: {
+    avgRating: number;
+    totalCount: number;
+    ratingDistribution: Record<1 | 2 | 3 | 4 | 5, number>;
+  };
   reviews: Page<Review>;
 }

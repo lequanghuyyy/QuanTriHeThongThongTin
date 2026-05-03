@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-import { reviewApi } from '../../api/reviewApi';
+import { reviewApi, type ReviewResponse } from '../../api/reviewApi';
 import { formatDate } from '../../utils/formatters';
-import { Star, MessageSquare } from 'lucide-react';
+import { Star, MessageSquare, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import clsx from 'clsx';
 
 export const Reviews = () => {
-  const { data: reviewsData, isLoading } = useQuery({
+  const { data: reviews, isLoading } = useQuery<ReviewResponse[]>({
     queryKey: ['my-reviews'],
     queryFn: () => reviewApi.getMyReviews(),
   });
-
-  const reviews = reviewsData || [];
 
   return (
     <div className="animate-fade-in">
@@ -18,7 +17,7 @@ export const Reviews = () => {
 
       {isLoading ? (
         <div className="text-center py-8 text-gray-500">Đang tải đánh giá...</div>
-      ) : reviews.length === 0 ? (
+      ) : !reviews || reviews.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-12 text-center flex flex-col items-center">
           <MessageSquare size={48} className="text-gray-200 mb-4" />
           <p className="text-gray-500 mb-4">Bạn chưa có đánh giá nào.</p>
@@ -26,18 +25,39 @@ export const Reviews = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review: any) => (
+          {reviews.map((review) => (
             <div key={review.id} className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm">
               <div className="flex flex-col sm:flex-row gap-6">
                 <div className="w-20 h-20 bg-gray-50 border border-gray-100 rounded p-2 flex-shrink-0">
-                  <img src={review.product?.thumbnailUrl || 'https://placehold.co/100'} alt={review.product?.name} className="w-full h-full object-contain mix-blend-multiply" />
+                  <img 
+                    src={review.productThumbnail || 'https://placehold.co/100'} 
+                    alt={review.productName} 
+                    className="w-full h-full object-contain mix-blend-multiply" 
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
-                    <Link to={`/san-pham/${review.product?.slug}`} className="font-semibold text-gray-900 hover:text-primary transition-colors truncate">
-                      {review.product?.name}
-                    </Link>
-                    <span className="text-xs text-gray-500 shrink-0">{formatDate(review.createdAt)}</span>
+                    <div className="flex-1">
+                      <Link 
+                        to={`/san-pham/${review.productSlug}`} 
+                        className="font-semibold text-gray-900 hover:text-primary transition-colors block"
+                      >
+                        {review.productName}
+                      </Link>
+                      <p className="text-xs text-gray-500 mt-1">{review.variantName}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500 shrink-0">{formatDate(review.createdAt)}</span>
+                      {review.isApproved ? (
+                        <span className="flex items-center gap-1 text-xs text-success bg-success/10 px-2 py-1 rounded-full font-medium">
+                          <CheckCircle2 size={12} /> Đã duyệt
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1 text-xs text-orange-500 bg-orange-50 px-2 py-1 rounded-full font-medium">
+                          <Clock size={12} /> Chờ duyệt
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
                   <div className="flex items-center text-yellow-400 mb-3">

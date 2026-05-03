@@ -4,13 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCartStore } from '../../store/cartStore';
 import { productApi } from '../../api/productApi';
 import { cartApi } from '../../api/cartApi';
+import { ReviewModal } from '../../components/customer/ReviewModal';
 import type { ProductVariant } from '../../types/product.types';
 import { formatVND, formatDate } from '../../utils/formatters';
 import { ProductCard } from '../../components/common/ProductCard';
 import { 
   ChevronRight, Star, Minus, Plus, ShoppingBag, 
   ShoppingCart, Truck, ShieldCheck, RotateCcw,
-  CheckCircle2
+  CheckCircle2, MessageSquare
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -30,6 +31,7 @@ export const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews'>('desc');
   const [mainImage, setMainImage] = useState<string>('');
+  const [showReviewModal, setShowReviewModal] = useState(false);
   
   // Reviews state
   const [reviewPage, setReviewPage] = useState(1);
@@ -473,19 +475,19 @@ export const ProductDetail = () => {
                   {/* Reviews Summary */}
                   <div className="md:col-span-4 flex flex-col gap-6">
                     <div className="text-center md:text-left">
-                      <div className="text-5xl font-bold text-gray-900 mb-2">{reviewsData.averageRating.toFixed(1)}</div>
+                      <div className="text-5xl font-bold text-gray-900 mb-2">{reviewsData.summary?.avgRating?.toFixed(1) || '0.0'}</div>
                       <div className="flex justify-center md:justify-start text-yellow-400 mb-2">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={20} fill={i < Math.round(reviewsData.averageRating) ? "currentColor" : "none"} />
+                          <Star key={i} size={20} fill={i < Math.round(reviewsData.summary?.avgRating || 0) ? "currentColor" : "none"} />
                         ))}
                       </div>
-                      <div className="text-sm text-gray-500">{reviewsData.totalCount} đánh giá</div>
+                      <div className="text-sm text-gray-500">{reviewsData.summary?.totalCount || 0} đánh giá</div>
                     </div>
 
                     <div className="flex flex-col gap-2">
                       {[5, 4, 3, 2, 1].map((star) => {
-                        const count = reviewsData.ratingDistribution[star as 1|2|3|4|5] || 0;
-                        const percent = reviewsData.totalCount > 0 ? (count / reviewsData.totalCount) * 100 : 0;
+                        const count = reviewsData.summary?.ratingDistribution?.[star as 1|2|3|4|5] || 0;
+                        const percent = (reviewsData.summary?.totalCount || 0) > 0 ? (count / (reviewsData.summary?.totalCount || 1)) * 100 : 0;
                         return (
                           <div key={star} className="flex items-center gap-3 text-sm cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setRatingFilter(ratingFilter === star ? undefined : star)}>
                             <span className={clsx("w-3 text-gray-600 font-medium", ratingFilter === star && "text-primary font-bold")}>{star}</span>
@@ -506,9 +508,18 @@ export const ProductDetail = () => {
                       <h3 className="font-semibold text-gray-900">
                         {ratingFilter ? `Đánh giá ${ratingFilter} sao` : "Tất cả đánh giá"}
                       </h3>
-                      {ratingFilter && (
-                        <button onClick={() => setRatingFilter(undefined)} className="text-sm text-primary underline">Xóa bộ lọc</button>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {ratingFilter && (
+                          <button onClick={() => setRatingFilter(undefined)} className="text-sm text-primary underline">Xóa bộ lọc</button>
+                        )}
+                        <button
+                          onClick={() => setShowReviewModal(true)}
+                          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                        >
+                          <MessageSquare size={16} />
+                          Viết đánh giá
+                        </button>
+                      </div>
                     </div>
 
                     {reviewsData.reviews.content.length === 0 ? (
@@ -521,15 +532,17 @@ export const ProductDetail = () => {
                           <div key={review.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
                             <div className="flex items-center gap-4 mb-3">
                               <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold overflow-hidden">
-                                {review.user.avatar ? (
-                                  <img src={review.user.avatar} alt={review.user.fullName} className="w-full h-full object-cover" />
-                                ) : (
-                                  review.user.fullName.charAt(0)
-                                )}
+                                {review.userName ? (
+                                  review.userAvatar ? (
+                                    <img src={review.userAvatar} alt={review.userName} className="w-full h-full object-cover" />
+                                  ) : (
+                                    review.userName.charAt(0)
+                                  )
+                                ) : '?'}
                               </div>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-semibold text-gray-900">{review.user.fullName}</span>
+                                  <span className="font-semibold text-gray-900">{review.userName || 'Anonymous'}</span>
                                   {review.isVerifiedPurchase && (
                                     <span className="flex items-center gap-1 text-[10px] text-success bg-success/10 px-1.5 py-0.5 rounded font-medium">
                                       <CheckCircle2 size={12} /> Đã mua hàng
@@ -545,7 +558,18 @@ export const ProductDetail = () => {
                               ))}
                             </div>
                             <h4 className="font-medium text-gray-900 mb-1 text-sm">{review.title}</h4>
-                            <p className="text-gray-600 text-sm leading-relaxed">{review.content}</p>
+                            <p className="text-gray-600 text-sm leading-relaxed mb-3">{review.content}</p>
+                            
+                            {/* Review Images */}
+                            {review.imageUrls && review.imageUrls.length > 0 && (
+                              <div className="flex gap-2 flex-wrap mt-3">
+                                {review.imageUrls.map((url: string, idx: number) => (
+                                  <div key={idx} className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity">
+                                    <img src={url} alt={`Review ${idx + 1}`} className="w-full h-full object-cover" />
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -587,6 +611,21 @@ export const ProductDetail = () => {
           </div>
         </div>
       )}
+
+      {/* Review Modal */}
+      {showReviewModal && product && (
+        <ReviewModal
+          item={{
+            productName: product.name,
+            productSlug: product.slug,
+            imageUrl: product.thumbnailUrl || product.images?.[0]?.imageUrl || '',
+            alreadyReviewed: false,
+          }}
+          productId={product.id}
+          onClose={() => setShowReviewModal(false)}
+        />
+      )}
     </div>
   );
 };
+

@@ -1,8 +1,48 @@
 import { axiosInstance as api } from './axiosInstance';
 
+export interface CreateReviewRequest {
+  orderItemId?: number;
+  productId?: number;
+  rating: number;
+  title: string;
+  content: string;
+  imageUrls?: string[];
+}
+
+export interface ReviewableItem {
+  orderItemId?: number;
+  productName: string;
+  productSlug: string;
+  variantName?: string;
+  imageUrl: string;
+  alreadyReviewed: boolean;
+}
+
+export interface ReviewResponse {
+  id: number;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  title: string;
+  content: string;
+  isVerifiedPurchase: boolean;
+  createdAt: string;
+  variantName?: string;
+  productId?: number;
+  productName?: string;
+  productSlug?: string;
+  productThumbnail?: string;
+  isApproved?: boolean;
+  imageUrls?: string[];
+}
+
 export const reviewApi = {
-  createReview: (data: { orderItemId: number; rating: number; title: string; content: string }) => 
-    api.post<never, any>('/reviews', data),
+  createReview: (data: CreateReviewRequest) => 
+    api.post<any>('/reviews', data).then(res => res.data),
+  
   getMyReviews: () => 
-    api.get<never, any[]>('/reviews/me'),
+    api.get<any>('/reviews/my-reviews').then(res => res.data),
+  
+  getReviewableItems: (orderCode: string) =>
+    api.get<any>(`/orders/${orderCode}/reviewable-items`).then(res => res.data),
 };

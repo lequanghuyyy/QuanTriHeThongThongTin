@@ -1,4 +1,5 @@
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\mapper\ProductMapper.java
+D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\dto\response\ReviewableItemResponse.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\enums\Role.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\controller\CollectionController.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\service\interfaces\CollectionService.java
@@ -83,6 +84,7 @@ D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\controller\Ad
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\exception\GlobalExceptionHandler.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\dto\request\ChangePasswordRequest.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\dto\response\DashboardOverviewResponse.java
+D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\entity\ReviewImage.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\service\interfaces\UserService.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\controller\AuthController.java
 D:\QuanTriHeThongTT\final\HMK\backend\src\main\java\com\hmkeyewear\exception\ResourceNotFoundException.java

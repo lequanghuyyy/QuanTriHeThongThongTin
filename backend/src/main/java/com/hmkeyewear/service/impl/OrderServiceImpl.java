@@ -166,17 +166,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderSummaryResponse> getUserOrders(String userEmail, Pageable pageable) {
+    public Page<OrderSummaryResponse> getUserOrders(String userEmail, Pageable pageable, String status) {
         User user = getUser(userEmail);
-        return orderRepository.findByUser(user, pageable).map(order -> 
-                OrderSummaryResponse.builder()
-                        .orderCode(order.getOrderCode())
-                        .status(order.getStatus().name())
-                        .totalAmount(order.getTotalAmount())
-                        .createdAt(order.getCreatedAt())
-                        .itemCount(order.getItems().stream().mapToInt(OrderItem::getQuantity).sum())
-                        .build()
-        );
+        Page<Order> orders;
+        
+        if (status != null && !status.isEmpty()) {
+            try {
+                OrderStatus orderStatus = OrderStatus.valueOf(status);
+                orders = orderRepository.findByUserAndStatusOrderByCreatedAtDesc(user, orderStatus, pageable);
+            } catch (IllegalArgumentException e) {
+                // Invalid status, return all orders
+                orders = orderRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+            }
+        } else {
+            orders = orderRepository.findByUserOrderByCreatedAtDesc(user, pageable);
+        }
+        
+        return orders.map(order -> {
+            int itemCount = order.getItems() != null 
+                ? order.getItems().stream().mapToInt(OrderItem::getQuantity).sum() 
+                : 0;
+            
+            return OrderSummaryResponse.builder()
+                    .id(order.getId())
+                    .orderCode(order.getOrderCode())
+                    .status(order.getStatus().name())
+                    .totalAmount(order.getTotalAmount())
+                    .createdAt(order.getCreatedAt())
+                    .itemCount(itemCount)
+                    .build();
+        });
     }
 
     @Override

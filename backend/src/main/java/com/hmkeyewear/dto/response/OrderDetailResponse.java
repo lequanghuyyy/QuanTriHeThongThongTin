@@ -21,6 +21,7 @@ public class OrderDetailResponse {
     private String couponCode;
     private String shippingAddress; // stored as JSON
     private String note;
+    private String trackingCode;
     private Instant createdAt;
     private List<OrderItemResponse> items;
 }

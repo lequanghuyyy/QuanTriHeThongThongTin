@@ -42,6 +42,7 @@ com\hmkeyewear\entity\Review.class
 com\hmkeyewear\controller\AdminProductController.class
 com\hmkeyewear\controller\ReviewController.class
 com\hmkeyewear\entity\ProductVariant$ProductVariantBuilder.class
+com\hmkeyewear\entity\ReviewImage.class
 com\hmkeyewear\dto\response\AuthResponse.class
 com\hmkeyewear\service\interfaces\DashboardService.class
 com\hmkeyewear\service\impl\AuthServiceImpl.class
@@ -75,6 +76,7 @@ com\hmkeyewear\controller\UserController.class
 com\hmkeyewear\repository\UserRepository.class
 com\hmkeyewear\controller\AdminOrderController.class
 com\hmkeyewear\service\impl\CouponServiceImpl.class
+com\hmkeyewear\dto\response\ReviewableItemResponse$ReviewableItemResponseBuilder.class
 com\hmkeyewear\dto\request\RegisterRequest$RegisterRequestBuilder.class
 com\hmkeyewear\dto\response\AuthResponse$UserData$UserDataBuilder.class
 com\hmkeyewear\dto\request\UpdateCartItemRequest.class
@@ -82,6 +84,7 @@ com\hmkeyewear\entity\User.class
 com\hmkeyewear\mapper\CategoryMapperImpl.class
 com\hmkeyewear\service\impl\CartServiceImpl.class
 com\hmkeyewear\dto\response\ProductDetailResponse$CollectionInfo.class
+com\hmkeyewear\entity\ReviewImage$ReviewImageBuilder.class
 com\hmkeyewear\entity\Product.class
 com\hmkeyewear\controller\CollectionController.class
 com\hmkeyewear\config\AdminSeeder.class
@@ -130,6 +133,7 @@ com\hmkeyewear\entity\Order$OrderBuilder.class
 com\hmkeyewear\entity\Store.class
 com\hmkeyewear\enums\DiscountType.class
 com\hmkeyewear\entity\CartItem$CartItemBuilder.class
+com\hmkeyewear\dto\response\ReviewableItemResponse.class
 com\hmkeyewear\entity\ProductImage.class
 com\hmkeyewear\dto\response\CartItemResponse.class
 com\hmkeyewear\service\impl\OrderServiceImpl.class

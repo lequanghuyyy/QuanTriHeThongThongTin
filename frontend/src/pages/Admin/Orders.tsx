@@ -27,7 +27,7 @@ export const Orders = () => {
 
   const { data: ordersData, isLoading } = useQuery({
     queryKey: ['admin-orders', page, search, statusFilter],
-    queryFn: () => adminApi.getOrders({ page, size: 10, keyword: search, status: statusFilter || undefined }),
+    queryFn: () => adminApi.getOrders({ page: page - 1, size: 10, keyword: search, status: statusFilter || undefined }),
   });
 
   const { register, handleSubmit, reset } = useForm();
@@ -40,6 +40,18 @@ export const Orders = () => {
       setDrawerOpen(false);
     }
   });
+  
+  // Helper to parse shippingAddress
+  const parseShippingAddress = (address: any) => {
+    if (typeof address === 'string') {
+      try {
+        return JSON.parse(address);
+      } catch {
+        return null;
+      }
+    }
+    return address;
+  };
 
   const openDrawer = (order: any) => {
     setSelectedOrder(order);
@@ -107,12 +119,14 @@ export const Orders = () => {
               ) : orders.length === 0 ? (
                 <tr><td colSpan={7} className="text-center py-12 text-gray-500">Không tìm thấy đơn hàng nào.</td></tr>
               ) : (
-                orders.map((order: any) => (
-                  <tr key={order.id} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => openDrawer(order)}>
+                orders.map((order: any) => {
+                  const shippingAddr = parseShippingAddress(order.shippingAddress);
+                  return (
+                  <tr key={order.orderCode} className="hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => openDrawer(order)}>
                     <td className="px-6 py-4 font-semibold text-gray-900">#{order.orderCode}</td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{order.shippingAddress?.recipientName || order.user?.fullName}</div>
-                      <div className="text-xs text-gray-500">{order.user?.email}</div>
+                      <div className="font-medium text-gray-900">{shippingAddr?.recipientName || 'N/A'}</div>
+                      <div className="text-xs text-gray-500">{shippingAddr?.phone || ''}</div>
                     </td>
                     <td className="px-6 py-4 text-gray-500">{formatDate(order.createdAt)}</td>
                     <td className="px-6 py-4 text-right font-medium text-gray-900">{formatVND(order.totalAmount)}</td>
@@ -132,7 +146,8 @@ export const Orders = () => {
                        </button>
                     </td>
                   </tr>
-                ))
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -158,7 +173,9 @@ export const Orders = () => {
       </div>
 
       {/* Detail Drawer */}
-      {drawerOpen && selectedOrder && (
+      {drawerOpen && selectedOrder && (() => {
+        const shippingAddr = parseShippingAddress(selectedOrder.shippingAddress);
+        return (
         <>
           <div className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-40 transition-opacity" onClick={() => setDrawerOpen(false)}></div>
           <div className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col transform transition-transform duration-300 ease-in-out border-l border-gray-100">
@@ -194,9 +211,9 @@ export const Orders = () => {
                 <div>
                   <h4 className="font-medium text-gray-900 mb-3 border-b pb-2 text-sm">Thông tin khách hàng</h4>
                   <div className="text-sm space-y-2">
-                    <p><span className="text-gray-500">Người nhận:</span> <span className="font-medium">{selectedOrder.shippingAddress?.recipientName}</span></p>
-                    <p><span className="text-gray-500">Điện thoại:</span> <span>{selectedOrder.shippingAddress?.phone}</span></p>
-                    <p><span className="text-gray-500">Địa chỉ:</span> <span>{selectedOrder.shippingAddress?.addressDetail}, {selectedOrder.shippingAddress?.ward}, {selectedOrder.shippingAddress?.district}, {selectedOrder.shippingAddress?.province}</span></p>
+                    <p><span className="text-gray-500">Người nhận:</span> <span className="font-medium">{shippingAddr?.recipientName || 'N/A'}</span></p>
+                    <p><span className="text-gray-500">Điện thoại:</span> <span>{shippingAddr?.phone || 'N/A'}</span></p>
+                    <p><span className="text-gray-500">Địa chỉ:</span> <span>{shippingAddr?.addressDetail}, {shippingAddr?.ward}, {shippingAddr?.district}, {shippingAddr?.province}</span></p>
                   </div>
                 </div>
 
@@ -221,7 +238,7 @@ export const Orders = () => {
                     {selectedOrder.items?.map((item: any) => (
                       <div key={item.id} className="flex gap-3 text-sm">
                         <div className="w-12 h-12 bg-gray-50 rounded border flex-shrink-0 p-1">
-                           <img src={item.productVariant?.imageUrl} alt="" className="w-full h-full object-contain mix-blend-multiply" />
+                           <img src={item.imageUrl} alt="" className="w-full h-full object-contain mix-blend-multiply" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-gray-900 truncate">{item.productName}</p>
@@ -246,7 +263,8 @@ export const Orders = () => {
              </div>
           </div>
         </>
-      )}
+        );
+      })()}
     </div>
   );
 };

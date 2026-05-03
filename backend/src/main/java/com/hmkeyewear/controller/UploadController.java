@@ -18,27 +18,49 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/admin/upload")
 @RequiredArgsConstructor
 public class UploadController {
 
     private final CloudinaryService cloudinaryService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // Admin endpoints
+    @PostMapping(value = "/api/v1/admin/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> uploadFile(
+    public ResponseEntity<ApiResponse<String>> uploadFileAdmin(
             @RequestPart("file") MultipartFile file) throws IOException {
         String url = cloudinaryService.uploadFile(file);
         return ResponseEntity.ok(ApiResponse.success(url));
     }
 
-    @PostMapping(value = "/multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/v1/admin/upload/multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<String>>> uploadFiles(
+    public ResponseEntity<ApiResponse<List<String>>> uploadFilesAdmin(
             @RequestPart("files") List<MultipartFile> files) throws IOException {
 
         log.info("Upload /multiple - Received {} files", files.size());
         List<String> urls = cloudinaryService.uploadFiles(files);
         return ResponseEntity.ok(ApiResponse.success(urls));
+    }
+
+    // Public endpoint for authenticated users (reviews, avatars, etc.)
+    @PostMapping(value = "/api/v1/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<String>> uploadImage(
+            @RequestPart("file") MultipartFile file) throws IOException {
+        
+        // Validate file type
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("Only image files are allowed"));
+        }
+        
+        // Validate file size (max 5MB)
+        if (file.getSize() > 5 * 1024 * 1024) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("File size must not exceed 5MB"));
+        }
+        
+        String url = cloudinaryService.uploadFile(file);
+        return ResponseEntity.ok(ApiResponse.success(url));
     }
 }

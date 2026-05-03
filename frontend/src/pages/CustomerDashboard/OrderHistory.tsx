@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../api/orderApi';
 import { reviewApi } from '../../api/reviewApi';
-import type { OrderStatus, Order, OrderItem } from '../../types/order.types';
+import type { OrderStatus, OrderSummary, OrderItem } from '../../types/order.types';
 import { formatVND, formatDate, formatOrderStatus, getOrderStatusColor } from '../../utils/formatters';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
@@ -35,7 +35,7 @@ export const OrderHistory = () => {
 
   const { data: ordersData, isLoading } = useQuery({
     queryKey: ['orders', page, activeTab],
-    queryFn: () => orderApi.getMyOrders({ page, size: 10, status: activeTab }),
+    queryFn: () => orderApi.getMyOrders({ page: page - 1, size: 10, status: activeTab }),
   });
 
   const cancelMutation = useMutation({
@@ -90,7 +90,7 @@ export const OrderHistory = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {ordersData?.content.map((order: Order) => (
+              {ordersData?.content.map((order: OrderSummary) => (
                 <div key={order.id} className="border border-gray-100 rounded-lg p-6 hover:shadow-sm transition-shadow">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
                     <div>
@@ -103,27 +103,10 @@ export const OrderHistory = () => {
                     </span>
                   </div>
 
-                  <div className="space-y-4 mb-6">
-                    {order.items.map((item: OrderItem) => (
-                      <div key={item.id} className="flex gap-4 items-center">
-                        <div className="w-16 h-16 bg-gray-50 rounded border border-gray-100 flex-shrink-0">
-                          <img src={item.productVariant.imageUrl || 'https://placehold.co/100'} alt={item.productName} className="w-full h-full object-contain p-1 mix-blend-multiply" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium text-gray-900 truncate">{item.productName}</h4>
-                          <div className="text-xs text-gray-500 mt-1">Phân loại: {item.variantName}</div>
-                          <div className="text-xs text-gray-500">x{item.quantity}</div>
-                        </div>
-                        <div className="text-sm font-medium text-gray-900 text-right">
-                          {formatVND(item.totalPrice)}
-                        </div>
-                        {order.status === 'DELIVERED' && item.canReview && (
-                          <div className="text-right">
-                             <button onClick={() => openReviewModal(item)} className="text-xs border border-primary text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors">Đánh giá</button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600">
+                      Số lượng sản phẩm: <span className="font-medium">{order.itemCount}</span>
+                    </p>
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-100 gap-4">

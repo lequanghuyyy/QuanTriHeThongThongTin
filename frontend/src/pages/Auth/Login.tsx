@@ -7,8 +7,10 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi } from '../../api/authApi';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import clsx from 'clsx';
+
+// Import ảnh banner từ thư mục nội bộ
+import bannerImg from '../../assets/imageRegister.jpg';
 
 const loginSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -32,7 +34,6 @@ export const Login = () => {
     mutationFn: ({ email, password }: LoginForm) => authApi.login(email, password),
     onSuccess: (tokens) => {
       setAuth(tokens);
-      // As per requirement, if backend returns cartItemCount in user object
       setItemCount((tokens.user as any).cartItemCount || 0);
       const redirect = searchParams.get("redirect") || "/";
       navigate(redirect, { replace: true });
@@ -41,7 +42,6 @@ export const Login = () => {
   });
 
   const handleGoogleLogin = () => {
-    // Vite API URL usually includes /api/v1, we need the base backend URL
     const baseUrl = import.meta.env.VITE_API_URL 
       ? import.meta.env.VITE_API_URL.replace('/api/v1', '') 
       : 'http://localhost:8080';
@@ -49,107 +49,124 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Left: Brand Image (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gray-900 overflow-hidden">
+    <div className="flex min-h-screen bg-gray-50 font-sans">
+      {/* Left: Brand Image */}
+      <div className="hidden lg:flex lg:w-[55%] relative bg-white border-r border-gray-200">
         <img 
-          src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=1200" 
-          alt="HMK Eyewear Brand" 
-          className="absolute inset-0 w-full h-full object-cover opacity-70"
+          src={bannerImg} 
+          alt="HMK Eyewear Banner" 
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-        <div className="absolute bottom-20 left-20 right-20 text-white">
-          <h2 className="font-serif text-5xl mb-6 leading-tight">The Visionary Edit</h2>
-          <p className="text-gray-300 font-light text-lg max-w-md">Khám phá bộ sưu tập kính mắt thiết kế mới nhất, mang đậm phong cách kiến trúc và đương đại.</p>
-        </div>
       </div>
 
       {/* Right: Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 animate-fade-in relative">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-[42%] flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white animate-fade-in relative">
+        <div className="w-full max-w-[400px]">
+          
+          {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="font-serif text-3xl text-gray-900 mb-3">Chào mừng trở lại</h1>
-            <p className="text-gray-500">Đăng nhập để tiếp tục hành trình của bạn</p>
+            <h1 className="font-bold text-[32px] text-black mb-2">Chào mừng trở lại</h1>
+            <p className="text-gray-500 text-sm">Đăng nhập để tiếp tục hành trình của bạn</p>
           </div>
 
-          <form onSubmit={handleSubmit(data => loginMutation.mutate(data))} className="space-y-6">
+          <form onSubmit={handleSubmit(data => loginMutation.mutate(data))} className="space-y-5">
             {errors.root && (
-              <div className="bg-danger/10 text-danger text-sm p-4 rounded-md text-center font-medium">
+              <div className="bg-red-50 text-red-500 text-sm p-4 rounded-lg text-center font-medium border border-red-100">
                 {errors.root.message}
               </div>
             )}
 
+            {/* Email Input */}
             <div>
-              <label className="block text-xs font-medium text-gray-500 uppercase tracking-widest mb-2">Địa chỉ Email</label>
+              <label className="block text-xs font-bold text-gray-800 uppercase tracking-wide mb-2">
+                Địa chỉ Email
+              </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail size={18} className="text-gray-400" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none z-10">
+                  {/* Đã cập nhật màu ở đây */}
+                  <span className="material-symbols-outlined text-[#474747] text-[20px]">mail</span>
                 </div>
                 <input
                   type="email"
                   {...register("email")}
-                  placeholder="name@example.com"
+                  placeholder="nva123@example.com"
                   className={clsx(
-                    "w-full pl-12 pr-4 py-3.5 bg-white border rounded-md text-sm transition-all focus:outline-none focus:ring-1",
-                    errors.email ? "border-danger focus:border-danger focus:ring-danger" : "border-gray-200 focus:border-primary focus:ring-primary"
+                    "w-full pl-11 pr-4 py-3.5 bg-white border rounded-md text-sm transition-all focus:outline-none focus:ring-1 focus:ring-black",
+                    // Fix lỗi nền xanh dương nhạt khi trình duyệt autofill:
+                    "[&:autofill]:shadow-[inset_0_0_0px_1000px_white] [&:-webkit-autofill]:shadow-[inset_0_0_0px_1000px_white]",
+                    errors.email ? "border-red-500 focus:border-red-500" : "border-black"
                   )}
                 />
               </div>
-              {errors.email && <span className="text-danger text-xs mt-1 block">{errors.email.message}</span>}
+              {errors.email && <span className="text-red-500 text-xs mt-1.5 block font-medium">{errors.email.message}</span>}
             </div>
 
+            {/* Password Input */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-medium text-gray-500 uppercase tracking-widest">Mật khẩu</label>
-                <Link to="/quen-mat-khau" className="text-xs font-medium text-gray-500 hover:text-primary transition-colors">Quên mật khẩu?</Link>
+                <label className="block text-xs font-bold text-gray-800 uppercase tracking-wide">
+                  Mật khẩu
+                </label>
+                <Link to="/quen-mat-khau" className="text-xs text-gray-500 hover:text-black font-medium transition-colors">
+                  Quên mật khẩu?
+                </Link>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock size={18} className="text-gray-400" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none z-10">
+                  {/* Đã cập nhật màu ở đây */}
+                  <span className="material-symbols-outlined text-[#474747] text-[20px]">lock</span>
                 </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   {...register("password")}
                   placeholder="••••••••"
                   className={clsx(
-                    "w-full pl-12 pr-12 py-3.5 bg-white border rounded-md text-sm transition-all focus:outline-none focus:ring-1",
-                    errors.password ? "border-danger focus:border-danger focus:ring-danger" : "border-gray-200 focus:border-primary focus:ring-primary"
+                    "w-full pl-11 pr-12 py-3.5 bg-white border rounded-md text-sm transition-all focus:outline-none focus:ring-1 focus:ring-black",
+                    // Fix lỗi nền xanh dương nhạt khi trình duyệt autofill:
+                    "[&:autofill]:shadow-[inset_0_0_0px_1000px_white] [&:-webkit-autofill]:shadow-[inset_0_0_0px_1000px_white]",
+                    errors.password ? "border-red-500 focus:border-red-500" : "border-black"
                   )}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                  // Đã cập nhật màu text-[#474747] cho nút con mắt
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#474747] hover:text-black transition-colors focus:outline-none z-10"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? "visibility_off" : "visibility"}
+                  </span>
                 </button>
               </div>
-              {errors.password && <span className="text-danger text-xs mt-1 block">{errors.password.message}</span>}
+              {errors.password && <span className="text-red-500 text-xs mt-1.5 block font-medium">{errors.password.message}</span>}
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loginMutation.isPending}
-              className="w-full bg-primary text-white py-4 rounded-button font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 relative overflow-hidden uppercase tracking-widest text-sm"
+              className="w-full bg-black text-white py-4 mt-2 rounded-full font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 flex items-center justify-center text-sm tracking-widest uppercase"
             >
               {loginMutation.isPending ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : "Đăng nhập"}
             </button>
 
+            {/* Divider */}
             <div className="relative py-4">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-4 bg-gray-50 text-gray-400 uppercase tracking-widest">Hoặc</span>
+                <span className="px-4 bg-white text-gray-400 uppercase tracking-widest font-medium">Hoặc</span>
               </div>
             </div>
 
+            {/* Google Login */}
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full bg-white border border-gray-200 text-gray-700 py-3.5 rounded-button font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 text-sm"
+              className="w-full bg-white border border-gray-300 text-gray-700 py-3.5 rounded-full font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-3 text-sm"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -161,10 +178,12 @@ export const Login = () => {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-gray-500">
+          {/* Footer */}
+          <p className="mt-8 text-center text-sm text-gray-600">
             Chưa có tài khoản?{' '}
-            <Link to="/dang-ky" className="font-semibold text-primary hover:underline">Đăng ký ngay</Link>
+            <Link to="/dang-ky" className="font-bold text-black hover:underline">Đăng ký ngay</Link>
           </p>
+          
         </div>
       </div>
     </div>

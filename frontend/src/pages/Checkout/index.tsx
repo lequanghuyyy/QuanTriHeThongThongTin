@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm as useHookForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -148,7 +149,7 @@ export const Checkout = () => {
   }
 
   if (isCartLoading || isAddressesLoading) {
-    return <div className="p-8 text-center min-h-[60vh] flex items-center justify-center">Đang tải thông tin...</div>;
+    return <div className="p-8 text-center min-h-[60vh] flex items-center justify-center font-sans">Đang tải thông tin...</div>;
   }
 
   const cart = cartData;
@@ -160,11 +161,11 @@ export const Checkout = () => {
   }
 
   const handlePlaceOrder = () => {
-    if (addresses.length === 0) {
+    if (addresses.length === 0 && !isAddingAddress) {
       toast.error("Vui lòng thêm địa chỉ giao hàng");
       return;
     }
-    if (!selectedAddressId) {
+    if (!selectedAddressId && !isAddingAddress) {
       toast.error("Vui lòng chọn địa chỉ giao hàng");
       return;
     }
@@ -176,7 +177,7 @@ export const Checkout = () => {
     }
 
     const payload: CheckoutRequest = {
-      addressId: selectedAddressId,
+      addressId: selectedAddressId!,
       paymentMethod,
       note: note.trim() || undefined,
       couponCode: passedCoupon,
@@ -215,21 +216,18 @@ export const Checkout = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-fade-in">
         <div className="flex flex-col lg:flex-row gap-12">
         {/* Left: Checkout Steps */}
-        <div className="w-full lg:w-[60%] flex flex-col gap-12">
+        <div className="w-full lg:w-[60%] flex flex-col gap-10">
           
           {/* STEP 1: Address */}
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <span className="text-3xl font-serif text-gray-200">01</span>
-              <h2 className="text-2xl font-serif text-gray-900">Địa chỉ giao hàng</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-lg font-bold">01</span>
+              <h2 className="text-lg font-bold">Thông Tin Thanh Toán</h2>
             </div>
 
-            {addresses.length === 0 ? (
-              <div className="bg-yellow-50 text-yellow-800 p-4 rounded mb-4 text-sm">
-                Bạn chưa có địa chỉ giao hàng nào. Vui lòng thêm địa chỉ.
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4 mb-6">
+            {/* Address List Selection */}
+            {addresses.length > 0 && !isAddingAddress ? (
+              <div className="flex flex-col gap-3 mb-6">
                 {addresses.map((addr: any) => (
                   <label 
                     key={addr.id} 
@@ -249,81 +247,116 @@ export const Checkout = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-gray-900">{addr.recipientName}</span>
-                        <span className="text-gray-400">|</span>
+                        <span className="font-bold text-sm">{addr.recipientName}</span>
+                        <span className="text-gray-300">|</span>
                         <span className="text-gray-600 text-sm">{addr.phone}</span>
                         {addr.isDefault && (
-                          <span className="ml-2 text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded uppercase">Mặc định</span>
+                          <span className="ml-2 text-[10px] font-bold bg-gray-100 px-2 py-0.5 rounded uppercase">Mặc định</span>
                         )}
                       </div>
                       <p className="text-sm text-gray-500 leading-relaxed">
                         {addr.addressDetail}, {addr.ward}, {addr.district}, {addr.province}
                       </p>
                     </div>
+                    {selectedAddressId === addr.id ? (
+                      <span className="material-symbols-outlined text-black text-[20px]">radio_button_checked</span>
+                    ) : (
+                      <span className="material-symbols-outlined text-gray-300 text-[20px]">radio_button_unchecked</span>
+                    )}
                   </label>
                 ))}
+                <button 
+                  onClick={() => setIsAddingAddress(true)}
+                  className="mt-2 text-sm font-bold text-black flex items-center gap-2 hover:underline w-fit"
+                >
+                  <span className="material-symbols-outlined text-[16px]">add</span> Thêm địa chỉ mới
+                </button>
               </div>
+            ) : (
+              /* Add New Address Form */
+              <form id="address-form" onSubmit={handleSubmit(data => addAddressMutation.mutate(data))} className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-800 mb-2">Họ Tên</label>
+                  <input {...register('recipientName')} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" placeholder="Nguyễn Văn A" />
+                  {errors.recipientName && <span className="text-red-500 text-xs mt-1">{errors.recipientName.message}</span>}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-800 mb-2">Số Điện Thoại</label>
+                  <input {...register('phone')} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" placeholder="0901234567" />
+                  {errors.phone && <span className="text-red-500 text-xs mt-1">{errors.phone.message}</span>}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-800 mb-2">Địa Chỉ</label>
+                  <input {...register('addressDetail')} placeholder="123, Đường Trần Hưng Đạo..." className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" />
+                  {errors.addressDetail && <span className="text-red-500 text-xs mt-1">{errors.addressDetail.message}</span>}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 mb-2">Tỉnh/Thành Phố</label>
+                    <input {...register('province')} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" placeholder="Thành phố Hồ Chí Minh" />
+                    {errors.province && <span className="text-red-500 text-xs mt-1">{errors.province.message}</span>}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 mb-2">Quận/Huyện</label>
+                    <input {...register('district')} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" placeholder="Quận 1" />
+                    {errors.district && <span className="text-red-500 text-xs mt-1">{errors.district.message}</span>}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-800 mb-2">Xã/Phường</label>
+                    <input {...register('ward')} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" placeholder="Phường Phạm Ngũ Lão" />
+                    {errors.ward && <span className="text-red-500 text-xs mt-1">{errors.ward.message}</span>}
+                  </div>
+                </div>
+
+                {addresses.length > 0 && (
+                  <div className="flex justify-end gap-3 mt-2">
+                    <button type="button" onClick={() => setIsAddingAddress(false)} className="px-4 py-2 text-sm font-bold text-gray-600 hover:text-black">Hủy</button>
+                    <button type="submit" disabled={addAddressMutation.isPending} className="px-6 py-2.5 text-sm font-bold bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50">Lưu địa chỉ</button>
+                  </div>
+                )}
+              </form>
             )}
 
-            {!isAddingAddress ? (
-              <button 
-                onClick={() => setIsAddingAddress(true)}
-                className="text-sm font-medium text-primary flex items-center gap-2 hover:underline"
-              >
-                <Plus size={16} /> Thêm địa chỉ mới
-              </button>
-            ) : (
-              <form onSubmit={handleSubmit(data => addAddressMutation.mutate(data))} className="bg-gray-50 p-6 rounded-lg border border-gray-100">
-                <h3 className="font-medium text-gray-900 mb-4">Thêm địa chỉ mới</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Họ tên</label>
-                    <input {...register('recipientName')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
-                    {errors.recipientName && <span className="text-danger text-xs mt-1">{errors.recipientName.message}</span>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Số điện thoại</label>
-                    <input {...register('phone')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
-                    {errors.phone && <span className="text-danger text-xs mt-1">{errors.phone.message}</span>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Tỉnh/Thành</label>
-                    <input {...register('province')} placeholder="VD: Hà Nội" className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
-                    {errors.province && <span className="text-danger text-xs mt-1">{errors.province.message}</span>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Quận/Huyện</label>
-                    <input {...register('district')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
-                    {errors.district && <span className="text-danger text-xs mt-1">{errors.district.message}</span>}
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Phường/Xã</label>
-                    <input {...register('ward')} className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
-                    {errors.ward && <span className="text-danger text-xs mt-1">{errors.ward.message}</span>}
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Địa chỉ cụ thể</label>
-                  <input {...register('addressDetail')} placeholder="Số nhà, tên đường..." className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary" />
-                  {errors.addressDetail && <span className="text-danger text-xs mt-1">{errors.addressDetail.message}</span>}
-                </div>
-                <div className="flex justify-end gap-3">
-                  <button type="button" onClick={() => setIsAddingAddress(false)} className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 rounded transition-colors">Hủy</button>
-                  <button type="submit" disabled={addAddressMutation.isPending} className="px-6 py-2 text-sm font-medium bg-primary text-white rounded hover:bg-gray-800 transition-colors disabled:opacity-50">Lưu địa chỉ</button>
-                </div>
-              </form>
+            {/* Note input placed outside form so it's always visible */}
+            {!isAddingAddress && (
+              <div className="mt-4">
+                <label className="block text-xs font-bold text-gray-800 mb-2">Ghi Chú Đơn Hàng</label>
+                <input 
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black transition-colors" 
+                  placeholder="Ghi chú thêm về đơn hàng..." 
+                />
+              </div>
             )}
           </section>
 
-          <hr className="border-gray-100" />
-
-          {/* STEP 2: Payment */}
+          {/* STEP 2: Shipping */}
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <span className="text-3xl font-serif text-gray-200">02</span>
-              <h2 className="text-2xl font-serif text-gray-900">Phương thức thanh toán</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-lg font-bold">02</span>
+              <h2 className="text-lg font-bold">Phương Thức Vận Chuyển</h2>
+            </div>
+            <label className="flex items-center justify-between p-4 border border-black rounded-lg cursor-pointer bg-white">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-gray-600 text-[20px]">local_shipping</span>
+                <span className="font-medium text-sm text-gray-900">Giao hàng tiêu chuẩn</span>
+              </div>
+              <span className="material-symbols-outlined text-black text-[20px]">radio_button_checked</span>
+            </label>
+          </section>
+
+          {/* STEP 3: Payment */}
+          <section>
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-lg font-bold">03</span>
+              <h2 className="text-lg font-bold">Phương Thức Thanh Toán</h2>
             </div>
 
             <div className="flex flex-col gap-4">
@@ -342,11 +375,11 @@ export const Checkout = () => {
                     {paymentMethod === 'COD' && <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>}
                   </div>
                 </div>
-                <Wallet size={24} className="text-gray-400 mr-4" />
-                <div className="flex-1">
-                  <span className="font-semibold text-gray-900 block">Thanh toán khi nhận hàng (COD)</span>
-                  <span className="text-sm text-gray-500">Thanh toán bằng tiền mặt khi đơn hàng được giao đến</span>
-                </div>
+                {paymentMethod === 'COD' ? (
+                  <span className="material-symbols-outlined text-black text-[20px]">radio_button_checked</span>
+                ) : (
+                  <span className="material-symbols-outlined text-gray-300 text-[20px]">radio_button_unchecked</span>
+                )}
               </label>
 
               <label 
@@ -364,37 +397,21 @@ export const Checkout = () => {
                     {paymentMethod === 'BANK_TRANSFER' && <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>}
                   </div>
                 </div>
-                <CreditCard size={24} className="text-gray-400 mr-4" />
-                <div className="flex-1">
-                  <span className="font-semibold text-gray-900 block">Chuyển khoản ngân hàng</span>
-                  <span className="text-sm text-gray-500">Chuyển khoản qua số tài khoản hoặc quét mã QR</span>
-                </div>
+                {paymentMethod === 'BANK_TRANSFER' ? (
+                  <span className="material-symbols-outlined text-black text-[20px]">radio_button_checked</span>
+                ) : (
+                  <span className="material-symbols-outlined text-gray-300 text-[20px]">radio_button_unchecked</span>
+                )}
               </label>
             </div>
-          </section>
-
-          <hr className="border-gray-100" />
-
-          {/* STEP 3: Notes */}
-          <section>
-             <div className="flex items-center gap-4 mb-6">
-              <span className="text-3xl font-serif text-gray-200">03</span>
-              <h2 className="text-2xl font-serif text-gray-900">Ghi chú đơn hàng</h2>
-            </div>
-            <textarea 
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Nhập ghi chú cho người bán hoặc người giao hàng (Tùy chọn)..."
-              className="w-full p-4 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary min-h-[100px] resize-y"
-            ></textarea>
           </section>
 
         </div>
 
         {/* Right: Order Summary */}
         <div className="w-full lg:w-[40%] relative">
-          <div className="bg-gray-50 rounded-card p-6 sm:p-8 sticky top-24">
-            <h2 className="text-xl font-serif text-gray-900 mb-6">Tóm tắt đơn hàng</h2>
+          <div className="bg-[#E8E8E8] rounded-[16px] p-6 sm:p-8 sticky top-24">
+            <h2 className="text-lg font-bold text-gray-900 mb-6">Tổng quan đơn hàng</h2>
             
             <div className="flex flex-col gap-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {cart && cart.items && cart.items.map((item: any) => (
@@ -403,59 +420,66 @@ export const Checkout = () => {
                     <img src={item.thumbnailUrl} alt={item.productName} className="w-full h-full object-contain mix-blend-multiply p-1" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-gray-900 truncate pr-2">{item.productName}</h4>
-                    <div className="text-xs text-gray-500 mb-1">{item.colorName}</div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-500">SL: {item.quantity}</span>
-                      <span className="font-medium text-gray-900">{formatVND(item.totalPrice)}</span>
-                    </div>
+                    <h4 className="text-xs font-bold text-gray-900 truncate pr-2 mb-1 leading-tight">{item.productName}</h4>
+                    <div className="text-[11px] text-gray-500 mb-1">Màu sắc: {item.colorName}</div>
+                    <div className="text-[11px] text-gray-500">Số lượng: {item.quantity}</div>
+                  </div>
+                  <div className="text-sm font-bold text-gray-900 shrink-0">
+                    {formatVND(item.totalPrice)}
                   </div>
                 </div>
               ))}
             </div>
 
-            <hr className="border-gray-200 mb-6" />
+            <hr className="border-gray-300 mb-5" />
 
-            <div className="flex flex-col gap-3 mb-6 text-sm">
+            
+
+            {/* Cost Breakdown */}
+            <div className="flex flex-col gap-3 mb-5 text-xs">
               <div className="flex justify-between items-center text-gray-600">
-                <span>Tạm tính</span>
-                <span className="font-medium text-gray-900">{formatVND(subtotal)}</span>
+                <span className="font-medium">Tạm Tính</span>
+                <span className="font-bold text-gray-900">{formatVND(subtotal)}</span>
               </div>
               <div className="flex justify-between items-center text-gray-600">
-                <span>Phí vận chuyển</span>
-                <span className="font-medium text-gray-900">Miễn phí</span>
+                <span className="font-medium">Phí Vận Chuyển</span>
+                <span className="font-bold text-gray-900">{formatVND(shippingFee)}</span>
               </div>
-              {passedCoupon && (
-                <div className="flex justify-between items-center text-success font-medium">
-                  <span>Mã giảm giá ({passedCoupon})</span>
-                  <span>Đã áp dụng</span>
-                </div>
-              )}
             </div>
 
-            <hr className="border-gray-200 mb-6" />
+            <hr className="border-gray-300 mb-5" />
 
-            <div className="flex justify-between items-end mb-8">
-              <span className="text-base font-medium text-gray-900">Tổng cộng</span>
-              <span className="text-2xl font-bold text-gray-900">{formatVND(subtotal + shippingFee)}</span>
+            {/* Total */}
+            <div className="flex justify-between items-center mb-8">
+              <span className="text-sm font-bold text-gray-900">Tổng Cộng</span>
+              <span className="text-lg font-bold text-gray-900">{formatVND(total)}</span>
             </div>
 
+            {/* Submit Button */}
+            {/* Submit Button */}
             <button 
-              onClick={handlePlaceOrder}
-              disabled={checkoutMutation.isPending || !selectedAddressId}
-              className="w-full bg-primary text-white py-4 rounded-button font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase text-sm tracking-widest relative overflow-hidden"
+              onClick={() => {
+                // Form hiển thị khi người dùng chủ động thêm mới HOẶC khi chưa có địa chỉ nào
+                const isShowingForm = isAddingAddress || addresses.length === 0;
+
+                if (isShowingForm) {
+                  const form = document.getElementById('address-form') as HTMLFormElement;
+                  if (form) form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                } else {
+                  handlePlaceOrder();
+                }
+              }}
+              // Chỉ khóa nút khi đang gọi API để tránh spam click
+              disabled={checkoutMutation.isPending || addAddressMutation.isPending}
+              className="w-full bg-black text-white py-4 rounded-xl font-bold flex items-center justify-center hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm tracking-wide"
             >
-              {checkoutMutation.isPending ? (
+              {checkoutMutation.isPending || addAddressMutation.isPending ? (
                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                <>HOÀN TẤT ĐẶT HÀNG — {formatVND(subtotal + shippingFee)}</>
+                <>HOÀN TẤT ĐƠN HÀNG</>
               )}
             </button>
-
-            <div className="mt-6 flex items-center justify-center gap-2 text-gray-400 text-xs">
-               <Lock size={12} />
-               <span>Hệ thống thanh toán bảo mật</span>
-            </div>
+            
           </div>
         </div>
         </div>

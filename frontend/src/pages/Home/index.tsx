@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, Truck, RefreshCcw, Eye } from 'lucide-react';
 import { productApi } from '../../api/productApi';
 import { ProductCard } from '../../components/common/ProductCard';
+import bannerImg from "../../assets/imageStore.png";
+import bannerImg1 from "../../assets/animation1.jpg";
 
 // ----------------------------------------------------------------------
 // 1. HeroBanner
@@ -11,16 +13,16 @@ import { ProductCard } from '../../components/common/ProductCard';
 const BANNERS = [
   {
     id: 1,
-    title: 'THE ART OF ARCHITECTURAL PRECISION',
+    title: '',
     subtitle: 'WINTER AURA COLLECTION',
-    image: 'https://placehold.co/1920x800/E8E8E8/474747?text=The+Art+Of+Architectural',
+    image: bannerImg1,
     link: '/bo-suu-tap/winter-aura',
   },
   {
     id: 2,
-    title: 'CLEAR VISION, CLEAR MIND',
+    title: '',
     subtitle: 'TITANIUM SERIES',
-    image: 'https://placehold.co/1920x800/C6C6C6/000000?text=Clear+Vision',
+    image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/595512761_1443701357765818_2357912442372904911_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=b895b5&_nc_eui2=AeFkoULA-qAUuQmR49bdlO7yUglWiNvg9MdSCVaI2-D0x0D1InNIPjmAvexzdDQ-NupFKkgIh0VrpzuD1ns2UBMp&_nc_ohc=vJHDsa8saSQQ7kNvwHhcJED&_nc_oc=AdqRBO1FmwL1XxgWmKxAcdZL7PdxfXbGle6p7smvPeQ6PVLGqtH76YW42KMwec5MtWSNkoWQmetSaTdrPj0pAZZU&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=neFK2XNcyzvGxe_Ab0FaCg&_nc_ss=7b2a8&oh=00_Af5UDMozbBtvZhcedfcnGAiH3UUP_kzLDJBrEfad-1ka5w&oe=69FD2503',
     link: '/bo-suu-tap/titanium',
   },
 ];
@@ -39,7 +41,7 @@ const HeroBanner = () => {
   const prevSlide = () => setCurrentIdx((prev) => (prev === 0 ? BANNERS.length - 1 : prev - 1));
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden bg-gray-100">
+    <div className="relative w-full h-[900px] overflow-hidden bg-gray-100">
       {BANNERS.map((banner, idx) => (
         <div
           key={banner.id}
@@ -48,18 +50,7 @@ const HeroBanner = () => {
           }`}
         >
           <img src={banner.image} alt={banner.title} className="w-full h-full object-cover mix-blend-multiply" />
-          <div className="absolute inset-0 bg-black/20 flex flex-col justify-center items-start p-12 md:p-24">
-            <p className="text-white text-sm tracking-[0.2em] mb-4 uppercase">{banner.subtitle}</p>
-            <h2 className="text-white text-4xl md:text-6xl font-serif font-bold max-w-2xl mb-8 leading-tight">
-              {banner.title}
-            </h2>
-            <Link 
-              to={banner.link}
-              className="bg-primary text-white px-8 py-3 rounded-button font-medium hover:bg-gray-800 transition-colors uppercase tracking-wide text-sm"
-            >
-              Khám phá ngay
-            </Link>
-          </div>
+         
         </div>
       ))}
       
@@ -131,13 +122,13 @@ const BestSellers = () => {
   return (
     <section className="py-[var(--space-section)] container mx-auto px-4 md:px-8">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-serif font-bold mb-8 uppercase tracking-wider">Bán chạy nhất</h2>
-        <div className="flex justify-center gap-8 border-b border-gray-200">
+        <h2 className="text-3xl font-bold mb-8 uppercase tracking-wider">Bán chạy nhất</h2>
+        <div className="flex justify-center gap-8 border-b border-gray-200 mt-6">
           {tabs.map(tab => (
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`pb-4 font-medium text-sm transition-colors relative ${
+              className={`pb-4 font-medium text-[14px] transition-colors relative ${
                 activeTab === tab.value ? 'text-primary' : 'text-gray-400 hover:text-gray-800'
               }`}
             >
@@ -180,17 +171,17 @@ const FeaturedCollections = () => {
 
   // Mock data if API is empty
   const mockCollections = collections?.length ? collections : [
-    { id: 1, name: 'The Rock', slug: 'the-rock', bannerImageUrl: 'https://placehold.co/400x500/E8E8E8/474747?text=The+Rock', description: 'Bold and sturdy' },
-    { id: 2, name: 'Aurora Alloy', slug: 'aurora-alloy', bannerImageUrl: 'https://placehold.co/400x500/E8E8E8/474747?text=Aurora+Alloy', description: 'Lightweight titan' },
-    { id: 3, name: 'Red Velvet', slug: 'red-velvet', bannerImageUrl: 'https://placehold.co/400x500/E8E8E8/474747?text=Red+Velvet', description: 'Elegant red frames' },
-    { id: 4, name: 'Minimalist', slug: 'minimalist', bannerImageUrl: 'https://placehold.co/400x500/E8E8E8/474747?text=Minimalist', description: 'Less is more' },
+    { id: 1, name: 'The Rock', slug: 'the-rock', bannerImageUrl: 'https://hmkeyewear.com/wp-content/uploads/2025/02/4.-THE-ROCK.webp', description: 'Bold and sturdy' },
+    { id: 2, name: 'Aurora Alloy', slug: 'aurora-alloy', bannerImageUrl: 'https://hmkeyewear.com/wp-content/uploads/2025/02/3.-Aurora-Alloy.webp', description: 'Lightweight titan' },
+    { id: 3, name: 'Red Velvet', slug: 'red-velvet', bannerImageUrl: 'https://hmkeyewear.com/wp-content/uploads/2025/02/5.-Red-velvet.webp', description: 'Elegant red frames' },
+    { id: 4, name: 'Disc Dream', slug: 'disc-dream', bannerImageUrl: 'https://hmkeyewear.com/wp-content/uploads/2025/02/7.-Disc-Dream.webp', description: 'Less is more' },
   ];
 
   return (
     <section className="bg-gray-50 py-24">
       <div className="container mx-auto px-4 md:px-8">
         <div className="flex justify-between items-end mb-12">
-          <h2 className="text-3xl font-serif font-bold uppercase tracking-wider">Bộ sưu tập nổi bật</h2>
+          <h2 className="text-3xl font-sans font-bold uppercase tracking-wider">Bộ sưu tập nổi bật</h2>
           <div className="flex gap-2">
             <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white"><ChevronLeft size={20}/></button>
             <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white"><ChevronRight size={20}/></button>
@@ -223,16 +214,16 @@ const CategoryShowcase = () => {
 
   return (
     <section className="py-[var(--space-section)] container mx-auto px-4 md:px-8">
-      <h2 className="text-center text-3xl font-serif font-bold mb-12 uppercase tracking-wider">Chọn kính - Kẻ cá tính</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <h2 className="text-center text-3xl font-sans font-bold mb-12 uppercase tracking-wider">Chọn kính - Kẻ cá tính</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
         <div 
           onClick={() => navigate('/san-pham?gender=MALE')}
           className="relative h-[600px] group cursor-pointer overflow-hidden rounded-image"
         >
-          <img src="https://placehold.co/800x600/E8E8E8/474747?text=Gong+Nam" alt="Gọng Nam" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/666808471_1550304903772129_328402076671839701_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeEwTijwycfhGN0MAFbLwfe7T7VcC9fZWRVPtVwL19lZFcyMOi72tIwufV0d1R2hm9AhEvtA8uIpf0y01eG93tRR&_nc_ohc=y0J2st0nCaEQ7kNvwHmmZ6d&_nc_oc=AdogGqJSe_G_bthcQWeVJbvjdMO9mj_GZLt76W2ikG7TSkAFj-4kylFq41nAjFNpHjV5psv7o7yS2GLcnxAfNVRF&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=AelpFZ-LRw7jItxFGJ72Ww&_nc_ss=7b2a8&oh=00_Af619KPVs7hzb1_B_dvPvKAxh4wq4a8Nc5ri73AuaediOA&oe=69FD2166" alt="Gọng Nam" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center">
-            <h3 className="text-white text-4xl font-serif font-bold mb-6">Gọng Nam</h3>
-            <button className="bg-white text-primary px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm">
+           <h1 className="w-full text-left px-8 text-white text-4xl font-sans font-bold">Gọng Nam</h1>
+            <button className="bg-black text-white px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm mt-60">
               Xem chi tiết
             </button>
           </div>
@@ -241,10 +232,10 @@ const CategoryShowcase = () => {
           onClick={() => navigate('/san-pham?gender=FEMALE')}
           className="relative h-[600px] group cursor-pointer overflow-hidden rounded-image"
         >
-          <img src="https://placehold.co/800x600/E8E8E8/474747?text=Gong+Nu" alt="Gọng Nữ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/679675933_1565547712247848_7120040392077682858_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeHdf1Hoia8yrTj1Ou4_uczL3hARnOPMUTHeEBGc48xRMUKmDHYB01E3dk20WpKfUb7qVtHbes6yuZcpLC1PmdY0&_nc_ohc=KZUw_MxeSnAQ7kNvwHvCQar&_nc_oc=AdpgS2XoRlWiEs8j6b6FaLKSLc8uSZOIwwt-LrpWPXNR_P88OJp7a9mSObCWIxHxaTKDrMXPFEhVdpRxhJ2SfI9t&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=M8CLEHGFFol8ZsrGDfZzNQ&_nc_ss=7b2a8&oh=00_Af78bH9r9X0euc4B6TR_c93Y29tZtwjPNDn3IWbtqpye3g&oe=69FD3E33" alt="Gọng Nữ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center">
-            <h3 className="text-white text-4xl font-serif font-bold mb-6">Gọng Nữ</h3>
-            <button className="bg-white text-primary px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm">
+            <h1 className="w-full text-left px-8 text-white text-4xl font-sans font-bold">Gọng Nữ</h1>
+            <button className="bg-black text-white px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm mt-60">
               Xem chi tiết
             </button>
           </div>
@@ -266,7 +257,7 @@ const NewArrivals = () => {
   return (
     <section className="pb-[var(--space-section)] container mx-auto px-4 md:px-8">
       <div className="flex justify-between items-end mb-12 border-b border-gray-200 pb-4">
-        <h2 className="text-3xl font-serif font-bold uppercase tracking-wider">Mới nhất</h2>
+        <h2 className="text-3xl font-sans font-bold uppercase tracking-wider">Mới nhất</h2>
         <Link to="/san-pham" className="text-sm font-medium hover:text-primary/70 flex items-center gap-2">
           Xem tất cả <ArrowRight size={16} />
         </Link>
@@ -290,16 +281,16 @@ const NewArrivals = () => {
 // ----------------------------------------------------------------------
 const BlogHighlights = () => {
   const blogs = [
-    { id: 1, title: 'Bí quyết chọn kính phù hợp với khuôn mặt', image: 'https://placehold.co/600x400/E8E8E8/474747?text=Blog+1', date: '20/10/2026' },
-    { id: 2, title: 'Xu hướng kính mát mùa hè 2026 không thể bỏ lỡ', image: 'https://placehold.co/600x400/E8E8E8/474747?text=Blog+2', date: '15/10/2026' },
-    { id: 3, title: 'Bảo quản kính cận đúng cách để luôn như mới', image: 'https://placehold.co/600x400/E8E8E8/474747?text=Blog+3', date: '05/10/2026' },
+    { id: 1, title: 'Siêu khuyến mãi chỉ có tại HMK', image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/602330652_1455693543233266_5999574423352990123_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeGTIi1SG2OBUVRl9T__CgP5W3GtEHnnUO5bca0QeedQ7gU95WYd22amr0TCg7YeqgGRGzFIEnlxpcg1COig7RvS&_nc_ohc=sMnxlcw93dEQ7kNvwHpZXbB&_nc_oc=AdqkuLvCggQiwVVT3M2Mm1ffZ8x67z9ar6rxGtJ8MRxu1k0oguzjYXr-La7GvwI2GXxFFA_pCH_Ne3yCsuMOQlAw&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=8CGmrGXijz3JpSA32AJu6A&_nc_ss=7b2a8&oh=00_Af7Mxvq_MqmdlPwnTG0wa5hco_qgPQ33l_Q01G_gZR_0vg&oe=69FD408B', date: '20/10/2026' },
+    { id: 2, title: 'Diện mạo mới tại chi nhánh HMK Đà Nẵng Store', image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/581272527_1422980253171262_6133393421819966415_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeEUyAHsJQvpfeMApttJIoGR-yJwaLgoWrP7InBouChas-iAolb55UWpWsRZgDv0vqw6VXzKg6z_eKk0ILn1CWX_&_nc_ohc=Q6ne0iq5Z8UQ7kNvwGuyfql&_nc_oc=AdqGBuAwOyDtI3sUk2fcJd4_UWZTizsAr4YD3AWsBHWOVZv-V6kESK_S8eHtb2okGpTAdGQTN1Dl5NmsMy8WWbfB&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=dpWmHotbYGKXeQ0grTv6tA&_nc_ss=7b2a8&oh=00_Af6Ep9yUc1VtogbTdcLTJICzKlOflOSQBqw1okWAb718ng&oe=69FD214A', date: '15/10/2026' },
+    { id: 3, title: 'Nhận diện thương hiệu', image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/560664492_1397342659068355_9116625938196319443_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeFK_kF81XR7BfsfgDG4Y3ggHsFRUvZyuC8ewVFS9nK4LzuE3Vb0rDe5zgb6V8Nn5VeQMrGXC7WlAlM6L1uEdgCR&_nc_ohc=XwbUIDLbnPgQ7kNvwFW65ip&_nc_oc=AdqlDqB5hcaFnMgVxjSGKXD21WvhAViPpxizkDfqhDnCu4SwAUV0ag9PDIFTPBo6rR61Y8dzdhPoxbOyV9gT9iNh&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=jg8yCqvaObPqwrbxtWTEtQ&_nc_ss=7b2a8&oh=00_Af5bzTCChA9_hU-rPye23SlSVcdcA0SXMOdIoKJ8VJpU3A&oe=69FD48D5', date: '05/10/2026' },
   ];
 
   return (
     <section className="bg-gray-50 py-24">
       <div className="container mx-auto px-4 md:px-8">
-        <h2 className="text-center text-3xl font-serif font-bold mb-12 uppercase tracking-wider">Bài viết nổi bật</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <h2 className="text-center text-3xl font-sans font-bold mb-12 uppercase tracking-wider">Bài viết nổi bật</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
           {blogs.map(blog => (
             <div key={blog.id} className="group cursor-pointer">
               <div className="overflow-hidden rounded-card mb-4 aspect-video">
@@ -316,19 +307,77 @@ const BlogHighlights = () => {
 };
 
 // ----------------------------------------------------------------------
-// 8. StoreMap
+// 8. StoreMap (Đã cập nhật theo giao diện ảnh)
 // ----------------------------------------------------------------------
 const StoreMap = () => {
   return (
-    <section className="py-[var(--space-section)] container mx-auto px-4 md:px-8">
-      <div className="relative rounded-[32px] overflow-hidden bg-gray-900 h-[400px] flex items-center justify-center">
-        <img src="https://placehold.co/1200x400/1A1A1A/FFFFFF?text=Store+Banner" alt="Stores" className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay" />
-        <div className="relative z-10 text-center px-4">
-          <h2 className="text-white text-3xl md:text-5xl font-serif font-bold mb-6">HỆ THỐNG 60+ CỬA HÀNG TOÀN QUỐC</h2>
-          <p className="text-white/80 mb-8 max-w-xl mx-auto">Trải nghiệm mua sắm trực tiếp với không gian hiện đại và đội ngũ chuyên viên đo mắt giàu kinh nghiệm.</p>
-          <Link to="/cua-hang" className="bg-white text-primary px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm inline-block">
-            Tìm cửa hàng gần bạn
-          </Link>
+    <section className="w-full bg-[#EFEFEF]">
+      <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="flex flex-col justify-center px-8 py-16 md:p-24">
+          <h2 className="text-2xl md:text-3xl font-bold uppercase mb-6 text-gray-900 tracking-wide">
+            Hệ thống mắt<br/>kính HMK
+          </h2>
+          <p className="text-gray-600 text-sm leading-relaxed max-w-md mt-3">
+            Hệ thống Mắt Kính HMK với 60+ chi nhánh trên toàn quốc, tập trung hầu hết ở các tỉnh thành lớn như: TP. Hồ Chí Minh, TP. Hà Nội, TP. Đà Nẵng, TP. Cần Thơ và nhiều tỉnh thành khác.
+          </p>
+        </div>
+        <div className="h-[400px] md:h-auto">
+          <img 
+            src={bannerImg}  
+            alt="HMK Sài Gòn Chi Nhánh 20" 
+            className="w-full h-full object-cover" 
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ----------------------------------------------------------------------
+// 9. BrandStory (Thêm mới - Câu chuyện HMK)
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// 9. BrandStory
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+// 9. BrandStory
+// ----------------------------------------------------------------------
+const BrandStory = () => {
+  return (
+    <section className="py-20 md:py-24 bg-white">
+      <div className="container mx-auto px-4 md:px-8">
+        {/* Phần Tiêu đề được căn giữa và in đậm */}
+        <div className="flex flex-col items-center justify-center text-center mb-16 md:mb-20">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 uppercase text-black">
+            Câu chuyện HMK
+          </h2>
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold uppercase text-black max-w-4xl mx-auto leading-snug">
+            Kiến tạo vẻ đẹp thông thái cùng kính mắt hàng đầu Việt Nam
+          </h2>
+        </div>
+        
+        {/* Phần Nội dung 3 cột */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 max-w-5xl mx-auto text-left">
+          {/* Phương châm */}
+          <div className="flex flex-col">
+            <span className="text-4xl md:text-5xl font-bold mb-4 text-[#474747]">01</span>
+            <h4 className="font-bold text-[15px] mb-2 uppercase text-[#1A1A1A] tracking-wider">Phương châm</h4>
+            <p className="text-gray-600 text-[14px] leading-relaxed">Care your eyes, style your life</p>
+          </div>
+          
+          {/* Sứ mệnh */}
+          <div className="flex flex-col">
+            <span className="text-4xl md:text-5xl font-bold mb-4 text-[#474747]">02</span>
+            <h4 className="font-bold text-[15px] mb-2 uppercase text-[#1A1A1A] tracking-wider">Sứ mệnh</h4>
+            <p className="text-gray-600 text-[14px] leading-relaxed">Trở thành “Thương hiệu kính mắt hàng đầu Việt Nam”</p>
+          </div>
+          
+          {/* Lan tỏa thông điệp */}
+          <div className="flex flex-col">
+            <span className="text-4xl md:text-5xl font-bold mb-4 text-[#474747]">03</span>
+            <h4 className="font-bold text-[15px] mb-2 uppercase text-[#1A1A1A] tracking-wider">Lan tỏa thông điệp</h4>
+            <p className="text-gray-600 text-[14px] leading-relaxed">Đôi mắt thông thái</p>
+          </div>
         </div>
       </div>
     </section>
@@ -340,7 +389,7 @@ const StoreMap = () => {
 // ----------------------------------------------------------------------
 export const Home = () => {
   return (
-    <div className="w-full">
+    <div className="w-full" style={{ fontFamily: '"Inter", sans-serif' }}>
       <USPBar />
       <HeroBanner />
       <BestSellers />
@@ -349,6 +398,7 @@ export const Home = () => {
       <NewArrivals />
       <BlogHighlights />
       <StoreMap />
+      <BrandStory />
     </div>
   );
 };

@@ -7,7 +7,7 @@ import { ProductCard } from '../../components/common/ProductCard';
 import { ProductCardSkeleton } from '../../components/common/ProductCardSkeleton';
 import { ProductSidebar } from '../../components/common/ProductSidebar';
 import { Pagination } from '../../components/common/Pagination';
-import mainBanner from '../../assets/Group90.jpg';
+import mainBanner from '../../assets/main.jpg';
 
 const mapCategorySlugToProductType = (slug?: string | null): ProductFilterParams['productType'] => {
   if (!slug) return undefined;

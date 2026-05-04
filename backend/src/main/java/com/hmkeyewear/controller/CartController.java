@@ -36,8 +36,16 @@ public class CartController {
             @Valid @RequestBody AddToCartRequest request
     ) {
         String userEmail = authentication != null ? authentication.getName() : null;
-        System.out.println("[Cart Debug] POST /cart/items - userEmail: " + userEmail + ", sessionId: " + sessionId + ", variantId: " + request.getProductVariantId());
-        return ResponseEntity.ok(ApiResponse.success(cartService.addToCart(userEmail, sessionId, request)));
+        System.out.println("[Cart Debug] POST /cart/items - userEmail: " + userEmail + ", sessionId: " + sessionId + ", variantId: " + request.getProductVariantId() + ", quantity: " + request.getQuantity());
+        
+        try {
+            CartResponse response = cartService.addToCart(userEmail, sessionId, request);
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (Exception e) {
+            System.err.println("[Cart Error] Failed to add to cart: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @PutMapping("/items/{cartItemId}")

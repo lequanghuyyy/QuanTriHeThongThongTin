@@ -3,8 +3,14 @@ import type { Cart, CouponValidation } from '../types/cart.types';
 
 export const cartApi = {
   getCart: () => api.get<never, Cart>("/cart"),
-  addItem: (productVariantId: number, quantity: number) =>
-    api.post<never, Cart>("/cart/items", { productVariantId, quantity }),
+  addItem: (productVariantId: number, quantity: number) => {
+    console.log('[Cart API] Adding item:', { productVariantId, quantity });
+    if (!productVariantId || quantity < 1) {
+      console.error('[Cart API] Invalid params:', { productVariantId, quantity });
+      throw new Error('Invalid product variant ID or quantity');
+    }
+    return api.post<never, Cart>("/cart/items", { productVariantId, quantity });
+  },
   updateItem: (cartItemId: number, quantity: number) =>
     api.put<never, Cart>(`/cart/items/${cartItemId}`, { quantity }),
   removeItem: (cartItemId: number) => api.delete<never, Cart>(`/cart/items/${cartItemId}`),

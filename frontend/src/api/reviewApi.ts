@@ -38,11 +38,11 @@ export interface ReviewResponse {
 
 export const reviewApi = {
   createReview: (data: CreateReviewRequest) => 
-    api.post<any>('/reviews', data).then(res => res.data),
+    api.post<any>('/reviews', data),
   
   getMyReviews: () => 
-    api.get<any>('/reviews/my-reviews').then(res => res.data),
+    api.get<any>('/reviews/my-reviews'),
   
   getReviewableItems: (orderCode: string) =>
-    api.get<any>(`/orders/${orderCode}/reviewable-items`).then(res => res.data),
+    api.get<any>(`/orders/${orderCode}/reviewable-items`),
 };

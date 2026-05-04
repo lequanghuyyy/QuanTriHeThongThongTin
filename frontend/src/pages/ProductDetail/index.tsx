@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCartStore } from '../../store/cartStore';
+import { useAuthStore } from '../../store/authStore';
 import { productApi } from '../../api/productApi';
 import { cartApi } from '../../api/cartApi';
 import { ReviewModal } from '../../components/customer/ReviewModal';
@@ -16,6 +17,7 @@ export const ProductDetail = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const setItemCount = useCartStore(state => state.setItemCount);
+  const { isAuthenticated } = useAuthStore();
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -26,6 +28,15 @@ export const ProductDetail = () => {
   // Reviews state
   const [reviewPage, setReviewPage] = useState(0); // API uses 0-based pagination
   const [ratingFilter, setRatingFilter] = useState<number | undefined>(undefined);
+
+  const handleWriteReview = () => {
+    if (!isAuthenticated) {
+      toast.warning('Vui lòng đăng nhập để đánh giá sản phẩm');
+      navigate('/dang-nhap');
+      return;
+    }
+    setShowReviewModal(true);
+  };
 
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ['product', slug],
@@ -75,6 +86,8 @@ export const ProductDetail = () => {
   const addToCartMutation = useMutation({
     mutationFn: () => {
       if (!selectedVariant) throw new Error("Vui lòng chọn phân loại");
+      if (quantity < 1) throw new Error("Số lượng phải lớn hơn 0");
+      console.log('[ProductDetail] Adding to cart:', { variantId: selectedVariant.id, quantity });
       return cartApi.addItem(selectedVariant.id, quantity);
     },
     onSuccess: (response) => {
@@ -85,12 +98,21 @@ export const ProductDetail = () => {
       toast.success("Đã thêm vào giỏ hàng!");
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
-    onError: () => toast.error("Không thể thêm vào giỏ"),
+    onError: (error: any) => {
+      console.error('[ProductDetail] Add to cart error:', error);
+      console.error('[ProductDetail] Error response:', error?.response?.data);
+      const errorMsg = error?.response?.data?.message || error?.message || "Không thể thêm vào giỏ";
+      toast.error(errorMsg);
+    },
   });
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
       toast.error("Vui lòng chọn phân loại");
+      return;
+    }
+    if (quantity < 1) {
+      toast.error("Số lượng phải lớn hơn 0");
       return;
     }
     addToCartMutation.mutate();
@@ -99,6 +121,10 @@ export const ProductDetail = () => {
   const handleBuyNow = () => {
     if (!selectedVariant) {
       toast.error("Vui lòng chọn phân loại");
+      return;
+    }
+    if (quantity < 1) {
+      toast.error("Số lượng phải lớn hơn 0");
       return;
     }
     addToCartMutation.mutate(undefined, {
@@ -525,7 +551,7 @@ export const ProductDetail = () => {
                           <button onClick={() => setRatingFilter(undefined)} className="text-sm text-gray-500 hover:text-black underline underline-offset-4">Xóa bộ lọc</button>
                         )}
                         <button
-                          onClick={() => setShowReviewModal(true)}
+                          onClick={handleWriteReview}
                           className="flex items-center gap-2 px-5 py-2.5 bg-black text-white text-sm font-semibold rounded-full hover:bg-gray-800 transition-colors shadow-md shadow-black/10"
                         >
                           <span className="material-symbols-outlined text-[16px]">chat</span>
@@ -534,7 +560,7 @@ export const ProductDetail = () => {
                       </div>
                     </div>
 
-                    {reviewsData.reviews.content.length === 0 ? (
+                    {!reviewsData?.reviews?.content || reviewsData.reviews.content.length === 0 ? (
                       <div className="text-center py-16 bg-slate-50 rounded-3xl border border-dashed border-gray-200">
                         <span className="text-gray-500 font-medium">Chưa có đánh giá nào. Hãy là người đầu tiên!</span>
                       </div>
@@ -607,7 +633,7 @@ export const ProductDetail = () => {
                             onClick={() => setReviewPage(i)}
                             className={clsx(
                               "w-10 h-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-300",
-                              reviewPage === i + 1 ? "bg-black text-white shadow-md shadow-black/20" : "bg-slate-50 text-gray-600 hover:bg-black hover:text-white"
+                              reviewPage === i ? "bg-black text-white shadow-md shadow-black/20" : "bg-slate-50 text-gray-600 hover:bg-black hover:text-white"
                             )}
                           >
                             {i + 1}

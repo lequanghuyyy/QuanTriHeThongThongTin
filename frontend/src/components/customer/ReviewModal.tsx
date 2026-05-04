@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewApi, type CreateReviewRequest, type ReviewableItem } from '../../api/reviewApi';
 import { axiosInstance } from '../../api/axiosInstance';
+import { useAuthStore } from '../../store/authStore';
 import { Star, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
 import { toast } from '../../utils/toast';
@@ -14,6 +15,7 @@ interface ReviewModalProps {
 
 export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuthStore();
   const [rating, setRating] = useState(5);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [title, setTitle] = useState('');
@@ -22,7 +24,12 @@ export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
   const [uploading, setUploading] = useState(false);
 
   const createReviewMutation = useMutation({
-    mutationFn: (data: CreateReviewRequest) => reviewApi.createReview(data),
+    mutationFn: (data: CreateReviewRequest) => {
+      if (!isAuthenticated) {
+        throw new Error('Vui lòng đăng nhập để đánh giá sản phẩm');
+      }
+      return reviewApi.createReview(data);
+    },
     onSuccess: () => {
       // Invalidate tất cả queries liên quan đến reviews của product này
       queryClient.invalidateQueries({ queryKey: ['reviews', item.productSlug] });

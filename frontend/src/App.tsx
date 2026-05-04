@@ -12,9 +12,9 @@ import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 import { ForgotPassword } from './pages/Auth/ForgotPassword';
 import { OAuth2RedirectHandler } from './pages/Auth/OAuth2RedirectHandler';
+import { CollectionDetail } from './pages/CollectionDetail';
 
 const StoreLocator = () => <div className="p-8">StoreLocator</div>
-const CollectionDetail = () => <div className="p-8">CollectionDetail</div>
 
 import { Checkout } from './pages/Checkout';
 import { CustomerDashboardLayout } from './pages/CustomerDashboard';

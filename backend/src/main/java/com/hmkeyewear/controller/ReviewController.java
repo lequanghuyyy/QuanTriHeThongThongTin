@@ -7,6 +7,7 @@ import com.hmkeyewear.dto.response.ReviewResponse;
 import com.hmkeyewear.service.interfaces.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -35,11 +37,17 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
+        log.info("Getting reviews for product: {}, rating: {}, page: {}, size: {}, sort: {}", slug, rating, page, size, sort);
         String[] sortParams = sort.split(",");
-        Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
-        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortParams[0]));
+        Sort.Direction direction = sortParams.length > 1 
+            ? Sort.Direction.fromString(sortParams[1]) 
+            : Sort.Direction.DESC;
+        String sortField = sortParams.length > 0 ? sortParams[0] : "createdAt";
+        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
         
-        return ResponseEntity.ok(ApiResponse.success(reviewService.getProductReviews(slug, rating, pageable)));
+        ReviewPageResponse response = reviewService.getProductReviews(slug, rating, pageable);
+        log.info("Found {} reviews for product {}", response.getReviews().getTotalElements(), slug);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/api/v1/reviews/my-reviews")

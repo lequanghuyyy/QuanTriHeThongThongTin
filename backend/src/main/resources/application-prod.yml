@@ -53,3 +53,9 @@ cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME}
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
+
+app:
+  setup:
+    secret: ${SETUP_SECRET:CHANGE_THIS_SECRET_KEY}
+  oauth2:
+    frontend-redirect-url: ${FRONTEND_OAUTH2_REDIRECT_URL:https://hmk-eyewear-frontend.onrender.com/oauth2/redirect}

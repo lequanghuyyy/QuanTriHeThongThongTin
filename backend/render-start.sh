@@ -3,12 +3,13 @@
 
 set -e
 
-# Load SDKMAN
-source "$HOME/.sdkman/bin/sdkman-init.sh"
-sdk use java 21.0.1-tem
+# Set Java path
+export JAVA_HOME="/opt/render/project/.jdk"
+export PATH="$JAVA_HOME/bin:$PATH"
 
 echo "Starting application with Java:"
 java -version
 
 # Start the application
+cd backend
 java -jar target/*.jar

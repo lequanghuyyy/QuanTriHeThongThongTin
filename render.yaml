@@ -9,7 +9,7 @@ services:
     region: singapore
     plan: free
     rootDir: backend
-    buildCommand: ./mvnw clean package -DskipTests
+    buildCommand: chmod +x mvnw && ./mvnw clean package -DskipTests
     startCommand: java -jar target/hmk-eyewear-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
     healthCheckPath: /actuator/health
     envVars:

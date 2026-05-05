@@ -37,7 +37,7 @@
    - Branch: `main`
    - Root Directory: `backend`
    - Runtime: **Java**
-   - Build Command: `./mvnw clean package -DskipTests`
+   - Build Command: `chmod +x mvnw && ./mvnw clean package -DskipTests`
    - Start Command: `java -jar target/hmk-eyewear-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod`
 
 5. **Environment Variables** (click Add Environment Variable):

@@ -1,1 +1,78 @@
-# HMK
+# HMK Eyewear E-commerce Platform
+
+Nền tảng thương mại điện tử bán kính mắt với Spring Boot backend và React frontend.
+
+## 🚀 Quick Links
+
+- **[Hướng dẫn Deploy](./DEPLOYMENT.md)** - Chi tiết đầy đủ về deployment
+- **[Quick Start Deploy](./QUICK_START.md)** - Deploy trong 15 phút
+
+## 🛠️ Tech Stack
+
+### Backend
+- Spring Boot 3.2.4
+- MySQL (Aiven)
+- Redis (Render)
+- Spring Security + JWT
+- Google OAuth2
+- Cloudinary (Image storage)
+
+### Frontend
+- React 19
+- Vite
+- TailwindCSS
+- React Query
+- Zustand
+- React Router
+
+## 📦 Project Structure
+
+```
+hmk-eyewear/
+├── backend/              # Spring Boot API
+│   ├── src/
+│   ├── pom.xml
+│   └── system.properties
+├── frontend/             # React SPA
+│   ├── src/
+│   ├── package.json
+│   └── .env.production
+├── docs/                 # Documentation
+├── render.yaml          # Render Blueprint
+├── DEPLOYMENT.md        # Deployment guide
+└── QUICK_START.md       # Quick deploy guide
+```
+
+## 🏃 Local Development
+
+### Backend
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## 🌐 Deployment
+
+Xem [QUICK_START.md](./QUICK_START.md) để deploy nhanh hoặc [DEPLOYMENT.md](./DEPLOYMENT.md) để xem chi tiết.
+
+### Services
+- **Backend**: Render Web Service
+- **Frontend**: Render Static Site
+- **Database**: Aiven MySQL
+- **Cache**: Render Redis
+- **Storage**: Cloudinary
+
+## 📝 Environment Variables
+
+Xem file `.env` trong mỗi thư mục để biết các biến môi trường cần thiết.
+
+## 📄 License
+
+Private Project

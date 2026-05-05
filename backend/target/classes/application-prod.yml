@@ -2,8 +2,14 @@ spring:
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
-    password: huy112005
+    password: ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
   jpa:
     hibernate:
       ddl-auto: validate
@@ -11,6 +17,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: UTC
   data:
     redis:
       url: ${REDIS_URL}

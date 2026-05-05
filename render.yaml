@@ -1,0 +1,82 @@
+# Render Blueprint for HMK Eyewear
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  # Backend Spring Boot Service
+  - type: web
+    name: hmk-eyewear-backend
+    runtime: java
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/hmk-eyewear-backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_USERNAME
+        sync: false
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: hmk-eyewear-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MS
+        value: 604800000
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  # Frontend React Static Site
+  - type: web
+    name: hmk-eyewear-frontend
+    runtime: static
+    region: singapore
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://hmk-eyewear-backend.onrender.com/api/v1
+      - key: VITE_GOOGLE_CLIENT_ID
+        sync: false
+      - key: VITE_CLOUDINARY_URL
+        sync: false
+
+  # Redis Cache
+  - type: redis
+    name: hmk-eyewear-redis
+    region: singapore
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []

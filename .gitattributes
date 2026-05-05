@@ -1,0 +1,11 @@
+# Git attributes for security
+
+# Prevent accidental commits of environment files
+*.env filter=git-crypt diff=git-crypt
+.env.* filter=git-crypt diff=git-crypt
+
+# Mark sensitive files as binary to prevent diffs
+**/secrets.txt binary
+**/*credentials* binary
+**/*password* binary
+RENDER_ENV_VARS.txt binary

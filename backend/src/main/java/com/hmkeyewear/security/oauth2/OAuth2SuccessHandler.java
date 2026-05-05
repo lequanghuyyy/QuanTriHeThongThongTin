@@ -29,7 +29,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final UserRepository userRepository;
 
     @Value("${app.oauth2.frontend-redirect-url:http://localhost:5174/oauth2/redirect}")
-    private String frontendUrl;
+    private String frontendRedirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -66,7 +66,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String accessToken = jwtService.generateAccessToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
 
-        String targetUrl = UriComponentsBuilder.fromUriString(frontendUrl)
+        String targetUrl = UriComponentsBuilder.fromUriString(frontendRedirectUrl)
                 .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build().toUriString();

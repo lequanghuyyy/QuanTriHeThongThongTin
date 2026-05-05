@@ -170,8 +170,8 @@ export const Categories = () => {
           <div className="overflow-y-auto max-h-[calc(100vh-250px)]">
             {isLoading ? (
               <div className="text-center py-12 text-gray-500">Đang tải...</div>
-            ) : categories && categories.length > 0 ? (
-              categories.map((category: Category) => renderCategoryItem(category))
+            ) : categories && (categories as Category[]).length > 0 ? (
+              (categories as Category[]).map((category: Category) => renderCategoryItem(category))
             ) : (
               <div className="text-center py-12 text-gray-500">Chưa có danh mục nào</div>
             )}

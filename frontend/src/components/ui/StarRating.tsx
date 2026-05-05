@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Star, StarHalf } from 'lucide-react';
+import { Star } from 'lucide-react';
 import clsx from 'clsx';
 
 interface StarRatingProps {

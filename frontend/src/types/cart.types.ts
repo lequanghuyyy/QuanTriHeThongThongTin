@@ -1,5 +1,3 @@
-import type { ProductVariant } from "./product.types";
-
 export interface CartItem {
   id: number;
   productVariantId: number;

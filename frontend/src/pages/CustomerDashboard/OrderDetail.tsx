@@ -28,11 +28,13 @@ export const OrderDetail = () => {
     enabled: !!orderCode,
   });
 
-  const { data: reviewableItems } = useQuery({
+  const { data: reviewableItemsData } = useQuery({
     queryKey: ['reviewable-items', orderCode],
     queryFn: () => reviewApi.getReviewableItems(orderCode!),
     enabled: !!orderCode && orderData?.status === 'DELIVERED',
   });
+
+  const reviewableItems = reviewableItemsData?.data;
 
   useEffect(() => {
     if (location.state?.isNewOrder) {

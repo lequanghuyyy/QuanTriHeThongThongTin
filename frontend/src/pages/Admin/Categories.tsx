@@ -31,7 +31,7 @@ export const Categories = () => {
 
   const toggleStatusMutation = useMutation({
     mutationFn: (id: number) => adminApi.toggleCategoryStatus(id),
-    onMutate: async (id) => {
+    onMutate: async (categoryId) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['admin-categories'] });
       
@@ -43,7 +43,7 @@ export const Categories = () => {
         if (!old) return old;
         const updateCategory = (cats: Category[]): Category[] => {
           return cats.map(cat => {
-            if (cat.id === id) {
+            if (cat.id === categoryId) {
               return { ...cat, isActive: !cat.isActive };
             }
             if (cat.children) {
@@ -57,7 +57,7 @@ export const Categories = () => {
       
       return { previousCategories };
     },
-    onError: (error: any, id, context) => {
+    onError: (error: any, _id, context) => {
       // Rollback on error
       if (context?.previousCategories) {
         queryClient.setQueryData(['admin-categories'], context.previousCategories);
@@ -205,7 +205,7 @@ export const Categories = () => {
     );
   };
 
-  const filteredCategories = categories?.filter((cat: Category) =>
+  const filteredCategories = (categories as Category[] | undefined)?.filter((cat: Category) =>
     cat.name.toLowerCase().includes(search.toLowerCase()) ||
     cat.slug.toLowerCase().includes(search.toLowerCase())
   );

@@ -11,7 +11,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
 import { formatVND } from '../../utils/formatters';
 import type { CheckoutRequest, PaymentMethod } from '../../types/order.types';
-import { CreditCard, Wallet, Plus, Lock, X, CheckCircle } from 'lucide-react';
+import { X, CheckCircle } from 'lucide-react';
 import clsx from 'clsx';
 import { toast } from '../../utils/toast';
 
@@ -191,6 +191,7 @@ export const Checkout = () => {
 
   const subtotal = cart?.subtotal || 0;
   const shippingFee = 0; // TBD logic
+  const total = subtotal + shippingFee;
   // Since we don't have discountAmount fetched here natively if we didn't revalidate,
   // ideally we should call validateCoupon again or backend handles it on checkout.
   // For UI mockup, we will assume backend applies it based on couponCode.

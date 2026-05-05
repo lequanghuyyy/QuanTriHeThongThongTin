@@ -24,14 +24,16 @@ export const Collections = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<Collection | null>(null);
 
-  const { data: collections, isLoading } = useQuery({
+  const { data: collectionsData, isLoading } = useQuery({
     queryKey: ['admin-collections'],
     queryFn: () => adminApi.getCollections(),
   });
 
+  const collections = collectionsData as Collection[] | undefined;
+
   const toggleStatusMutation = useMutation({
     mutationFn: (id: number) => adminApi.toggleCollectionStatus(id),
-    onSuccess: (data, id) => {
+    onSuccess: (_response, id) => {
       queryClient.invalidateQueries({ queryKey: ['admin-collections'] });
       // Update selected collection state
       if (selectedCollection?.id === id) {

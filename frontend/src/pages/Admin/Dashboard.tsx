@@ -177,7 +177,7 @@ export const Dashboard = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
                 <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#888', fontFamily: 'Inter, sans-serif' }} axisLine={false} tickLine={false} />
                 <YAxis tickFormatter={(val) => `${val / 1000000}M`} tick={{ fontSize: 12, fill: '#888', fontFamily: 'Inter, sans-serif' }} axisLine={false} tickLine={false} />
-                <RechartsTooltip formatter={(value: number) => formatVND(value)} labelStyle={{ color: '#333', fontFamily: 'Inter, sans-serif' }} contentStyle={{ fontFamily: 'Inter, sans-serif' }} />
+                <RechartsTooltip formatter={(value) => formatVND(Number(value))} labelStyle={{ color: '#333', fontFamily: 'Inter, sans-serif' }} contentStyle={{ fontFamily: 'Inter, sans-serif' }} />
                 <Line type="monotone" dataKey="revenue" stroke="#000" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>

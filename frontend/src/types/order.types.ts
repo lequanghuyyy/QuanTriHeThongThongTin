@@ -1,5 +1,3 @@
-import type { ProductVariant } from "./product.types";
-
 export type OrderStatus = "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "REFUNDED";
 export type PaymentMethod = "COD" | "BANK_TRANSFER" | "MOMO" | "VNPAY" | "ZALOPAY";
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";

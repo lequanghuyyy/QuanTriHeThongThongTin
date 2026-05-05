@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderApi } from '../../api/orderApi';
-import { reviewApi } from '../../api/reviewApi';
-import type { OrderStatus, OrderSummary, OrderItem } from '../../types/order.types';
+import type { OrderStatus, OrderSummary } from '../../types/order.types';
 import { formatVND, formatDate, formatOrderStatus, getOrderStatusColor } from '../../utils/formatters';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import { Package, X } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { Package } from 'lucide-react';
 import { toast } from '../../utils/toast';
 
 const tabs = [
@@ -24,9 +22,7 @@ export const OrderHistory = () => {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
-  // Review Modal state
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [itemToReview, setItemToReview] = useState<OrderItem | null>(null);
+  // Review Modal state - removed unused variables
 
   const { data: ordersData, isLoading } = useQuery({
     queryKey: ['orders', page, activeTab],
@@ -46,11 +42,6 @@ export const OrderHistory = () => {
     if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
       cancelMutation.mutate(orderCode);
     }
-  };
-
-  const openReviewModal = (item: OrderItem) => {
-    setItemToReview(item);
-    setReviewModalOpen(true);
   };
 
   return (
@@ -149,100 +140,6 @@ export const OrderHistory = () => {
               )}
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Review Modal */}
-      {reviewModalOpen && itemToReview && (
-        <ReviewModal 
-          item={itemToReview} 
-          onClose={() => setReviewModalOpen(false)} 
-        />
-      )}
-    </div>
-  );
-};
-
-// Review Modal Component
-const ReviewModal = ({ item, onClose }: { item: OrderItem, onClose: () => void }) => {
-  const queryClient = useQueryClient();
-  const [rating, setRating] = useState(5);
-  const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const reviewMutation = useMutation({
-    mutationFn: (data: any) => reviewApi.createReview({ 
-      orderItemId: item.id, 
-      rating, 
-      title: data.title, 
-      content: data.content 
-    }),
-    onSuccess: () => {
-      toast.success("Cảm ơn bạn đã đánh giá!");
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      // Invalidate product reviews if necessary
-      onClose();
-    },
-    onError: () => toast.error("Không thể gửi đánh giá")
-  });
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white w-full max-w-lg rounded-xl shadow-xl overflow-hidden">
-        <div className="flex justify-between items-center p-6 border-b border-gray-100">
-          <h3 className="font-serif text-xl text-gray-900">Đánh giá sản phẩm</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
-        </div>
-        <div className="p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <img src={item.productVariant.imageUrl ?? undefined} alt="" className="w-16 h-16 object-contain bg-gray-50 border rounded" />
-            <div>
-              <p className="font-medium text-sm text-gray-900">{item.productName}</p>
-              <p className="text-xs text-gray-500">{item.variantName}</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit(data => reviewMutation.mutate(data))} className="space-y-4">
-            <div className="flex justify-center gap-2 mb-6">
-              {[1, 2, 3, 4, 5].map(star => (
-                <button 
-                  key={star} 
-                  type="button" 
-                  onClick={() => setRating(star)}
-                  className={clsx("text-3xl focus:outline-none transition-colors", star <= rating ? "text-yellow-400" : "text-gray-200")}
-                >
-                  ★
-                </button>
-              ))}
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Tiêu đề đánh giá</label>
-              <input 
-                {...register("title", { required: "Vui lòng nhập tiêu đề" })} 
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary"
-                placeholder="Tóm tắt ngắn gọn..."
-              />
-              {errors.title && <p className="text-xs text-danger mt-1">{errors.title.message as string}</p>}
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-700 uppercase mb-1">Chi tiết trải nghiệm</label>
-              <textarea 
-                {...register("content", { required: "Vui lòng nhập nội dung" })} 
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-primary focus:border-primary min-h-[100px]"
-                placeholder="Bạn có hài lòng về sản phẩm này không?"
-              ></textarea>
-              {errors.content && <p className="text-xs text-danger mt-1">{errors.content.message as string}</p>}
-            </div>
-
-            <button 
-              type="submit"
-              disabled={reviewMutation.isPending}
-              className="w-full bg-primary text-white py-3 rounded font-medium hover:bg-gray-800 transition-colors mt-2"
-            >
-              Gửi đánh giá
-            </button>
-          </form>
         </div>
       </div>
     </div>

@@ -1,15 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { reviewApi, type ReviewResponse } from '../../api/reviewApi';
 import { formatDate } from '../../utils/formatters';
-import { Star, MessageSquare, Clock, CheckCircle2, XCircle } from 'lucide-react';
+import { Star, MessageSquare, Clock, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import clsx from 'clsx';
 
 export const Reviews = () => {
-  const { data: reviews, isLoading } = useQuery<ReviewResponse[]>({
+  const { data: reviewsData, isLoading } = useQuery({
     queryKey: ['my-reviews'],
     queryFn: () => reviewApi.getMyReviews(),
   });
+
+  const reviews = reviewsData?.data as ReviewResponse[] | undefined;
 
   return (
     <div className="animate-fade-in">

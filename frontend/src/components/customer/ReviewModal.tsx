@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewApi, type CreateReviewRequest, type ReviewableItem } from '../../api/reviewApi';
 import { axiosInstance } from '../../api/axiosInstance';
 import { useAuthStore } from '../../store/authStore';
-import { Star, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { Star, X, Upload, Trash2 } from 'lucide-react';
 import clsx from 'clsx';
 import { toast } from '../../utils/toast';
 
@@ -78,7 +78,12 @@ export const ReviewModal = ({ item, onClose, productId }: ReviewModalProps) => {
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
-      setImages((prev) => [...prev, ...uploadedUrls]);
+      // Extract string URLs from axios responses
+      const urls = uploadedUrls.map(response => {
+        // axiosInstance interceptor returns response.data.data
+        return typeof response === 'string' ? response : response.data;
+      });
+      setImages((prev) => [...prev, ...urls]);
     } catch (error: any) {
       toast.error(error.message || 'Không thể upload ảnh');
     } finally {

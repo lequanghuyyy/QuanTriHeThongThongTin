@@ -39,6 +39,7 @@ public class ProductCardResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class VariantInfo {
+        private Long id;
         private String colorName;
         private String colorHex;
         private int stockQuantity;

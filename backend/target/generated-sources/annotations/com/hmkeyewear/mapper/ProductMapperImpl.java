@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-06T11:48:16+0700",
+    date = "2026-05-06T12:28:06+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -30,6 +30,7 @@ public class ProductMapperImpl implements ProductMapper {
 
         productCardResponse.category( categoryToCategoryInfo( product.getCategory() ) );
         productCardResponse.thumbnailUrl( getThumbnailUrl( product ) );
+        productCardResponse.variants( productVariantListToVariantInfoList( product.getVariants() ) );
         productCardResponse.id( product.getId() );
         productCardResponse.name( product.getName() );
         productCardResponse.slug( product.getSlug() );
@@ -38,9 +39,24 @@ public class ProductMapperImpl implements ProductMapper {
         productCardResponse.discountPercent( product.getDiscountPercent() );
         productCardResponse.averageRating( product.getAverageRating() );
         productCardResponse.reviewCount( product.getReviewCount() );
-        productCardResponse.variants( productVariantListToVariantInfoList( product.getVariants() ) );
 
         return productCardResponse.build();
+    }
+
+    @Override
+    public ProductCardResponse.VariantInfo toVariantInfo(ProductVariant variant) {
+        if ( variant == null ) {
+            return null;
+        }
+
+        ProductCardResponse.VariantInfo variantInfo = new ProductCardResponse.VariantInfo();
+
+        variantInfo.setId( variant.getId() );
+        variantInfo.setColorName( variant.getColorName() );
+        variantInfo.setColorHex( variant.getColorHex() );
+        variantInfo.setStockQuantity( variant.getStockQuantity() );
+
+        return variantInfo;
     }
 
     @Override
@@ -97,20 +113,6 @@ public class ProductMapperImpl implements ProductMapper {
         return categoryInfo;
     }
 
-    protected ProductCardResponse.VariantInfo productVariantToVariantInfo(ProductVariant productVariant) {
-        if ( productVariant == null ) {
-            return null;
-        }
-
-        ProductCardResponse.VariantInfo variantInfo = new ProductCardResponse.VariantInfo();
-
-        variantInfo.setColorName( productVariant.getColorName() );
-        variantInfo.setColorHex( productVariant.getColorHex() );
-        variantInfo.setStockQuantity( productVariant.getStockQuantity() );
-
-        return variantInfo;
-    }
-
     protected List<ProductCardResponse.VariantInfo> productVariantListToVariantInfoList(List<ProductVariant> list) {
         if ( list == null ) {
             return null;
@@ -118,7 +120,7 @@ public class ProductMapperImpl implements ProductMapper {
 
         List<ProductCardResponse.VariantInfo> list1 = new ArrayList<ProductCardResponse.VariantInfo>( list.size() );
         for ( ProductVariant productVariant : list ) {
-            list1.add( productVariantToVariantInfo( productVariant ) );
+            list1.add( toVariantInfo( productVariant ) );
         }
 
         return list1;

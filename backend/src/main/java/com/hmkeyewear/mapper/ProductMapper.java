@@ -17,7 +17,14 @@ public interface ProductMapper {
     @Mapping(target = "category.name", source = "category.name")
     @Mapping(target = "category.slug", source = "category.slug")
     @Mapping(target = "thumbnailUrl", source = "product", qualifiedByName = "getThumbnailUrl")
+    @Mapping(target = "variants", source = "variants")
     ProductCardResponse toCardResponse(Product product);
+    
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "colorName", source = "colorName")
+    @Mapping(target = "colorHex", source = "colorHex")
+    @Mapping(target = "stockQuantity", source = "stockQuantity")
+    ProductCardResponse.VariantInfo toVariantInfo(com.hmkeyewear.entity.ProductVariant variant);
 
     @Named("getThumbnailUrl")
     default String getThumbnailUrl(Product product) {

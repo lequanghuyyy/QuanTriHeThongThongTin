@@ -363,17 +363,13 @@ export const Checkout = () => {
               <label 
                 onClick={() => setPaymentMethod('COD')}
                 className={clsx(
-                  "flex items-center p-4 border rounded-lg cursor-pointer transition-all",
+                  "flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all",
                   paymentMethod === 'COD' ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
                 )}
               >
-                <div className="mr-4">
-                  <div className={clsx(
-                    "w-5 h-5 rounded-full border-2 flex items-center justify-center",
-                    paymentMethod === 'COD' ? "border-primary" : "border-gray-300"
-                  )}>
-                    {paymentMethod === 'COD' && <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>}
-                  </div>
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-gray-600 text-[20px]">payments</span>
+                  <span className="font-medium text-sm text-gray-900">Thanh toán khi nhận hàng (COD)</span>
                 </div>
                 {paymentMethod === 'COD' ? (
                   <span className="material-symbols-outlined text-black text-[20px]">radio_button_checked</span>
@@ -385,17 +381,13 @@ export const Checkout = () => {
               <label 
                 onClick={() => setPaymentMethod('BANK_TRANSFER')}
                 className={clsx(
-                  "flex items-center p-4 border rounded-lg cursor-pointer transition-all",
+                  "flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all",
                   paymentMethod === 'BANK_TRANSFER' ? "border-primary bg-gray-50" : "border-gray-200 hover:border-gray-300 bg-white"
                 )}
               >
-                <div className="mr-4">
-                  <div className={clsx(
-                    "w-5 h-5 rounded-full border-2 flex items-center justify-center",
-                    paymentMethod === 'BANK_TRANSFER' ? "border-primary" : "border-gray-300"
-                  )}>
-                    {paymentMethod === 'BANK_TRANSFER' && <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>}
-                  </div>
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-gray-600 text-[20px]">account_balance</span>
+                  <span className="font-medium text-sm text-gray-900">Chuyển khoản ngân hàng</span>
                 </div>
                 {paymentMethod === 'BANK_TRANSFER' ? (
                   <span className="material-symbols-outlined text-black text-[20px]">radio_button_checked</span>

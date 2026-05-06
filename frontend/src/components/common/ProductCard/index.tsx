@@ -41,17 +41,24 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     
     const availableVariant = product.variants?.find(v => v.stockQuantity > 0);
     
-    if (!availableVariant) {
-      toast.error('Sản phẩm đã hết hàng');
+    if (!availableVariant || !availableVariant.id) {
+      toast.error('Sản phẩm đã hết hàng hoặc không có biến thể');
+      console.error('[ProductCard] No available variant found:', { product, variants: product.variants });
       return;
     }
 
+    console.log('[ProductCard] Adding variant to cart:', { variantId: availableVariant.id, quantity: 1 });
+    
     addToCartMutation.mutate(
       { variantId: availableVariant.id, quantity: 1 },
       {
         onSuccess: () => {
           toast.success("Đã thêm vào giỏ hàng!");
           navigate('/gio-hang');
+        },
+        onError: (error) => {
+          console.error('[ProductCard] Add to cart failed:', error);
+          toast.error('Không thể thêm vào giỏ');
         }
       }
     );

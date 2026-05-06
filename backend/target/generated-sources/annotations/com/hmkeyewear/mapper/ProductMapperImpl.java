@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-05-04T15:04:54+0700",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.46.0.v20260407-0427, environment: Java 21.0.10 (Eclipse Adoptium)"
+    date = "2026-05-06T11:48:16+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
 public class ProductMapperImpl implements ProductMapper {
@@ -29,15 +29,15 @@ public class ProductMapperImpl implements ProductMapper {
         ProductCardResponse.ProductCardResponseBuilder productCardResponse = ProductCardResponse.builder();
 
         productCardResponse.category( categoryToCategoryInfo( product.getCategory() ) );
-        productCardResponse.averageRating( product.getAverageRating() );
-        productCardResponse.basePrice( product.getBasePrice() );
-        productCardResponse.discountPercent( product.getDiscountPercent() );
+        productCardResponse.thumbnailUrl( getThumbnailUrl( product ) );
         productCardResponse.id( product.getId() );
         productCardResponse.name( product.getName() );
-        productCardResponse.reviewCount( product.getReviewCount() );
-        productCardResponse.salePrice( product.getSalePrice() );
         productCardResponse.slug( product.getSlug() );
-        productCardResponse.thumbnailUrl( product.getThumbnailUrl() );
+        productCardResponse.basePrice( product.getBasePrice() );
+        productCardResponse.salePrice( product.getSalePrice() );
+        productCardResponse.discountPercent( product.getDiscountPercent() );
+        productCardResponse.averageRating( product.getAverageRating() );
+        productCardResponse.reviewCount( product.getReviewCount() );
         productCardResponse.variants( productVariantListToVariantInfoList( product.getVariants() ) );
 
         return productCardResponse.build();
@@ -56,28 +56,28 @@ public class ProductMapperImpl implements ProductMapper {
         if ( product.getGender() != null ) {
             productDetailResponse.gender( product.getGender().name() );
         }
-        productDetailResponse.averageRating( product.getAverageRating() );
-        productDetailResponse.basePrice( product.getBasePrice() );
-        productDetailResponse.brand( product.getBrand() );
-        productDetailResponse.description( product.getDescription() );
-        productDetailResponse.discountPercent( product.getDiscountPercent() );
-        productDetailResponse.frameShape( product.getFrameShape() );
         productDetailResponse.id( product.getId() );
-        productDetailResponse.images( productImageListToImageInfoList( product.getImages() ) );
-        productDetailResponse.lensCoating( product.getLensCoating() );
-        productDetailResponse.lensFeature( product.getLensFeature() );
-        productDetailResponse.lensIndex( product.getLensIndex() );
-        productDetailResponse.material( product.getMaterial() );
+        productDetailResponse.sku( product.getSku() );
         productDetailResponse.name( product.getName() );
+        productDetailResponse.slug( product.getSlug() );
+        productDetailResponse.description( product.getDescription() );
+        productDetailResponse.shortDescription( product.getShortDescription() );
         if ( product.getProductType() != null ) {
             productDetailResponse.productType( product.getProductType().name() );
         }
-        productDetailResponse.reviewCount( product.getReviewCount() );
+        productDetailResponse.brand( product.getBrand() );
+        productDetailResponse.basePrice( product.getBasePrice() );
         productDetailResponse.salePrice( product.getSalePrice() );
-        productDetailResponse.shortDescription( product.getShortDescription() );
-        productDetailResponse.sku( product.getSku() );
-        productDetailResponse.slug( product.getSlug() );
+        productDetailResponse.discountPercent( product.getDiscountPercent() );
+        productDetailResponse.averageRating( product.getAverageRating() );
+        productDetailResponse.reviewCount( product.getReviewCount() );
         productDetailResponse.totalSold( product.getTotalSold() );
+        productDetailResponse.lensIndex( product.getLensIndex() );
+        productDetailResponse.lensCoating( product.getLensCoating() );
+        productDetailResponse.lensFeature( product.getLensFeature() );
+        productDetailResponse.material( product.getMaterial() );
+        productDetailResponse.frameShape( product.getFrameShape() );
+        productDetailResponse.images( productImageListToImageInfoList( product.getImages() ) );
         productDetailResponse.variants( productVariantListToVariantDetailInfoList( product.getVariants() ) );
 
         return productDetailResponse.build();
@@ -104,8 +104,8 @@ public class ProductMapperImpl implements ProductMapper {
 
         ProductCardResponse.VariantInfo variantInfo = new ProductCardResponse.VariantInfo();
 
-        variantInfo.setColorHex( productVariant.getColorHex() );
         variantInfo.setColorName( productVariant.getColorName() );
+        variantInfo.setColorHex( productVariant.getColorHex() );
         variantInfo.setStockQuantity( productVariant.getStockQuantity() );
 
         return variantInfo;
@@ -159,9 +159,9 @@ public class ProductMapperImpl implements ProductMapper {
 
         ProductDetailResponse.ImageInfo imageInfo = new ProductDetailResponse.ImageInfo();
 
-        imageInfo.setAltText( productImage.getAltText() );
         imageInfo.setId( productImage.getId() );
         imageInfo.setImageUrl( productImage.getImageUrl() );
+        imageInfo.setAltText( productImage.getAltText() );
         imageInfo.setPrimary( productImage.isPrimary() );
 
         return imageInfo;
@@ -187,14 +187,14 @@ public class ProductMapperImpl implements ProductMapper {
 
         ProductDetailResponse.VariantDetailInfo variantDetailInfo = new ProductDetailResponse.VariantDetailInfo();
 
-        variantDetailInfo.setAdditionalPrice( productVariant.getAdditionalPrice() );
-        variantDetailInfo.setColorHex( productVariant.getColorHex() );
-        variantDetailInfo.setColorName( productVariant.getColorName() );
         variantDetailInfo.setId( productVariant.getId() );
-        variantDetailInfo.setImageUrl( productVariant.getImageUrl() );
-        variantDetailInfo.setSize( productVariant.getSize() );
         variantDetailInfo.setSku( productVariant.getSku() );
+        variantDetailInfo.setColorName( productVariant.getColorName() );
+        variantDetailInfo.setColorHex( productVariant.getColorHex() );
+        variantDetailInfo.setSize( productVariant.getSize() );
+        variantDetailInfo.setAdditionalPrice( productVariant.getAdditionalPrice() );
         variantDetailInfo.setStockQuantity( productVariant.getStockQuantity() );
+        variantDetailInfo.setImageUrl( productVariant.getImageUrl() );
 
         return variantDetailInfo;
     }

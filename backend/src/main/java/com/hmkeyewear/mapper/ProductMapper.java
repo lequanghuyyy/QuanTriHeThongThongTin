@@ -16,7 +16,22 @@ public interface ProductMapper {
     @Mapping(target = "category.id", source = "category.id")
     @Mapping(target = "category.name", source = "category.name")
     @Mapping(target = "category.slug", source = "category.slug")
+    @Mapping(target = "thumbnailUrl", source = "product", qualifiedByName = "getThumbnailUrl")
     ProductCardResponse toCardResponse(Product product);
+
+    @Named("getThumbnailUrl")
+    default String getThumbnailUrl(Product product) {
+        // Nếu có thumbnailUrl thì dùng
+        if (product.getThumbnailUrl() != null && !product.getThumbnailUrl().isEmpty()) {
+            return product.getThumbnailUrl();
+        }
+        // Nếu không có, lấy ảnh đầu tiên từ images
+        if (product.getImages() != null && !product.getImages().isEmpty()) {
+            return product.getImages().get(0).getImageUrl();
+        }
+        // Trả về null để frontend hiển thị placeholder
+        return null;
+    }
 
     @Mapping(target = "category", source = "category")
     @Mapping(target = "collection", source = "collection")

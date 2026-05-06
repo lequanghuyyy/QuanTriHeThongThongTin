@@ -64,9 +64,10 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Cacheable(value = "products", key = "'best-sellers'")
     public List<ProductCardResponse> getBestSellers(int limit) {
-        return productRepository.findAll(
-                PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "totalSold"))
-        ).map(productMapper::toCardResponse).getContent();
+        return productRepository.findBestSellersWithImages(PageRequest.of(0, limit))
+                .stream()
+                .map(productMapper::toCardResponse)
+                .collect(Collectors.toList());
     }
 
     @Override

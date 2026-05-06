@@ -1,12 +1,6 @@
 # HMK Eyewear E-commerce Platform
 
 Nền tảng thương mại điện tử bán kính mắt với Spring Boot backend và React frontend.
-
-## 🚀 Quick Links
-
-- **[Hướng dẫn Deploy](./DEPLOYMENT.md)** - Chi tiết đầy đủ về deployment
-- **[Quick Start Deploy](./QUICK_START.md)** - Deploy trong 15 phút
-
 ## 🛠️ Tech Stack
 
 ### Backend
@@ -39,16 +33,13 @@ hmk-eyewear/
 │   └── .env.production
 ├── docs/                 # Documentation
 ├── render.yaml          # Render Blueprint
-├── DEPLOYMENT.md        # Deployment guide
-└── QUICK_START.md       # Quick deploy guide
 ```
-
-## 🏃 Local Development
+## Local Development
 
 ### Backend
 ```bash
 cd backend
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
 ### Frontend

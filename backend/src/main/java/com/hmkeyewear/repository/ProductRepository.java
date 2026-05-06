@@ -1,6 +1,7 @@
 package com.hmkeyewear.repository;
 
 import com.hmkeyewear.entity.Product;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -16,4 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     // For full-text search simulation or basic LIKE
     @Query("SELECT p FROM Product p WHERE p.isActive = true AND (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Product> searchByKeyword(String keyword);
+    
+    // Fetch join images for best sellers
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images WHERE p.isActive = true ORDER BY p.totalSold DESC")
+    List<Product> findBestSellersWithImages(Pageable pageable);
 }

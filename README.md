@@ -49,18 +49,7 @@ npm install
 npm run dev
 ```
 
-## 🌐 Deployment
-
-Xem [QUICK_START.md](./QUICK_START.md) để deploy nhanh hoặc [DEPLOYMENT.md](./DEPLOYMENT.md) để xem chi tiết.
-
-### Services
-- **Backend**: Render Web Service
-- **Frontend**: Render Static Site
-- **Database**: Aiven MySQL
-- **Cache**: Render Redis
-- **Storage**: Cloudinary
-
-## 📝 Environment Variables
+## Environment Variables
 
 Xem file `.env` trong mỗi thư mục để biết các biến môi trường cần thiết.
 

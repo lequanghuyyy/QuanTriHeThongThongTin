@@ -444,7 +444,7 @@ export const ProductDetail = () => {
                 activeTab === 'reviews' ? "bg-black text-white shadow-sm" : "text-gray-500 hover:text-black hover:bg-gray-200"
               )}
             >
-              Đánh giá ({product.reviewCount})
+              Đánh giá
             </button>
           </nav>
         </div>

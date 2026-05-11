@@ -22,8 +22,15 @@ const BANNERS = [
     id: 2,
     title: '',
     subtitle: 'TITANIUM SERIES',
-    image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/595512761_1443701357765818_2357912442372904911_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=b895b5&_nc_eui2=AeFkoULA-qAUuQmR49bdlO7yUglWiNvg9MdSCVaI2-D0x0D1InNIPjmAvexzdDQ-NupFKkgIh0VrpzuD1ns2UBMp&_nc_ohc=vJHDsa8saSQQ7kNvwHhcJED&_nc_oc=AdqRBO1FmwL1XxgWmKxAcdZL7PdxfXbGle6p7smvPeQ6PVLGqtH76YW42KMwec5MtWSNkoWQmetSaTdrPj0pAZZU&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=neFK2XNcyzvGxe_Ab0FaCg&_nc_ss=7b2a8&oh=00_Af5UDMozbBtvZhcedfcnGAiH3UUP_kzLDJBrEfad-1ka5w&oe=69FD2503',
+    image: 'https://hmkeyewear.com/wp-content/uploads/2025/06/Trang-Collection_.jpg',
     link: '/bo-suu-tap/titanium',
+  },
+  {
+    id: 3,
+    title: '',
+    subtitle: 'SUMMER GLOW COLLECTION',
+    image: 'https://hmkeyewear.com/wp-content/uploads/2025/02/7.-Disc-Dream.webp',
+    link: '/bo-suu-tap/summer-glow',
   },
 ];
 
@@ -45,15 +52,14 @@ const HeroBanner = () => {
       {BANNERS.map((banner, idx) => (
         <div
           key={banner.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            idx === currentIdx ? 'opacity-100 z-10' : 'opacity-0 z-0'
-          }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentIdx ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
         >
           <img src={banner.image} alt={banner.title} className="w-full h-full object-cover mix-blend-multiply" />
-         
+
         </div>
       ))}
-      
+
       {/* Arrows */}
       <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-white/50 hover:bg-white rounded-full flex items-center justify-center transition-colors">
         <ChevronLeft size={24} />
@@ -128,9 +134,8 @@ const BestSellers = () => {
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`pb-4 font-medium text-[14px] transition-colors relative ${
-                activeTab === tab.value ? 'text-primary' : 'text-gray-400 hover:text-gray-800'
-              }`}
+              className={`pb-4 font-medium text-[14px] transition-colors relative ${activeTab === tab.value ? 'text-primary' : 'text-gray-400 hover:text-gray-800'
+                }`}
             >
               {tab.label}
               {activeTab === tab.value && (
@@ -144,13 +149,13 @@ const BestSellers = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[var(--spacing-product-grid-gap)]">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="animate-pulse bg-gray-100 rounded-card aspect-[3/4]" />
-            ))
+            <div key={i} className="animate-pulse bg-gray-100 rounded-card aspect-[3/4]" />
+          ))
           : products?.slice(0, 4).map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            <ProductCard key={product.id} product={product} />
+          ))}
       </div>
-      
+
       <div className="mt-12 text-center">
         <Link to={`/san-pham?productType=${activeTab}`} className="inline-block border border-primary text-primary px-8 py-3 rounded-button hover:bg-primary hover:text-white transition-colors font-medium text-sm">
           XEM TẤT CẢ
@@ -183,8 +188,8 @@ const FeaturedCollections = () => {
         <div className="flex justify-between items-end mb-12">
           <h2 className="text-3xl font-sans font-bold uppercase tracking-wider">Bộ sưu tập nổi bật</h2>
           <div className="flex gap-2">
-            <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white"><ChevronLeft size={20}/></button>
-            <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white"><ChevronRight size={20}/></button>
+            <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white"><ChevronLeft size={20} /></button>
+            <button className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-white"><ChevronRight size={20} /></button>
           </div>
         </div>
 
@@ -216,23 +221,23 @@ const CategoryShowcase = () => {
     <section className="py-[var(--space-section)] container mx-auto px-4 md:px-8">
       <h2 className="text-center text-3xl font-sans font-bold mb-12 uppercase tracking-wider">Chọn kính - Kẻ cá tính</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-        <div 
+        <div
           onClick={() => navigate('/san-pham?gender=MALE')}
           className="relative h-[600px] group cursor-pointer overflow-hidden rounded-image"
         >
-          <img src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/666808471_1550304903772129_328402076671839701_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeEwTijwycfhGN0MAFbLwfe7T7VcC9fZWRVPtVwL19lZFcyMOi72tIwufV0d1R2hm9AhEvtA8uIpf0y01eG93tRR&_nc_ohc=y0J2st0nCaEQ7kNvwHmmZ6d&_nc_oc=AdogGqJSe_G_bthcQWeVJbvjdMO9mj_GZLt76W2ikG7TSkAFj-4kylFq41nAjFNpHjV5psv7o7yS2GLcnxAfNVRF&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=AelpFZ-LRw7jItxFGJ72Ww&_nc_ss=7b2a8&oh=00_Af619KPVs7hzb1_B_dvPvKAxh4wq4a8Nc5ri73AuaediOA&oe=69FD2166" alt="Gọng Nam" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src="https://hmkeyewear.com/wp-content/uploads/2024/07/GONG-KINH-NAM-1.jpg" alt="Gọng Nam" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center">
-           <h1 className="w-full text-left px-8 text-white text-4xl font-sans font-bold">Gọng Nam</h1>
+            <h1 className="w-full text-left px-8 text-white text-4xl font-sans font-bold">Gọng Nam</h1>
             <button className="bg-black text-white px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm mt-60">
               Xem chi tiết
             </button>
           </div>
         </div>
-        <div 
+        <div
           onClick={() => navigate('/san-pham?gender=FEMALE')}
           className="relative h-[600px] group cursor-pointer overflow-hidden rounded-image"
         >
-          <img src="https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/679675933_1565547712247848_7120040392077682858_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeHdf1Hoia8yrTj1Ou4_uczL3hARnOPMUTHeEBGc48xRMUKmDHYB01E3dk20WpKfUb7qVtHbes6yuZcpLC1PmdY0&_nc_ohc=KZUw_MxeSnAQ7kNvwHvCQar&_nc_oc=AdpgS2XoRlWiEs8j6b6FaLKSLc8uSZOIwwt-LrpWPXNR_P88OJp7a9mSObCWIxHxaTKDrMXPFEhVdpRxhJ2SfI9t&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=M8CLEHGFFol8ZsrGDfZzNQ&_nc_ss=7b2a8&oh=00_Af78bH9r9X0euc4B6TR_c93Y29tZtwjPNDn3IWbtqpye3g&oe=69FD3E33" alt="Gọng Nữ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+          <img src="https://hmkeyewear.com/wp-content/uploads/2025/02/m-4-1024x735.png" alt="Gọng Nữ" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
           <div className="absolute inset-0 bg-black/20 flex flex-col items-center justify-center">
             <h1 className="w-full text-left px-8 text-white text-4xl font-sans font-bold">Gọng Nữ</h1>
             <button className="bg-black text-white px-8 py-3 rounded-button font-medium hover:bg-gray-100 transition-colors uppercase tracking-wide text-sm mt-60">
@@ -266,11 +271,11 @@ const NewArrivals = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-[var(--spacing-product-grid-gap)]">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="animate-pulse bg-gray-100 rounded-card aspect-[3/4]" />
-            ))
+            <div key={i} className="animate-pulse bg-gray-100 rounded-card aspect-[3/4]" />
+          ))
           : products?.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            <ProductCard key={product.id} product={product} />
+          ))}
       </div>
     </section>
   );
@@ -281,9 +286,9 @@ const NewArrivals = () => {
 // ----------------------------------------------------------------------
 const BlogHighlights = () => {
   const blogs = [
-    { id: 1, title: 'Siêu khuyến mãi chỉ có tại HMK', image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/602330652_1455693543233266_5999574423352990123_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeGTIi1SG2OBUVRl9T__CgP5W3GtEHnnUO5bca0QeedQ7gU95WYd22amr0TCg7YeqgGRGzFIEnlxpcg1COig7RvS&_nc_ohc=sMnxlcw93dEQ7kNvwHpZXbB&_nc_oc=AdqkuLvCggQiwVVT3M2Mm1ffZ8x67z9ar6rxGtJ8MRxu1k0oguzjYXr-La7GvwI2GXxFFA_pCH_Ne3yCsuMOQlAw&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=8CGmrGXijz3JpSA32AJu6A&_nc_ss=7b2a8&oh=00_Af7Mxvq_MqmdlPwnTG0wa5hco_qgPQ33l_Q01G_gZR_0vg&oe=69FD408B', date: '20/10/2026' },
-    { id: 2, title: 'Diện mạo mới tại chi nhánh HMK Đà Nẵng Store', image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/581272527_1422980253171262_6133393421819966415_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeEUyAHsJQvpfeMApttJIoGR-yJwaLgoWrP7InBouChas-iAolb55UWpWsRZgDv0vqw6VXzKg6z_eKk0ILn1CWX_&_nc_ohc=Q6ne0iq5Z8UQ7kNvwGuyfql&_nc_oc=AdqGBuAwOyDtI3sUk2fcJd4_UWZTizsAr4YD3AWsBHWOVZv-V6kESK_S8eHtb2okGpTAdGQTN1Dl5NmsMy8WWbfB&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=dpWmHotbYGKXeQ0grTv6tA&_nc_ss=7b2a8&oh=00_Af6Ep9yUc1VtogbTdcLTJICzKlOflOSQBqw1okWAb718ng&oe=69FD214A', date: '15/10/2026' },
-    { id: 3, title: 'Nhận diện thương hiệu', image: 'https://scontent.fvca5-1.fna.fbcdn.net/v/t39.30808-6/560664492_1397342659068355_9116625938196319443_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=13d280&_nc_eui2=AeFK_kF81XR7BfsfgDG4Y3ggHsFRUvZyuC8ewVFS9nK4LzuE3Vb0rDe5zgb6V8Nn5VeQMrGXC7WlAlM6L1uEdgCR&_nc_ohc=XwbUIDLbnPgQ7kNvwFW65ip&_nc_oc=AdqlDqB5hcaFnMgVxjSGKXD21WvhAViPpxizkDfqhDnCu4SwAUV0ag9PDIFTPBo6rR61Y8dzdhPoxbOyV9gT9iNh&_nc_zt=23&_nc_ht=scontent.fvca5-1.fna&_nc_gid=jg8yCqvaObPqwrbxtWTEtQ&_nc_ss=7b2a8&oh=00_Af5bzTCChA9_hU-rPye23SlSVcdcA0SXMOdIoKJ8VJpU3A&oe=69FD48D5', date: '05/10/2026' },
+    { id: 1, title: 'Siêu khuyến mãi chỉ có tại HMK', image: 'https://hmkeyewear.com/wp-content/uploads/2025/03/ALL-CTKM-G.O-Can-Tho-Store-48-1024x1024.png', date: '20/10/2026' },
+    { id: 2, title: 'Diện mạo mới tại chi nhánh HMK Đà Nẵng Store', image: 'https://hmkeyewear.com/wp-content/uploads/2023/10/store-1.png', date: '15/10/2026' },
+    { id: 3, title: 'Nhận diện thương hiệu', image: 'https://img.gotit.vn/compress/brand/images/1699324510_dZlua.png', date: '05/10/2026' },
   ];
 
   return (
@@ -315,17 +320,17 @@ const StoreMap = () => {
       <div className="grid grid-cols-1 md:grid-cols-2">
         <div className="flex flex-col justify-center px-8 py-16 md:p-24">
           <h2 className="text-2xl md:text-3xl font-bold uppercase mb-6 text-gray-900 tracking-wide">
-            Hệ thống mắt<br/>kính HMK
+            Hệ thống mắt<br />kính HMK
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed max-w-md mt-3">
             Hệ thống Mắt Kính HMK với 60+ chi nhánh trên toàn quốc, tập trung hầu hết ở các tỉnh thành lớn như: TP. Hồ Chí Minh, TP. Hà Nội, TP. Đà Nẵng, TP. Cần Thơ và nhiều tỉnh thành khác.
           </p>
         </div>
         <div className="h-[400px] md:h-auto">
-          <img 
-            src={bannerImg}  
-            alt="HMK Sài Gòn Chi Nhánh 20" 
-            className="w-full h-full object-cover" 
+          <img
+            src={bannerImg}
+            alt="HMK Sài Gòn Chi Nhánh 20"
+            className="w-full h-full object-cover"
           />
         </div>
       </div>
@@ -355,7 +360,7 @@ const BrandStory = () => {
             Kiến tạo vẻ đẹp thông thái cùng kính mắt hàng đầu Việt Nam
           </h2>
         </div>
-        
+
         {/* Phần Nội dung 3 cột */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 max-w-5xl mx-auto text-left">
           {/* Phương châm */}
@@ -364,14 +369,14 @@ const BrandStory = () => {
             <h4 className="font-bold text-[15px] mb-2 uppercase text-[#1A1A1A] tracking-wider">Phương châm</h4>
             <p className="text-gray-600 text-[14px] leading-relaxed">Care your eyes, style your life</p>
           </div>
-          
+
           {/* Sứ mệnh */}
           <div className="flex flex-col">
             <span className="text-4xl md:text-5xl font-bold mb-4 text-[#474747]">02</span>
             <h4 className="font-bold text-[15px] mb-2 uppercase text-[#1A1A1A] tracking-wider">Sứ mệnh</h4>
             <p className="text-gray-600 text-[14px] leading-relaxed">Trở thành “Thương hiệu kính mắt hàng đầu Việt Nam”</p>
           </div>
-          
+
           {/* Lan tỏa thông điệp */}
           <div className="flex flex-col">
             <span className="text-4xl md:text-5xl font-bold mb-4 text-[#474747]">03</span>
